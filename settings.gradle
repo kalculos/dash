@@ -1,0 +1,3 @@
+rootProject.name = 'dash'
+include 'dash-core-api'
+

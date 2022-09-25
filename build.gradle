@@ -1,0 +1,64 @@
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '5.0.0'
+}
+
+group 'io.ib67.dash'
+version '1.0-SNAPSHOT'
+
+subprojects {
+    apply plugin: 'io.franzbecker.gradle-lombok'
+    afterEvaluate {
+        test {
+            useJUnitPlatform()
+        }
+/*
+  Java
+ */
+        def targetJavaVersion = 17
+        java {
+            def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
+            if (JavaVersion.current() < javaVersion) {
+                toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+            }
+        }
+/*
+  Lombok
+ */
+        lombok {
+            version = "1.18.24"
+        }
+
+        task delombok(type: DelombokTask, dependsOn: compileJava) {
+            ext.outputDir = file("$buildDir/delombok")
+            outputs.dir(outputDir)
+            sourceSets.main.java.srcDirs.each {
+                inputs.dir(it)
+                args(it, "-d", outputDir)
+            }
+            doFirst {
+                outputDir.deleteDir()
+            }
+        }
+/*
+  Javadoc
+ */
+        javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+        javadoc {
+            title("${project.name} JavaDoc v${project.version}")
+            exclude Set.of('**/internal/**', '**/impl/**', '**Impl', 'Simple**')
+            dependsOn delombok
+            source = delombok.outputDir
+            failOnError = false
+        }
+        /*
+         * Common Configurations
+         */
+        repositories {
+            mavenCentral()
+        }
+    }
+}
