@@ -13,15 +13,19 @@ public enum ScheduleType {
      * It will be VirtualThreads when JEP 425 is out of incubator.
      * <p>
      * WARNING: ASYNC events will not guarantee your handler priority.
-     */
+     *
+     * @apiNote ASYNC is <strong>NOT FAST</strong>, You should only use it when you're having some blocking and time-series ignored codes.
+     **/
     ASYNC(false),
     /**
-     * MAIN means your handler will be called on the EventBus MainThread and always earlier than ASYNC events.
+     * MAIN means your handler will be called on the EventBus's MainThread and always earlier than ASYNC events.
+     * @apiNote Write most of your business logics here.
      */
     MAIN(true),
     /**
      * MONITOR means your handler will be called on the thread which publishes the event.
      * For most situations, please use {@link #MAIN} or {@link #ASYNC} instead. This is only designed for some filters.
+     * @apiNote It is for monitor plugin or adapters. Though it is fast, but we cannot guarantee which thread you're running on, which can lead to unsure behavior especially for blocking, time-series required codes.
      */
     MONITOR(true);
 

@@ -21,10 +21,10 @@ public class TestEventBus {
 
     @Test
     public void testEventDelivery() {
-        bus = new DashEventBus(executor);
+        bus = new DashEventBus(executor, executor);
         var inte = new AtomicBoolean(false);
         var channel = new AcceptingChannel<>(
-                ScheduleType.MAIN,
+                ScheduleType.MONITOR,
                 null,
                 0,
                 null,
@@ -36,8 +36,8 @@ public class TestEventBus {
     }
 
     @Test
-    public void testEventDeliveryPriority() {
-        bus = new DashEventBus(executor);
+    public void testEventDeliveryPriority() throws InterruptedException {
+        bus = new DashEventBus(executor, executor);
         var c1 = new AcceptingChannel<>(
                 ScheduleType.MAIN,
                 null,
@@ -57,12 +57,13 @@ public class TestEventBus {
         c2.subscribeAlways((e, c) -> c2s.set(System.nanoTime()));
         c1.subscribeAlways((e, c) -> c1s.set(System.nanoTime()));
         bus.postEvent(new TestEvent(0));
+        Thread.sleep(10);
         assertTrue(c1s.get() < c2s.get());
     }
 
     @Test
     public void testEventDeliveryPriorityByScheduleType() throws InterruptedException {
-        bus = new DashEventBus(executor);
+        bus = new DashEventBus(executor, executor);
         var c1 = new AcceptingChannel<>(
                 ScheduleType.ASYNC,
                 null,
@@ -88,7 +89,7 @@ public class TestEventBus {
 
     @Test
     public void testEventDispatchAsync() throws InterruptedException {
-        bus = new DashEventBus(executor);
+        bus = new DashEventBus(executor, executor);
         var tid = new AtomicLong(-9);
         new AcceptingChannel<>(
                 ScheduleType.ASYNC,

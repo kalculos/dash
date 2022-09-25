@@ -13,7 +13,8 @@ import java.util.concurrent.ExecutorService;
 @RequiredArgsConstructor
 public class DashEventBus implements IEventBus {
     private final TreeSet<RegisteredHandler<?>> handlers = new TreeSet<>();
-    private final ExecutorService executor;
+    private final ExecutorService asyncExecutor;
+    private final ExecutorService mainExecutor;
 
     @Override
     public <E extends Event> void register(IEventChannel<E> channel, EventHandler<E> handler) {
@@ -26,7 +27,8 @@ public class DashEventBus implements IEventBus {
         while (iter.hasNext()) {
             var it = iter.next();
             var handler = ((EventHandler<Event>) it.handler());
-            if (it.channel().getScheduleType() == ScheduleType.ASYNC) {
+            if (it.channel().getScheduleType() != ScheduleType.MONITOR) {
+                var executor = it.channel().getScheduleType() == ScheduleType.ASYNC ? asyncExecutor : mainExecutor;
                 executor.submit(() -> {
                     try {
                         var mappedEvent = it.channel().apply(event);

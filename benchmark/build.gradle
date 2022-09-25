@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id "me.champeau.jmh" version "0.6.6"
+}
+
+group 'io.ib67.dash'
+version '0.1.0'
+
+jmh {
+    warmupIterations = 2
+    iterations = 2
+    fork = 1
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    jmhImplementation(project(":dash-core-impl"))
+    jmhImplementation(project(":dash-core-api"))
+}
+
+test {
+    useJUnitPlatform()
+}
