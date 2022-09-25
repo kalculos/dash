@@ -6,13 +6,14 @@ import org.jetbrains.annotations.ApiStatus;
 
 /**
  * There results determines whether the event will be processed.
+ *
+ * <br>All of these will not work when you're using {@link ScheduleType#ASYNC}.</br>
  */
 @ApiStatus.AvailableSince("0.1.0")
 public enum HandleResult {
     /**
      * The {@link IEventChannel} won't call more handlers.
      * <p>
-     * This is meaningless when you're using {@link ScheduleType#ASYNC}
      */
     CANCELLED,
     /**

@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+group parent.group
+version parent.version
+
+dependencies {
+    compileOnly(project(":dash-core-api"))
+    testImplementation(project(":dash-core-api"))
+}
+test {
+    useJUnitPlatform()
+}

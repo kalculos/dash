@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * An EventChannel is a {@link java.util.stream.Stream} variant that designed for receiving events. <br />
@@ -18,7 +19,8 @@ import java.util.function.Predicate;
  * For more about where your handlers will be called, please refer to {@link ScheduleType}
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface IEventChannel<E extends Event> {
+@SuppressWarnings("unused")
+public interface IEventChannel<E extends Event> extends Comparable<IEventChannel<E>>, UnaryOperator<Event> {
     /**
      * The {@link ScheduleType} for this EventChannel.
      *
@@ -37,23 +39,50 @@ public interface IEventChannel<E extends Event> {
     String getName();
 
     /**
+     * The priority of this event channel.
+     *
+     * @return priority. Smaller is earlier. Must be positive
+     */
+    int getPriority();
+
+    @Override
+    default int compareTo(@NotNull IEventChannel<E> o) {
+        if (o.getScheduleType() != getScheduleType()) {
+            return o.getScheduleType().compareTo(this.getScheduleType());
+        }
+        return getPriority() - o.getPriority();
+    }
+
+    /**
      * Split this EventChannel for a condition.
      *
      * @param filter condition
      * @return new channel
      */
     @Contract("_ -> new")
-    IEventChannel<E> filter(Predicate<E> filter);
+    IEventChannel<E> filter(Predicate<? super E> filter);
+
+    /**
+     * A `type filter` variant of {@link #map(Function)}
+     *
+     * @param type target type
+     * @param <P>  new type
+     * @return a new event channel
+     */
+    default <P extends Event> IEventChannel<P> filterForType(Class<P> type) {
+        return filter(type::isInstance).map(type::cast);
+    }
 
     /**
      * Split this EventChannel for a new type.
+     * This is possible to cause {@link ClassCastException}. For finding specified types, please use {@link #filterForType(Class)}
      *
      * @param mapper type mapper
      * @param <N>    new event type
      * @return new channel
      */
     @Contract("_ -> new")
-    <N extends Event> IEventChannel<N> map(Function<E, N> mapper);
+    <N extends Event> IEventChannel<N> map(Function<? super E, ? extends N> mapper);
 
     /**
      * Subscribes to this EventChannel. Your handler will receive messages until it returns {@link HandleResult#UNSUBSCRIBE}
