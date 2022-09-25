@@ -28,28 +28,37 @@ public class DashEventBus implements IEventBus {
             var handler = ((EventHandler<Event>) it.handler());
             if (it.channel().getScheduleType() == ScheduleType.ASYNC) {
                 executor.submit(() -> {
-                    var mappedEvent = it.channel().apply(event);
-                    if (mappedEvent == null) {
-                        return;
+                    try {
+                        var mappedEvent = it.channel().apply(event);
+                        if (mappedEvent == null) {
+                            return;
+                        }
+                        handler.handleMessage(mappedEvent, (IEventChannel<Event>) it.channel());
+                    } catch (Throwable throwable) {
+                        //todo: log it.
                     }
-                    handler.handleMessage(mappedEvent, (IEventChannel<Event>) it.channel());
                 });
             } else {
                 // assertion: type matches
-                var mappedEvent = it.channel().apply(event);
-                if (mappedEvent == null) {
-                    continue; // doesn't match the condition
-                }
-                var result = handler.handleMessage(mappedEvent, (IEventChannel<Event>) it.channel());
-                switch (result) {
-                    case UNSUBSCRIBE -> iter.remove();
-                    case CONTINUE -> {
-                        continue;
+                try {
+                    var mappedEvent = it.channel().apply(event);
+                    if (mappedEvent == null) {
+                        continue; // doesn't match the condition
                     }
-                    case CANCELLED -> {
-                        return;
+                    var result = handler.handleMessage(mappedEvent, (IEventChannel<Event>) it.channel());
+                    switch (result) {
+                        case UNSUBSCRIBE -> iter.remove();
+                        case CONTINUE -> {
+                            continue;
+                        }
+                        case CANCELLED -> {
+                            return;
+                        }
                     }
+                } catch (Throwable t) {
+                    //todo: log it.
                 }
+
             }
         }
     }

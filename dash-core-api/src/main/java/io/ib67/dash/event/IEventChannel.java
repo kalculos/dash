@@ -22,6 +22,11 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("unused")
 public interface IEventChannel<E extends Event> extends Comparable<IEventChannel<E>>, UnaryOperator<Event> {
     /**
+     * The default priority for all IEventChannels.
+     */
+    static final int DEFAULT_PRIORITY = 50;
+
+    /**
      * The {@link ScheduleType} for this EventChannel.
      *
      * @return the schedulerType
