@@ -1,8 +1,11 @@
 plugins {
     id 'java'
+    id 'java-library'
 }
 
 group parent.group
 version parent.version
 
-
+dependencies {
+    api 'io.ib67.kiwi:core:0.3.1'
+}

@@ -10,6 +10,7 @@ jmh {
     warmupIterations = 2
     iterations = 2
     fork = 1
+    profilers = ['jfr:dir=profile-results']
 }
 
 repositories {

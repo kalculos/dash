@@ -1,5 +1,6 @@
 package io.ib67.dash.event;
 
+import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.EventHandler;
 import io.ib67.dash.event.handler.HandleResult;
 import io.ib67.dash.event.handler.internal.CatchyHandler;
@@ -42,6 +43,8 @@ public interface IEventChannel<E extends Event> extends Comparable<IEventChannel
      */
     @Nullable
     String getName();
+
+    IEventBus getBus();
 
     /**
      * The priority of this event channel.
