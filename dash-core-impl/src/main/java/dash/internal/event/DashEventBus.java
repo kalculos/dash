@@ -7,7 +7,6 @@ import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.EventHandler;
 import io.ib67.dash.event.handler.HandleResult;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -16,12 +15,21 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 import static io.ib67.dash.event.ScheduleType.*;
+import static java.util.Objects.requireNonNull;
 
-@RequiredArgsConstructor
 public class DashEventBus implements IEventBus {
     private final Map<ScheduleType, SortedSet<RegisteredHandler<?>>> handlers = new TreeMap<>();
     private final ExecutorService asyncExecutor;
     private final ScheduledExecutorService mainExecutor;
+
+    public DashEventBus(ExecutorService asyncExecutor, ScheduledExecutorService mainExecutor) {
+        requireNonNull(this.asyncExecutor = asyncExecutor);
+        requireNonNull(this.mainExecutor = mainExecutor);
+        mainExecutor.execute(() -> {
+            Threads.primaryThread = Thread.currentThread();
+        });
+    }
+
 
     @Nullable
     @SuppressWarnings("unchecked")
@@ -33,7 +41,7 @@ public class DashEventBus implements IEventBus {
 
     @Override
     public <E extends Event> void register(IEventChannel<E> channel, EventHandler<E> handler) {
-        Objects.requireNonNull(channel.getScheduleType());
+        requireNonNull(channel.getScheduleType());
         handlers.computeIfAbsent(channel.getScheduleType(), k -> new TreeSet<>())
                 .add(new RegisteredHandler<>(channel, handler));
     }

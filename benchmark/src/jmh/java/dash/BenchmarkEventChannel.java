@@ -2,37 +2,31 @@ package dash;
 
 import dash.internal.event.DashEventBus;
 import dash.internal.event.channels.AcceptingChannel;
-import dash.internal.scheduler.SimpleCatchingScheduler;
 import dash.internal.util.Threads;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.scheduler.Scheduler;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @State(Scope.Benchmark)
 public class BenchmarkEventChannel {
-    private Scheduler simpleScheduler = new SimpleCatchingScheduler(5);
-    private IEventBus bus = new DashEventBus(Executors.newFixedThreadPool(4), simpleScheduler);
+    private final ExecutorService asyncExec = Executors.newFixedThreadPool(4);
+    private ScheduledExecutorService simpleScheduler = Executors.newSingleThreadScheduledExecutor();
+    private IEventBus bus = new DashEventBus(asyncExec, simpleScheduler);
 
     @Param({"MONITOR", "MAIN", "ASYNC"})
     private ScheduleType type;
     private CountDownLatch latch;
-    private Thread thread;
-    private volatile boolean stop = false;
+
 
     @Setup
     public void setup() {
-        thread = new Thread(() -> {
-            Threads.primaryThread = Thread.currentThread();
-            while (!stop) {
-                simpleScheduler.tick();
-            }
-        });
-        thread.start();
+        Threads.primaryThread = Thread.currentThread();
         var random = new Random(0);
         latch = new CountDownLatch(1000);
         for (int i = 0; i < 1000; i++) {
@@ -50,13 +44,16 @@ public class BenchmarkEventChannel {
 
     @Benchmark
     public void broadcastMessages() throws InterruptedException {
-        bus.postEvent(new TestEvent());
+        bus.postEvent(new TestEvent(), whenDone -> {
+        });
         //  latch.await();
     }
 
     @TearDown
     public void cleanUp() {
-        stop = true;
+        simpleScheduler.shutdownNow();
+        asyncExec.shutdownNow();
+        bus = new DashEventBus(asyncExec, simpleScheduler);
 
     }
 }
