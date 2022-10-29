@@ -5,6 +5,8 @@ import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.handler.EventHandler;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.function.Consumer;
+
 /**
  * An IEventBus delivers event to its registered handlers.
  */
@@ -26,5 +28,5 @@ public interface IEventBus {
      *
      * @param event the event
      */
-    void postEvent(Event event);
+    <E extends Event> void postEvent(E event, Consumer<E> whenDone);
 }

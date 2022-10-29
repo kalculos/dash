@@ -13,6 +13,7 @@ public enum ScheduleType {
      * It will be VirtualThreads when JEP 425 is out of incubator.
      * <p>
      * WARNING: ASYNC events will not guarantee your handler priority.
+     * WARNING: Modifications in events will not be handled since order cannot be ensured
      *
      * @apiNote ASYNC is <strong>NOT FAST</strong>, You should only use it when you're having some blocking and time-series ignored codes.
      **/
