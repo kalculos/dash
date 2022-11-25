@@ -18,7 +18,7 @@ import static io.ib67.dash.event.ScheduleType.*;
 import static java.util.Objects.requireNonNull;
 
 public class DashEventBus implements IEventBus {
-    private final Map<ScheduleType, SortedSet<RegisteredHandler<?>>> handlers = new TreeMap<>();
+    private final Map<ScheduleType, SortedSet<RegisteredHandler<?>>> handlers = new EnumMap<>(ScheduleType.class);
     private final ExecutorService asyncExecutor;
     private final ScheduledExecutorService mainExecutor;
 

@@ -119,6 +119,33 @@ public class TestEventBus {
         assertTrue(tid.get() != Thread.currentThread().getId(), "Async Handler doesn't go async");
     }
 
+    @Test
+    public void testPublishEventInHandler() throws InterruptedException {
+        bus = new DashEventBus(executor, scheduler);
+        new AcceptingChannel<>(
+                ScheduleType.MAIN,
+                null,
+                0,
+                null,
+                bus
+        ).filterForType(TestEvent.class).subscribeAlways((a, b) -> {
+            b.getBus().postEvent(new TestEvent2(1), e -> {
+                System.out.println("done");
+            });
+        });
+        AtomicBoolean bool = new AtomicBoolean(false);
+        new AcceptingChannel<>(ScheduleType.MAIN, null, 0, null, bus)
+                .filterForType(TestEventChannel.TestEvent2.class)
+                .subscribeAlways((a, b) -> {
+                    System.out.println("call");
+                    bool.set(true);
+                });
+        bus.postEvent(new TestEvent(0), evt -> {
+        });
+        Thread.sleep(100);
+        assertTrue(bool.get());
+    }
+
     @RequiredArgsConstructor
     class TestEvent extends Event {
         private final int value;
