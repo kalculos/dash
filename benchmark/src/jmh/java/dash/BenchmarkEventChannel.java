@@ -8,7 +8,6 @@ import io.ib67.dash.event.bus.IEventBus;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,15 +19,13 @@ public class BenchmarkEventChannel {
     private IEventBus bus = new DashEventBus(asyncExec, simpleScheduler);
 
     @Param({"MONITOR", "MAIN", "ASYNC"})
+    @SuppressWarnings("unused")
     private ScheduleType type;
-    private CountDownLatch latch;
-
 
     @Setup
     public void setup() {
         Threads.primaryThread = Thread.currentThread();
         var random = new Random(0);
-        latch = new CountDownLatch(1000);
         for (int i = 0; i < 1000; i++) {
             var channel = new AcceptingChannel<>(
                     type,
