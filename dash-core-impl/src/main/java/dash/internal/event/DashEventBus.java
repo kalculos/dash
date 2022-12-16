@@ -51,7 +51,10 @@ public class DashEventBus implements IEventBus {
     public <E extends Event> void postEvent(E event, Consumer<E> whenDone) {
         postEvent1(event, MONITOR);
         if (!Threads.isPrimaryThread()) {
-            mainExecutor.submit(() -> postEvent0(event, whenDone));
+            // don't post if nothing subscribe on main
+            if (handlers.containsKey(MAIN)) {
+                mainExecutor.submit(() -> postEvent0(event, whenDone));
+            }
         } else {
             postEvent0(event, whenDone);
         }

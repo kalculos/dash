@@ -52,7 +52,7 @@ public class BenchmarkEventChannel {
     public void cleanUp() {
         simpleScheduler.shutdownNow();
         asyncExec.shutdownNow();
-        bus = new DashEventBus(asyncExec, simpleScheduler);
+       // bus = new DashEventBus(asyncExec, simpleScheduler);
 
     }
 }
