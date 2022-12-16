@@ -130,14 +130,12 @@ public class TestEventBus {
                 bus
         ).filterForType(TestEvent.class).subscribeAlways((a, b) -> {
             b.getBus().postEvent(new TestEvent2(1), e -> {
-                System.out.println("done");
             });
         });
         AtomicBoolean bool = new AtomicBoolean(false);
         new AcceptingChannel<>(ScheduleType.MAIN, null, 0, null, bus)
-                .filterForType(TestEventChannel.TestEvent2.class)
+                .filterForType(TestEvent2.class)
                 .subscribeAlways((a, b) -> {
-                    System.out.println("call");
                     bool.set(true);
                 });
         bus.postEvent(new TestEvent(0), evt -> {
@@ -152,7 +150,7 @@ public class TestEventBus {
     }
 
     @RequiredArgsConstructor
-    class TestEvent2 extends Event {
+    static class TestEvent2 extends Event {
         private final int value;
     }
 }

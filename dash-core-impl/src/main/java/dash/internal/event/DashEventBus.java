@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static io.ib67.dash.event.ScheduleType.*;
@@ -21,6 +22,7 @@ public class DashEventBus implements IEventBus {
     private final Map<ScheduleType, SortedSet<RegisteredHandler<?>>> handlers = new EnumMap<>(ScheduleType.class);
     private final ExecutorService asyncExecutor;
     private final ScheduledExecutorService mainExecutor;
+    private final AtomicInteger handlerCounter = new AtomicInteger(0);
 
     public DashEventBus(ExecutorService asyncExecutor, ScheduledExecutorService mainExecutor) {
         requireNonNull(this.asyncExecutor = asyncExecutor);
@@ -43,7 +45,7 @@ public class DashEventBus implements IEventBus {
     public <E extends Event> void register(IEventChannel<E> channel, EventHandler<E> handler) {
         requireNonNull(channel.getScheduleType());
         handlers.computeIfAbsent(channel.getScheduleType(), k -> new TreeSet<>())
-                .add(new RegisteredHandler<>(channel, handler));
+                .add(new RegisteredHandler<>(channel, handler, handlerCounter.addAndGet(1)));
     }
 
     public <E extends Event> void postEvent(E event, Consumer<E> whenDone) {
