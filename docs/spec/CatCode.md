@@ -1,7 +1,7 @@
 # 猫码 / CatCode
 
-和 [CatCode2](https://github.com/ForteScarlet/CatCode2) 类似, ~~
-但其实是我们[先](https://github.com/saltedfishclub/PolarCore/wiki/CatCode)拿的这个名字哦~~
+和 [CatCode2](https://github.com/ForteScarlet/CatCode2) 类似,
+~~但其实是我们[先](https://github.com/saltedfishclub/PolarCore/wiki/CatCode)拿的这个名字哦~~
 
 定义: 一段猫码是多个聊天平台之间通用的符合猫码格式规范的非纯文本信息的纯文本表示, 并且通过猫码必然 可以或接近完整的
 还原出原本的信息.
