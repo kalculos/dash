@@ -31,3 +31,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+**/profile-results/**
+*.jfr
+**/local/**
