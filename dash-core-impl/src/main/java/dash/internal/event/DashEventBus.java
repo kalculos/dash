@@ -49,11 +49,10 @@ public class DashEventBus implements IEventBus {
     }
 
     public <E extends Event> void postEvent(E event, Consumer<E> whenDone) {
+        postEvent1(event, MONITOR);
         if (!Threads.isPrimaryThread()) {
-            postEvent1(event, MONITOR);
             mainExecutor.submit(() -> postEvent0(event, whenDone));
         } else {
-            postEvent1(event, MONITOR);
             postEvent0(event, whenDone);
         }
     }
