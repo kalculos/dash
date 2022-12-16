@@ -16,16 +16,18 @@ import java.util.concurrent.ScheduledExecutorService;
 public class BenchmarkEventChannel {
     private final ExecutorService asyncExec = Executors.newFixedThreadPool(4);
     private ScheduledExecutorService simpleScheduler = Executors.newSingleThreadScheduledExecutor();
-    private IEventBus bus = new DashEventBus(asyncExec, simpleScheduler);
+    private static final TestEvent EVENT = new TestEvent();
 
     @Param({"MONITOR", "MAIN", "ASYNC"})
     @SuppressWarnings("unused")
     private ScheduleType type;
+    private IEventBus bus;
 
     @Setup
     public void setup() {
         Threads.primaryThread = Thread.currentThread();
         var random = new Random(0);
+        bus = new DashEventBus(asyncExec, simpleScheduler);
         for (int i = 0; i < 1000; i++) {
             var channel = new AcceptingChannel<>(
                     type,
@@ -41,7 +43,7 @@ public class BenchmarkEventChannel {
 
     @Benchmark
     public void broadcastMessages() throws InterruptedException {
-        bus.postEvent(new TestEvent(), whenDone -> {
+        bus.postEvent(EVENT, whenDone -> {
         });
         //  latch.await();
     }
