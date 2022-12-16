@@ -52,7 +52,7 @@ public class DashEventBus implements IEventBus {
         postEvent1(event, MONITOR);
         if (!Threads.isPrimaryThread()) {
             // don't post if nothing subscribe on main
-            if (handlers.containsKey(MAIN)) {
+            if (handlers.containsKey(MAIN) || handlers.containsKey(ASYNC)) {
                 mainExecutor.submit(() -> postEvent0(event, whenDone));
             }
         } else {
