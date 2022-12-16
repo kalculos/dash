@@ -18,9 +18,9 @@ public class BenchmarkEventChannel {
     private ScheduledExecutorService simpleScheduler = Executors.newSingleThreadScheduledExecutor();
     private static final TestEvent EVENT = new TestEvent();
 
-    @Param({"MONITOR", "MAIN", "ASYNC"})
+    //@Param({"MONITOR", "MAIN", "ASYNC"})
     @SuppressWarnings("unused")
-    private ScheduleType type;
+    private ScheduleType type = ScheduleType.MONITOR;
     private IEventBus bus;
 
     @Setup

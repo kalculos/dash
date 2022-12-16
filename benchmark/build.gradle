@@ -10,7 +10,7 @@ jmh {
     warmupIterations = 2
     iterations = 2
     fork = 1
-    if (!System.getenv("CI").toLowerCase().equals("true")) {
+    if (System.getenv("CI") == null) {
         profilers = ['jfr:dir=profile-results']
     } else {
         fork = 2
