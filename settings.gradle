@@ -2,5 +2,4 @@ rootProject.name = 'dash'
 include 'dash-core-api'
 include 'dash-core-impl'
 include 'benchmark'
-include 'dash-event-api'
 
