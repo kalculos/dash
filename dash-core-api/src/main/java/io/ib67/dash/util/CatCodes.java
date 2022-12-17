@@ -1,6 +1,6 @@
 package io.ib67.dash.util;
 
-import io.ib67.dash.message.feature.component.MessageComponent;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -15,16 +15,21 @@ import java.util.stream.Collectors;
  * CatCode Specification: <a href="https://github.com/kalculos/dash/blob/main/docs/spec/CatCode.md">About CatCode</a> <br /?
  * <p>
  * Note: This is not ForteScarlet/CatCode2. But you can parse our codes according to their specification.
+ * Note: This utility is independent. You can copy it under our License.
  */
+@ApiStatus.AvailableSince("0.1.0")
 public class CatCodes {
-    public static String toCatCode(Collection<? extends MessageComponent> components) {
-        return components.stream().map(MessageComponent::toCatCode).collect(Collectors.joining());
-    }
 
     public static String toString(Collection<? extends CatCode> catCodes) {
         return catCodes.stream().map(CatCode::toString).collect(Collectors.joining());
     }
 
+    /**
+     * Parse CatCodes from String.
+     *
+     * @param code a text contains catcode.
+     * @return some catcode
+     */
     public static List<CatCode> fromString(String code) {
         return new CatCodeParser(code).get();
     }
@@ -163,7 +168,29 @@ public class CatCodes {
                         return;
                 }
             }
-            throw new IllegalStateException("EOF");
+            throw new InvalidCatCodeException("EOF");
+        }
+    }
+
+    public static class InvalidCatCodeException extends RuntimeException {
+        public InvalidCatCodeException() {
+            super();
+        }
+
+        public InvalidCatCodeException(String message) {
+            super(message);
+        }
+
+        public InvalidCatCodeException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public InvalidCatCodeException(Throwable cause) {
+            super(cause);
+        }
+
+        protected InvalidCatCodeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+            super(message, cause, enableSuppression, writableStackTrace);
         }
     }
 }

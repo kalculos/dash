@@ -1,4 +1,4 @@
-package io.ib67.dash.message.feature.component;
+package io.ib67.dash.message.feature;
 
 /**
  * A part of a message, {@link io.ib67.dash.message.feature.CompoundMessage}.

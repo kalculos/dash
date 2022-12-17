@@ -17,9 +17,9 @@ import java.util.Map;
  */
 @ApiStatus.AvailableSince("0.1.0")
 @RequiredArgsConstructor
-public abstract class Message extends Event {
+public abstract class Message<S extends MessageSource> extends Event {
     @Getter
-    protected final MessageSource source;
+    protected final S source;
     @Getter(lazy = true)
     private final Context context = new Context();
 
