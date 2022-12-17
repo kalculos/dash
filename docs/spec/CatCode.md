@@ -31,6 +31,10 @@
 目前猫码支持的类型包括:
 
 - 纯文本 `TEXT` as-is
+- 提及 `AT`  
+  支持的属性:
+  - `target` 目标的通用 userid.
+  - `platform` 平台 id. 此项仅当 `target` 为非通用 userid 时启用
 - 图片 `IMAGE`  
   支持的属性:
   - `path` 图片文件的路径, 同时这可能是一个 `URL` 或者是来自 dash 的回环地址. ( 比如: `dash://image/111`)
