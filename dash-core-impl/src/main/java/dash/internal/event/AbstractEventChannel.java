@@ -19,18 +19,14 @@ import java.util.function.Predicate;
 @Getter
 @RequiredArgsConstructor
 public abstract class AbstractEventChannel<E extends AbstractEvent> implements IEventChannel<E> {
-    @Getter
     protected final ScheduleType scheduleType;
 
     protected final String name;
 
-    @Getter
     protected final int priority;
 
-    @Getter
     protected final AbstractEventChannel<?> parent;
 
-    @Getter
     protected final IEventBus bus;
 
     protected AbstractEventChannel(AbstractEventChannel<E> parent) {
