@@ -1,6 +1,6 @@
 package io.ib67.dash.message.feature.component;
 
-import io.ib67.dash.contact.AbstractContact;
+import io.ib67.dash.contact.Contact;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.util.CatCodes;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class At implements IMessageComponent {
     @Getter
     @Nullable
-    private final AbstractContact contact;
+    private final Contact contact;
     @Getter
     @Nullable
     private final String platformId;

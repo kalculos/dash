@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Manages {@link AbstractPlatformAdapter}
+ * Manages {@link PlatformAdapter}
  */
 @ApiStatus.AvailableSince("0.1.0")
 public interface IAdapterRegistry {
-    void registerAdapter(AbstractPlatformAdapter adapter);
+    void registerAdapter(PlatformAdapter adapter);
 
-    Optional<? extends AbstractPlatformAdapter> getAdapter(String name);
+    Optional<? extends PlatformAdapter> getAdapter(String name);
 
-    Collection<? extends AbstractPlatformAdapter> allAdapters();
+    Collection<? extends PlatformAdapter> allAdapters();
 }
