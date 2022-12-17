@@ -43,7 +43,7 @@ public abstract class Contact implements PlatformRelated {
 
     @Override
     public int hashCode() {
-        int i = 1;
+        var i = 1;
         i = i * 31 + Long.hashCode(uid);
         i = i * 31 + idOnPlatform.hashCode();
         return i;

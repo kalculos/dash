@@ -25,11 +25,13 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
      */
     @Getter
     protected final S source;
+
     /**
      * The context of message, created lazily by default.
      */
     @Getter(lazy = true)
     private final Context context = new Context();
+
     /**
      * Universal message id.
      */

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.AvailableSince("0.1.0")
 public class File extends ResourceMessage implements IMessageComponent {
 
-
     protected File(String path) {
         super("FILE", path);
     }

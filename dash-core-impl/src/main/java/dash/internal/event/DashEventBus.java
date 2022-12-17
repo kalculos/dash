@@ -20,16 +20,17 @@ import static java.util.Objects.requireNonNull;
 
 public class DashEventBus implements IEventBus {
     private final Map<ScheduleType, SortedSet<RegisteredHandler<?>>> handlers = new EnumMap<>(ScheduleType.class);
+
     private final ExecutorService asyncExecutor;
+
     private final ScheduledExecutorService mainExecutor;
+
     private final AtomicInteger handlerCounter = new AtomicInteger(0);
 
     public DashEventBus(ExecutorService asyncExecutor, ScheduledExecutorService mainExecutor) {
         requireNonNull(this.asyncExecutor = asyncExecutor);
         requireNonNull(this.mainExecutor = mainExecutor);
-        mainExecutor.execute(() -> {
-            Threads.primaryThread = Thread.currentThread();
-        });
+        mainExecutor.execute(() -> Threads.primaryThread = Thread.currentThread());
     }
 
 

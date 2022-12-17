@@ -3,6 +3,7 @@ package io.ib67.dash.contact.group;
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.contact.Contact;
 import io.ib67.dash.contact.group.channel.ChatChannel;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -12,15 +13,21 @@ import java.util.List;
  */
 public abstract class ChatGroup extends Contact {
 
-    protected ChatGroup(long uid, String platformId, PlatformAdapter platform) {
+    protected ChatGroup(long uid, String platformId, PlatformAdapter platform, List<ChatChannel> channels, ChatChannel defaultChannel, List<Member> members) {
         super(uid, platformId, platform);
+        this.channels = channels;
+        this.defaultChannel = defaultChannel;
+        this.members = members;
     }
 
-    public abstract ChatChannel getDefaultChannel();
+    @Getter
+    protected final List<ChatChannel> channels;
 
-    public abstract List<ChatChannel> getChannels();
+    @Getter
+    protected final ChatChannel defaultChannel;
 
-    public abstract List<Member> getMembers();
+    @Getter
+    protected final List<Member> members;
 
     @Override
     public String toString() {

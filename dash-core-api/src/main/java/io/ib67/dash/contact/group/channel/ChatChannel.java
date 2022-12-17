@@ -16,10 +16,12 @@ import static java.util.Objects.requireNonNull;
 public abstract class ChatChannel implements IMessageSource {
     @Getter
     protected final ChannelInfo info;
+
+    @Getter
     protected final ChatGroup group;
 
     public ChatChannel(ChannelInfo info, ChatGroup group) {
-        Objects.requireNonNull(this.group = group);
+        requireNonNull(this.group = group);
         requireNonNull(this.info = info);
     }
 

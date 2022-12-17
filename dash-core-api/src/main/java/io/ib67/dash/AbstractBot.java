@@ -10,7 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.AvailableSince("0.1.0")
 public abstract class AbstractBot implements Lifecycle {
     /**
-     * Bot's name
+     * The Bot's name
      */
     @Getter
     protected final String name;
