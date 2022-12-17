@@ -21,8 +21,8 @@ public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S
     @Getter
     private final MessageChain components;
 
-    public CompoundMessage(S source, MessageChain components) {
-        super(source);
+    public CompoundMessage(S source, long id, MessageChain components) {
+        super(source, id);
         Objects.requireNonNull(this.components = components);
     }
 
