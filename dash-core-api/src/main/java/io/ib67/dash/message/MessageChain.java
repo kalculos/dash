@@ -1,5 +1,6 @@
 package io.ib67.dash.message;
 
+import io.ib67.dash.Dash;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.util.CatCodes;
@@ -64,6 +65,22 @@ public class MessageChain extends ArrayList<IMessageComponent> {
 
     public static MessageChain fromCatCode(IComponentSerializer serializer, boolean lenient, String str) {
         return fromCatCode(serializer, lenient, CatCodes.fromString(str));
+    }
+
+    public static MessageChain fromCatCode(boolean lenient, List<CatCodes.CatCode> str) {
+        return fromCatCode(Dash.getInstance().defaultComponentSerializer(), lenient, str);
+    }
+
+    public static MessageChain fromCatCode(List<CatCodes.CatCode> str) {
+        return fromCatCode(Dash.getInstance().defaultComponentSerializer(), true, str);
+    }
+
+    public static MessageChain fromCatCode(String str) {
+        return fromCatCode(Dash.getInstance().defaultComponentSerializer(), str);
+    }
+
+    public static MessageChain fromCatCode(boolean lenient, String str) {
+        return fromCatCode(Dash.getInstance().defaultComponentSerializer(), lenient, str);
     }
 
     /**

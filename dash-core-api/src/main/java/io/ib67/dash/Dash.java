@@ -4,7 +4,11 @@ import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.internal.DashInstFiner;
+import io.ib67.dash.message.feature.IComponentSerializer;
+import io.ib67.dash.serialization.ISerializerRegistry;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * The core part of dash framework.<br>
@@ -24,4 +28,10 @@ public interface Dash {
      * @return global event channel.
      */
     IEventChannel<? extends AbstractEvent> getGlobalChannel();
+
+    ScheduledExecutorService getPool();
+
+    IComponentSerializer defaultComponentSerializer();
+
+    ISerializerRegistry getSerializerRegistry();
 }

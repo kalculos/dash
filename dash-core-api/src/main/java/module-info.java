@@ -18,5 +18,6 @@ module dash.core.api {
 
     requires kiwi.core;
     requires lombok;
+    requires java.net.http;
     requires org.jetbrains.annotations;
 }
