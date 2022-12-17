@@ -14,6 +14,6 @@ public record ChannelInfo(
 ) {
     public ChannelInfo {
         requireNonNull(name);
-        Objects.requireNonNull(announcements);
+        requireNonNull(announcements);
     }
 }

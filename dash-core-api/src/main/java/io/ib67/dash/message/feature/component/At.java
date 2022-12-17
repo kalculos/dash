@@ -14,17 +14,11 @@ import org.jetbrains.annotations.Nullable;
  */
 @RequiredArgsConstructor
 @ApiStatus.AvailableSince("0.1.0")
-public class At implements IMessageComponent {
-    @Getter
-    @Nullable
-    private final Contact contact;
-    @Getter
-    @Nullable
-    private final String platformId;
-    @Getter
-    @Nullable
-    private final String platformUid;
-
+public record At(
+        @Getter @Nullable Contact contact,
+        @Getter @Nullable String platformId,
+        @Getter @Nullable String platformUid
+) implements IMessageComponent {
     /**
      * Create a new {@link At} directly
      *

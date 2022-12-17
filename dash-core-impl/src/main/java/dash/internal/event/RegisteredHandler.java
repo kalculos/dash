@@ -13,7 +13,7 @@ record RegisteredHandler<E extends AbstractEvent>(
     @Override
     @SuppressWarnings("unchecked")
     public int compareTo(@NotNull RegisteredHandler o) {
-        int delta = channel.compareTo(o.channel);
+        var delta = channel.compareTo(o.channel);
         if (delta != 0) return delta;
         return increasingCounter - o.increasingCounter;
     }

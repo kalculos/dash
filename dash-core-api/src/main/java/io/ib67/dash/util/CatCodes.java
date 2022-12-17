@@ -43,7 +43,7 @@ public class CatCodes {
             throw new IllegalArgumentException("it must be key-value pairs.");
         }
         var builder = new CatCode();
-        for (int i = 0; i < args.length; i++) {
+        for (var i = 0; i < args.length; i++) {
             if (i == 0) continue;
             var last = i - 1;
             builder.prop(args[last], args[i]);
@@ -68,12 +68,12 @@ public class CatCodes {
 
         @Override
         public String toString() {
-            if (type.equals("TEXT")) {
-                return properties.get("content");
-            }
-            if (properties.isEmpty())
-                return "[dash:" + type + "]";
-            return "[dash:" + type + "," + properties.entrySet().stream().map(it -> it.getKey() + "=" + it.getValue()).collect(Collectors.joining(",")) + "]";
+            if (type.equals("TEXT")) return properties.get("content");
+            if (properties.isEmpty()) return "[dash:" + type + "]";
+            return "[dash:" + type + "," +
+                    properties.entrySet().stream()
+                            .map(it -> it.getKey() + "=" + it.getValue())
+                            .collect(Collectors.joining(",")) + "]";
         }
     }
 
@@ -143,7 +143,7 @@ public class CatCodes {
 
         private void readProperty(CatCode cc) {
             var begin = buffer.position();
-            boolean isHead = false;
+            var isHead = false;
             String key = null;
             while (buffer.hasRemaining()) {
                 var b = buffer.get();

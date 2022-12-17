@@ -26,5 +26,4 @@ public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S
         Objects.requireNonNull(this.components = components);
     }
 
-
 }

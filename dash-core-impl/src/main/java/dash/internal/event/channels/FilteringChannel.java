@@ -18,9 +18,7 @@ public class FilteringChannel<E extends AbstractEvent> extends AbstractEventChan
     @SuppressWarnings("unchecked") // we don't care its type here.
     protected <B extends AbstractEvent> B transform(E event) {
         if (event == null) return null;
-        if (condition.test(event)) {
-            return (B) event;
-        }
+        if (condition.test(event)) return (B) event;
         return null;
     }
 }
