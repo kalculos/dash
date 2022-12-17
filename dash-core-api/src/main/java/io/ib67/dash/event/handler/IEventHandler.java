@@ -1,15 +1,15 @@
 package io.ib67.dash.event.handler;
 
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An EventHandler receives {@link Event}s
+ * An EventHandler receives {@link AbstractEvent}s
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface EventHandler<T extends Event> {
+public interface IEventHandler<T extends AbstractEvent> {
 
     /**
      * The core part of your handler.

@@ -1,12 +1,12 @@
 package dash.internal.event;
 
 import dash.internal.util.Threads;
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.event.handler.EventHandler;
 import io.ib67.dash.event.handler.HandleResult;
+import io.ib67.dash.event.handler.IEventHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -35,20 +35,20 @@ public class DashEventBus implements IEventBus {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    private static <E extends Event> HandleResult getHandleResult(E event, RegisteredHandler<?> it) {
+    private static <E extends AbstractEvent> HandleResult getHandleResult(E event, RegisteredHandler<?> it) {
         var evt = it.channel().apply(event);
         if (evt == null) return null;
-        return ((EventHandler<Event>) it.handler()).handleMessage(evt, (IEventChannel<Event>) it.channel());
+        return ((IEventHandler<AbstractEvent>) it.handler()).handleMessage(evt, (IEventChannel<AbstractEvent>) it.channel());
     }
 
     @Override
-    public <E extends Event> void register(IEventChannel<E> channel, EventHandler<E> handler) {
+    public <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler) {
         requireNonNull(channel.getScheduleType());
         handlers.computeIfAbsent(channel.getScheduleType(), k -> new TreeSet<>())
                 .add(new RegisteredHandler<>(channel, handler, handlerCounter.addAndGet(1)));
     }
 
-    public <E extends Event> void postEvent(E event, Consumer<E> whenDone) {
+    public <E extends AbstractEvent> void postEvent(E event, Consumer<E> whenDone) {
         postEvent1(event, MONITOR);
         if (!Threads.isPrimaryThread()) {
             // don't post if nothing subscribe on main
@@ -60,13 +60,13 @@ public class DashEventBus implements IEventBus {
         }
     }
 
-    private <E extends Event> void postEvent0(E event, Consumer<E> whenDone) {
+    private <E extends AbstractEvent> void postEvent0(E event, Consumer<E> whenDone) {
         postEvent1(event, MAIN);
         postEvent1(event, ASYNC);
         whenDone.accept(event);
     }
 
-    private <E extends Event> void postEvent1(E event, ScheduleType type) {
+    private <E extends AbstractEvent> void postEvent1(E event, ScheduleType type) {
         var _handlers = handlers.getOrDefault(type, Collections.emptySortedSet());
         var iter = _handlers.iterator();
         while (iter.hasNext()) {

@@ -1,13 +1,13 @@
 package io.ib67.dash.message.feature.component;
 
-import io.ib67.dash.message.feature.MessageComponent;
+import io.ib67.dash.message.feature.IMessageComponent;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * A {@link Image} is a concrete implementation of {@link MessageComponent} that contains photo.
+ * A {@link Image} is a concrete implementation of {@link IMessageComponent} that contains photo.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public class Image extends ResourceMessage implements MessageComponent {
+public class Image extends ResourceMessage implements IMessageComponent {
 
     protected Image(String path) {
         super("IMAGE", path);

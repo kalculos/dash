@@ -2,7 +2,7 @@ package dash;
 
 import dash.internal.event.DashEventBus;
 import dash.internal.event.channels.AcceptingChannel;
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
 import lombok.RequiredArgsConstructor;
@@ -145,12 +145,12 @@ public class TestEventBus {
     }
 
     @RequiredArgsConstructor
-    class TestEvent extends Event {
+    static class TestEvent2 extends AbstractEvent {
         private final int value;
     }
 
     @RequiredArgsConstructor
-    static class TestEvent2 extends Event {
+    class TestEvent extends AbstractEvent {
         private final int value;
     }
 }

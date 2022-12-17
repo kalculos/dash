@@ -1,12 +1,12 @@
 package dash.internal.event.channels;
 
 import dash.internal.event.AbstractEventChannel;
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class FilteringChannel<E extends Event> extends AbstractEventChannel<E> {
+public class FilteringChannel<E extends AbstractEvent> extends AbstractEventChannel<E> {
     private final Predicate<? super E> condition;
 
     public FilteringChannel(AbstractEventChannel<E> parent, Predicate<? super E> condition) {
@@ -16,7 +16,7 @@ public class FilteringChannel<E extends Event> extends AbstractEventChannel<E> {
 
 
     @SuppressWarnings("unchecked") // we don't care its type here.
-    protected <B extends Event> B transform(E event) {
+    protected <B extends AbstractEvent> B transform(E event) {
         if (event == null) return null;
         if (condition.test(event)) {
             return (B) event;

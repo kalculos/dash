@@ -1,7 +1,7 @@
 package io.ib67.dash.message;
 
-import io.ib67.dash.message.feature.ComponentSerializer;
-import io.ib67.dash.message.feature.MessageComponent;
+import io.ib67.dash.message.feature.IComponentSerializer;
+import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.util.CatCodes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * A set of messages.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public class MessageChain extends ArrayList<MessageComponent> {
+public class MessageChain extends ArrayList<IMessageComponent> {
     public MessageChain(int initialCapacity) {
         super(initialCapacity);
     }
@@ -25,7 +25,7 @@ public class MessageChain extends ArrayList<MessageComponent> {
         super();
     }
 
-    public MessageChain(@NotNull Collection<? extends MessageComponent> c) {
+    public MessageChain(@NotNull Collection<? extends IMessageComponent> c) {
         super(c);
     }
 
@@ -38,7 +38,7 @@ public class MessageChain extends ArrayList<MessageComponent> {
      * @return MessageChain
      */
     @NotNull
-    public static MessageChain fromCatCode(ComponentSerializer serializer, boolean lenient, List<CatCodes.CatCode> str) {
+    public static MessageChain fromCatCode(IComponentSerializer serializer, boolean lenient, List<CatCodes.CatCode> str) {
         var newChain = new MessageChain(str.size());
         for (CatCodes.CatCode catCode : str) {
             if (lenient) {
@@ -54,15 +54,15 @@ public class MessageChain extends ArrayList<MessageComponent> {
         return newChain;
     }
 
-    public static MessageChain fromCatCode(ComponentSerializer serializer, List<CatCodes.CatCode> str) {
+    public static MessageChain fromCatCode(IComponentSerializer serializer, List<CatCodes.CatCode> str) {
         return fromCatCode(serializer, true, str);
     }
 
-    public static MessageChain fromCatCode(ComponentSerializer serializer, String str) {
+    public static MessageChain fromCatCode(IComponentSerializer serializer, String str) {
         return fromCatCode(serializer, CatCodes.fromString(str));
     }
 
-    public static MessageChain fromCatCode(ComponentSerializer serializer, boolean lenient, String str) {
+    public static MessageChain fromCatCode(IComponentSerializer serializer, boolean lenient, String str) {
         return fromCatCode(serializer, lenient, CatCodes.fromString(str));
     }
 
@@ -83,6 +83,11 @@ public class MessageChain extends ArrayList<MessageComponent> {
      * @return catcode
      */
     public String contentToString() {
-        return stream().map(MessageComponent::toCatCode).collect(Collectors.joining());
+        return stream().map(IMessageComponent::toCatCode).collect(Collectors.joining());
+    }
+
+    public MessageChain append(IMessageComponent component) {
+        add(component);
+        return this;
     }
 }

@@ -19,126 +19,126 @@ public interface IEventChannelFactory {
      * @param <E>          type of event.
      * @return a new event channel.
      */
-    <E extends Event> IEventChannel<E> from(ScheduleType scheduleType, @Nullable String name, int priority);
+    <E extends AbstractEvent> IEventChannel<E> from(ScheduleType scheduleType, @Nullable String name, int priority);
 
     /* OVERLOADS */
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> of(String name) {
+    default <E extends AbstractEvent> IEventChannel<E> of(String name) {
         return from(ScheduleType.MAIN, name, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> of(String name, int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> of(String name, int priority) {
         return from(ScheduleType.MAIN, name, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> of(int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> of(int priority) {
         return from(ScheduleType.MAIN, null, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> of(ScheduleType scheduleType) {
+    default <E extends AbstractEvent> IEventChannel<E> of(ScheduleType scheduleType) {
         return from(scheduleType, null, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> of(ScheduleType scheduleType, int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> of(ScheduleType scheduleType, int priority) {
         return from(scheduleType, null, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forAsync() {
+    default <E extends AbstractEvent> IEventChannel<E> forAsync() {
         return from(ScheduleType.ASYNC, null, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forAsync(String name, int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> forAsync(String name, int priority) {
         return from(ScheduleType.ASYNC, name, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forAsync(String name) {
+    default <E extends AbstractEvent> IEventChannel<E> forAsync(String name) {
         return from(ScheduleType.ASYNC, name, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forAsync(int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> forAsync(int priority) {
         return from(ScheduleType.ASYNC, null, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMain() {
+    default <E extends AbstractEvent> IEventChannel<E> forMain() {
         return from(ScheduleType.MAIN, null, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMain(String name, int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> forMain(String name, int priority) {
         return from(ScheduleType.MAIN, name, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMain(String name) {
+    default <E extends AbstractEvent> IEventChannel<E> forMain(String name) {
         return from(ScheduleType.MAIN, name, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMain(int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> forMain(int priority) {
         return from(ScheduleType.MAIN, null, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMonitor() {
+    default <E extends AbstractEvent> IEventChannel<E> forMonitor() {
         return from(ScheduleType.MONITOR, null, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMonitor(String name, int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> forMonitor(String name, int priority) {
         return from(ScheduleType.MONITOR, name, priority);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMonitor(String name) {
+    default <E extends AbstractEvent> IEventChannel<E> forMonitor(String name) {
         return from(ScheduleType.MONITOR, name, DEFAULT_PRIORITY);
     }
 
     /**
      * This is a overload, Please refer to {@link #from(ScheduleType, String, int)}
      */
-    default <E extends Event> IEventChannel<E> forMonitor(int priority) {
+    default <E extends AbstractEvent> IEventChannel<E> forMonitor(int priority) {
         return from(ScheduleType.MONITOR, null, priority);
     }
 }

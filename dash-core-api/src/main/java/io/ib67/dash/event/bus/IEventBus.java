@@ -1,8 +1,8 @@
 package io.ib67.dash.event.bus;
 
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.handler.EventHandler;
+import io.ib67.dash.event.handler.IEventHandler;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Consumer;
@@ -20,7 +20,7 @@ public interface IEventBus {
      * @param <E>     original message
      */
     @ApiStatus.Internal
-    <E extends Event> void register(IEventChannel<E> channel, EventHandler<E> handler);
+    <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler);
 
     /**
      * Post an event into the bus.
@@ -28,5 +28,5 @@ public interface IEventBus {
      *
      * @param event the event
      */
-    <E extends Event> void postEvent(E event, Consumer<E> whenDone);
+    <E extends AbstractEvent> void postEvent(E event, Consumer<E> whenDone);
 }

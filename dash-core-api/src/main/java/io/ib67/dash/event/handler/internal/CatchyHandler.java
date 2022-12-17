@@ -1,9 +1,9 @@
 package io.ib67.dash.event.handler.internal;
 
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.handler.EventHandler;
 import io.ib67.dash.event.handler.HandleResult;
+import io.ib67.dash.event.handler.IEventHandler;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +15,8 @@ import java.util.function.BiConsumer;
  */
 @RequiredArgsConstructor
 @ApiStatus.Internal
-public final class CatchyHandler<T extends Event> implements EventHandler<T> {
-    private final BiConsumer<Event, IEventChannel<T>> handler;
+public final class CatchyHandler<T extends AbstractEvent> implements IEventHandler<T> {
+    private final BiConsumer<AbstractEvent, IEventChannel<T>> handler;
     private boolean handled;
 
     @Override

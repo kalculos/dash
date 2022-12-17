@@ -5,6 +5,6 @@ package io.ib67.dash.message.feature;
  *
  * @implSpec A human-readable {@code toString} must be implemented.
  */
-public interface MessageComponent {
+public interface IMessageComponent {
     String toCatCode();
 }

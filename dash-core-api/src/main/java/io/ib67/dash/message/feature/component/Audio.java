@@ -1,13 +1,13 @@
 package io.ib67.dash.message.feature.component;
 
-import io.ib67.dash.message.feature.MessageComponent;
+import io.ib67.dash.message.feature.IMessageComponent;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * An {@link Audio} is a concrete implementation of {@link io.ib67.dash.message.feature.MessageComponent} that contains audio / voice.
+ * An {@link Audio} is a concrete implementation of {@link IMessageComponent} that contains audio / voice.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public class Audio extends ResourceMessage implements MessageComponent {
+public class Audio extends ResourceMessage implements IMessageComponent {
 
 
     protected Audio(String path) {

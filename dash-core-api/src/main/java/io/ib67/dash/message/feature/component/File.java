@@ -1,13 +1,13 @@
 package io.ib67.dash.message.feature.component;
 
-import io.ib67.dash.message.feature.MessageComponent;
+import io.ib67.dash.message.feature.IMessageComponent;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * A {@link File} is a concrete implementation of {@link MessageComponent} that contains a path to read file.
+ * A {@link File} is a concrete implementation of {@link IMessageComponent} that contains a path to read file.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public class File extends ResourceMessage implements MessageComponent {
+public class File extends ResourceMessage implements IMessageComponent {
 
 
     protected File(String path) {

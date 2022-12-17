@@ -1,12 +1,12 @@
 package dash.internal.event.channels;
 
 import dash.internal.event.AbstractEventChannel;
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 
 import java.util.Objects;
 import java.util.function.Function;
 
-public class MappingChannel<IN extends Event, OUT extends Event> extends AbstractEventChannel<IN> {
+public class MappingChannel<IN extends AbstractEvent, OUT extends AbstractEvent> extends AbstractEventChannel<IN> {
     private final Function<? super IN, ? extends OUT> mapper;
 
     @SuppressWarnings("unchecked") //todo fuck generics
@@ -18,7 +18,7 @@ public class MappingChannel<IN extends Event, OUT extends Event> extends Abstrac
 
     @SuppressWarnings("unchecked") // we don't care its type here.
     @Override
-    protected <B extends Event> B transform(IN event) {
+    protected <B extends AbstractEvent> B transform(IN event) {
         if (event == null) return null;
         return (B) mapper.apply(event);
     }

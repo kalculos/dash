@@ -1,8 +1,8 @@
 package io.ib67.dash.event;
 
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.event.handler.EventHandler;
 import io.ib67.dash.event.handler.HandleResult;
+import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.dash.event.handler.internal.CatchyHandler;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -16,12 +16,12 @@ import java.util.function.UnaryOperator;
 
 /**
  * An EventChannel is a {@link java.util.stream.Stream} variant that designed for receiving events. <br />
- * For more about Events, please refer to {@link Event}
+ * For more about Events, please refer to {@link AbstractEvent}
  * For more about where your handlers will be called, please refer to {@link ScheduleType}
  */
 @ApiStatus.AvailableSince("0.1.0")
 @SuppressWarnings("unused")
-public interface IEventChannel<E extends Event> extends Comparable<IEventChannel<E>>, UnaryOperator<Event> {
+public interface IEventChannel<E extends AbstractEvent> extends Comparable<IEventChannel<E>>, UnaryOperator<AbstractEvent> {
     /**
      * The default priority for all IEventChannels.
      */
@@ -77,7 +77,7 @@ public interface IEventChannel<E extends Event> extends Comparable<IEventChannel
      * @param <P>  new type
      * @return a new event channel
      */
-    default <P extends Event> IEventChannel<P> filterForType(Class<P> type) {
+    default <P extends AbstractEvent> IEventChannel<P> filterForType(Class<P> type) {
         return filter(type::isInstance).map(type::cast);
     }
 
@@ -90,7 +90,7 @@ public interface IEventChannel<E extends Event> extends Comparable<IEventChannel
      * @return new channel
      */
     @Contract("_ -> new")
-    <N extends Event> IEventChannel<N> map(Function<? super E, ? extends N> mapper);
+    <N extends AbstractEvent> IEventChannel<N> map(Function<? super E, ? extends N> mapper);
 
     /**
      * Subscribes to this EventChannel. Your handler will receive messages until it returns {@link HandleResult#UNSUBSCRIBE}
@@ -98,30 +98,30 @@ public interface IEventChannel<E extends Event> extends Comparable<IEventChannel
      * @param handler subscriber
      * @return this
      */
-    @NotNull IEventChannel<E> subscribe(@NotNull EventHandler<E> handler);
+    @NotNull IEventChannel<E> subscribe(@NotNull IEventHandler<E> handler);
 
-    default IEventChannel<E> subscribeAlways(@NotNull BiConsumer<Event, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeAlways(@NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
         return this.subscribe((event, channel) -> {
             subscriber.accept(event, channel);
             return HandleResult.CONTINUE;
         });
     }
 
-    default IEventChannel<E> subscribeOnce(@NotNull BiConsumer<Event, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeOnce(@NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
         return this.subscribe((event, channel) -> {
             subscriber.accept(event, channel);
             return HandleResult.UNSUBSCRIBE;
         });
     }
 
-    default IEventChannel<E> subscribeUntil(@NotNull Predicate<Event> shouldContinue, @NotNull BiConsumer<Event, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeUntil(@NotNull Predicate<AbstractEvent> shouldContinue, @NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
         return this.subscribe((event, channel) -> {
             subscriber.accept(event, channel);
             return shouldContinue.test(event) ? HandleResult.CONTINUE : HandleResult.UNSUBSCRIBE;
         });
     }
 
-    default IEventChannel<E> subscribeCatchy(@NotNull BiConsumer<Event, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeCatchy(@NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
         if (!getScheduleType().isOrdered())
             throw new IllegalStateException("subscribeCatchy doesn't support ASYNC EventChannels");
         return this.subscribe(new CatchyHandler<>(subscriber));

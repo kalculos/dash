@@ -1,6 +1,6 @@
 package dash;
 
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 
-public class TestEvent extends Event {
+public class TestEvent extends AbstractEvent {
 }

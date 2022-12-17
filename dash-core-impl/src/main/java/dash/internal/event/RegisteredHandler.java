@@ -1,13 +1,13 @@
 package dash.internal.event;
 
-import io.ib67.dash.event.Event;
+import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.handler.EventHandler;
+import io.ib67.dash.event.handler.IEventHandler;
 import org.jetbrains.annotations.NotNull;
 
-record RegisteredHandler<E extends Event>(
+record RegisteredHandler<E extends AbstractEvent>(
         @NotNull IEventChannel<E> channel,
-        @NotNull EventHandler<E> handler,
+        @NotNull IEventHandler<E> handler,
         int increasingCounter // to allow same priority in TreeSet.
 ) implements Comparable<RegisteredHandler<?>> {
     @Override
