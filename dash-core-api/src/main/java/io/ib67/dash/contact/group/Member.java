@@ -11,10 +11,10 @@ public abstract class Member extends Contact implements IMessageSource {
     @Getter
     protected final ChatGroup group;
 
-    protected Member(long uid, String idOnPlatform, PlatformAdapter adapter, ChatGroup group, boolean isFriend) {
+    protected Member(long uid, String idOnPlatform, PlatformAdapter adapter, ChatGroup group, boolean friend) {
         super(uid, idOnPlatform, adapter);
         this.group = group;
-        this.isFriend = isFriend;
+        this.friend = friend;
     }
 
     public Friend asFriend() throws NotFriendException {
@@ -22,7 +22,7 @@ public abstract class Member extends Contact implements IMessageSource {
     }
 
     @Getter
-    protected final boolean isFriend;
+    protected final boolean friend;
 
     @Override
     public String toString() {

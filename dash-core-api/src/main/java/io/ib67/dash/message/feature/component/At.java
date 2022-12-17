@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
  * Mention a user.
  * Also see: {@link #unsafeAt(String, String)}
  */
-@RequiredArgsConstructor
 @ApiStatus.AvailableSince("0.1.0")
 public record At(
         @Getter @Nullable Contact contact,
