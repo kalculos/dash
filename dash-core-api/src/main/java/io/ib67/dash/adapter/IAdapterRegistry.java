@@ -1,0 +1,18 @@
+package io.ib67.dash.adapter;
+
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Collection;
+import java.util.Optional;
+
+/**
+ * Manages {@link AbstractPlatformAdapter}
+ */
+@ApiStatus.AvailableSince("0.1.0")
+public interface IAdapterRegistry {
+    void registerAdapter(AbstractPlatformAdapter adapter);
+
+    Optional<? extends AbstractPlatformAdapter> getAdapter(String name);
+
+    Collection<? extends AbstractPlatformAdapter> allAdapters();
+}
