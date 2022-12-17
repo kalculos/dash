@@ -3,7 +3,7 @@
 和 [CatCode2](https://github.com/ForteScarlet/CatCode2) 类似,
 ~~但其实是我们[先](https://github.com/saltedfishclub/PolarCore/wiki/CatCode)拿的这个名字哦~~
 
-定义: 一段猫码是多个聊天平台之间通用的符合猫码格式规范的非纯文本信息的纯文本表示, 并且通过猫码必然 可以或接近完整的
+定义: 一段猫码是多个聊天平台之间通用的符合猫码格式规范的信息的纯文本表示, 并且通过猫码必然 可以或接近完整的
 还原出原本的信息.
 
 # 格式
@@ -30,6 +30,7 @@
 
 目前猫码支持的类型包括:
 
+- 纯文本 `TEXT` as-is
 - 图片 `IMAGE`  
   支持的属性:
   - `path` 图片文件的路径, 同时这可能是一个 `URL` 或者是来自 dash 的回环地址. ( 比如: `dash://image/111`)
