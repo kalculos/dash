@@ -1,5 +1,6 @@
 package io.ib67.dash.contact.group;
 
+import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.contact.Contact;
 import io.ib67.dash.contact.group.channel.ChatChannel;
 
@@ -11,8 +12,8 @@ import java.util.List;
  */
 public abstract class ChatGroup extends Contact {
 
-    protected ChatGroup(long uid, String platformId) {
-        super(uid, platformId);
+    protected ChatGroup(long uid, String platformId, PlatformAdapter platform) {
+        super(uid, platformId, platform);
     }
 
     public abstract ChatChannel getDefaultChannel();
@@ -20,4 +21,9 @@ public abstract class ChatGroup extends Contact {
     public abstract List<ChatChannel> getChannels();
 
     public abstract List<Member> getMembers();
+
+    @Override
+    public String toString() {
+        return "Group(" + uid + "/" + idOnPlatform + " on " + platform.getName() + ")";
+    }
 }

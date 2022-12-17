@@ -5,6 +5,8 @@ import io.ib67.dash.message.IMessageSource;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Objects;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -13,9 +15,16 @@ import static java.util.Objects.requireNonNull;
 @ApiStatus.AvailableSince("0.1.0")
 public abstract class ChatChannel implements IMessageSource {
     @Getter
-    protected ChannelInfo info;
+    protected final ChannelInfo info;
+    protected final ChatGroup group;
 
-    public ChatChannel(ChannelInfo info) {
+    public ChatChannel(ChannelInfo info, ChatGroup group) {
+        Objects.requireNonNull(this.group = group);
         requireNonNull(this.info = info);
+    }
+
+    @Override
+    public String toString() {
+        return "ChatChannel(" + info.name() + " on " + group + ")";
     }
 }

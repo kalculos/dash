@@ -1,5 +1,7 @@
 package io.ib67.dash.message;
 
+import io.ib67.dash.adapter.PlatformAdapter;
+import io.ib67.dash.adapter.PlatformRelated;
 import io.ib67.dash.event.AbstractEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ import java.util.Map;
  */
 @ApiStatus.AvailableSince("0.1.0")
 @RequiredArgsConstructor
-public abstract class AbstractMessage<S extends IMessageSource> extends AbstractEvent {
+public abstract class AbstractMessage<S extends IMessageSource> extends AbstractEvent implements PlatformRelated {
     /**
      * The source of the message.
      */
@@ -42,6 +44,11 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
      */
     public boolean reply(MessageChain message) {
         return source.reply(id, message).isSent();
+    }
+
+    @Override
+    public PlatformAdapter getPlatform() {
+        return source.getPlatform();
     }
 
     public static class Context {

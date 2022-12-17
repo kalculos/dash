@@ -14,7 +14,7 @@ import java.util.Optional;
 @ApiStatus.AvailableSince("0.1.0")
 public abstract class PlatformAdapter {
     @Getter
-    protected final String platformId;
+    protected final String name;
 
     public List<? extends Friend> getFriends() {
         return getAllContacts().stream().filter(it -> it instanceof Friend).map(it -> (Friend) it).toList();
