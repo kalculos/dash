@@ -35,7 +35,7 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
      * Universal message id.
      */
     @Getter
-    private final long id;
+    protected final long id;
 
     /**
      * To quickly reply

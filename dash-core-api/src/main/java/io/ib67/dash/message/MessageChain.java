@@ -119,6 +119,26 @@ public class MessageChain extends ArrayList<IMessageComponent> {
         });
     }
 
+    /**
+     * A safer implementation of replaceAll.
+     *
+     * @return a new message chain as result
+     */
+    @Contract("_, _ -> new")
+    public MessageChain replaceAll(String regex, String toBe) {
+        var newChain = new MessageChain(size());
+        stream().map(it -> performReplaceAll(regex, toBe, it)).forEach(newChain::add);
+        return newChain;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends IMessageComponent> T performReplaceAll(String regex, String toBe, T it) {
+        if (it instanceof Text t) {
+            return (T) new Text(t.toString().replaceAll(regex, toBe)); // we can make sure that T is Text
+        }
+        return it;
+    }
+
     public boolean contains(String str) {
         return containString(str);
     }

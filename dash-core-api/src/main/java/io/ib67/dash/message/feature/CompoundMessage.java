@@ -5,6 +5,7 @@ import io.ib67.dash.message.IMessageSource;
 import io.ib67.dash.message.MessageChain;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
 
@@ -28,6 +29,12 @@ public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S
 
     public boolean containString(String str) {
         return components.containString(str);
+    }
+
+    @Contract("_, _ -> new")
+    public CompoundMessage<S> replaceAll(String regex, String toBe) {
+        var newChain = components.replaceAll(regex, toBe);
+        return new CompoundMessage<>(source, id, newChain);
     }
 
 }
