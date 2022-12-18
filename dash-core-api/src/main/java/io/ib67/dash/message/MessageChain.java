@@ -3,6 +3,7 @@ package io.ib67.dash.message;
 import io.ib67.dash.Dash;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.message.feature.IMessageComponent;
+import io.ib67.dash.message.feature.component.Text;
 import io.ib67.dash.util.CatCodes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -101,6 +102,21 @@ public class MessageChain extends ArrayList<IMessageComponent> {
      */
     public String contentToString() {
         return stream().map(IMessageComponent::toCatCode).collect(Collectors.joining());
+    }
+
+    /**
+     * An efficient implementation of searching substrings.
+     *
+     * @param str target
+     * @return if exists
+     */
+    public boolean containString(String str) {
+        return stream().anyMatch(it -> {
+            if (it instanceof Text text) {
+                return text.toString().contains(str);
+            }
+            return false;
+        });
     }
 
     public MessageChain append(IMessageComponent component) {

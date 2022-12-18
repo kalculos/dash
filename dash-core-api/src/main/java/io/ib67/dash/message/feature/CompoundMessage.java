@@ -26,4 +26,8 @@ public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S
         Objects.requireNonNull(this.components = components);
     }
 
+    public boolean containString(String str) {
+        return components.containString(str);
+    }
+
 }
