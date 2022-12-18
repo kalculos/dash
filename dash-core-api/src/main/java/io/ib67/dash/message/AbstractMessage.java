@@ -23,7 +23,6 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
     /**
      * The source of the message.
      */
-    @Getter
     protected final S source;
 
     /**

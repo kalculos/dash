@@ -14,11 +14,11 @@ import java.util.Objects;
  * @param <S>
  */
 @ApiStatus.AvailableSince("0.1.0")
+@Getter
 public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S> {
     /**
      * The content of {@link CompoundMessage}, aka "MessageChain"
      */
-    @Getter
     private final MessageChain components;
 
     public CompoundMessage(S source, long id, MessageChain components) {

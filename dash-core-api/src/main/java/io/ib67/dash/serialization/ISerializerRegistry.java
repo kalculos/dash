@@ -11,6 +11,6 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.AvailableSince("0.1.0")
 public interface ISerializerRegistry {
     void registerSerializer(String codeType, IComponentSerializer serializer);
-
+    
     IComponentSerializer getSerializer(String codeType);
 }
