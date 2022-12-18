@@ -10,24 +10,24 @@ import org.jetbrains.annotations.ApiStatus;
  * A Contact is an object that may send messages to you on IM platform.
  */
 @ApiStatus.AvailableSince("0.1.0")
+@Getter
 public abstract class Contact implements PlatformRelated {
     /**
      * The user-id of the contact.
      * This ID is NOT platform ID. This is dash universal user id.
      */
-    @Getter
     protected final long uid;
+
     /**
      * User ID from IM platform
      */
-    @Getter
     protected final String idOnPlatform;
-    @Getter
+
     protected final PlatformAdapter platform;
+
     /**
      * The name of the contact.
      */
-    @Getter
     protected String name;
 
     protected Contact(long uid, String idOnPlatform, PlatformAdapter platform) {

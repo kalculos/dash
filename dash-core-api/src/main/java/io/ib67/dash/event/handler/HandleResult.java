@@ -16,10 +16,12 @@ public enum HandleResult {
      * <p>
      */
     CANCELLED,
+
     /**
      * The {@link IEventChannel} will call next handler.
      */
     CONTINUE,
+
     /**
      * When {@link #UNSUBSCRIBE} is given, your handler cannot receive events anymore.
      */

@@ -4,7 +4,6 @@ import io.ib67.dash.contact.Contact;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.util.CatCodes;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,10 +12,11 @@ import org.jetbrains.annotations.Nullable;
  * Also see: {@link #unsafeAt(String, String)}
  */
 @ApiStatus.AvailableSince("0.1.0")
+@Getter
 public record At(
-        @Getter @Nullable Contact contact,
-        @Getter @Nullable String platformId,
-        @Getter @Nullable String platformUid
+        @Nullable Contact contact,
+        @Nullable String platformId,
+        @Nullable String platformUid
 ) implements IMessageComponent {
     /**
      * Create a new {@link At} directly

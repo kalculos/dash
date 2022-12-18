@@ -7,9 +7,11 @@ import io.ib67.dash.exception.NotFriendException;
 import io.ib67.dash.message.IMessageSource;
 import lombok.Getter;
 
+@Getter
 public abstract class Member extends Contact implements IMessageSource {
-    @Getter
     protected final ChatGroup group;
+
+    protected final boolean friend;
 
     protected Member(long uid, String idOnPlatform, PlatformAdapter adapter, ChatGroup group, boolean friend) {
         super(uid, idOnPlatform, adapter);
@@ -20,9 +22,6 @@ public abstract class Member extends Contact implements IMessageSource {
     public Friend asFriend() throws NotFriendException {
         return getPlatform().getFriend(uid).orElseThrow(() -> new NotFriendException("This " + this + " from " + group + " isn't our friend.", this));
     }
-
-    @Getter
-    protected final boolean friend;
 
     @Override
     public String toString() {

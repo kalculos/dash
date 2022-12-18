@@ -2,10 +2,10 @@ package io.ib67.dash.message.feature.component;
 
 import lombok.Getter;
 
+@Getter
 public class Sticker extends Image {
-    @Getter
     private final String platform;
-    @Getter
+
     private final int id;
 
     protected Sticker(String path, String platform, int id) {
