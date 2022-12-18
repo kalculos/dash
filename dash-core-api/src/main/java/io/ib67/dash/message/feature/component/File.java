@@ -1,6 +1,7 @@
 package io.ib67.dash.message.feature.component;
 
 import io.ib67.dash.message.feature.IMessageComponent;
+import lombok.Builder;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.AvailableSince("0.1.0")
 public class File extends ResourceMessage implements IMessageComponent {
-
+    @Builder
     protected File(String path) {
         super("FILE", path);
     }

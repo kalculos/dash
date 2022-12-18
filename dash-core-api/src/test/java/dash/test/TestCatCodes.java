@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 public class TestCatCodes {
     @Test
     public void testBuilder() {
-        var result = CatCodes.of(
+        var result = CatCodes.ofProps(
                 "url", "nc://sb",
                 "id", "114514"
         ).type("image").toString();

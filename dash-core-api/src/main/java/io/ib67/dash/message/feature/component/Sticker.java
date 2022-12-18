@@ -1,8 +1,10 @@
 package io.ib67.dash.message.feature.component;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class Sticker extends Image {
     private final String platform;
 

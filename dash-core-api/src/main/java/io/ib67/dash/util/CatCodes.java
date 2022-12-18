@@ -38,7 +38,7 @@ public class CatCodes {
         return new CatCode().type(type);
     }
 
-    public static CatCode of(String... args) {
+    public static CatCode ofProps(String... args) {
         if (args.length % 2 != 0) {
             throw new IllegalArgumentException("it must be key-value pairs.");
         }

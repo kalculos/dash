@@ -3,6 +3,7 @@ package io.ib67.dash.message.feature.component;
 import io.ib67.dash.contact.Contact;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.util.CatCodes;
+import lombok.Builder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,9 +29,19 @@ public record At(
         return new At(null, platformId, platformUid, null);
     }
 
+    @Builder
+    public At {
+    }
+
     @Override
     public String toCatCode() {
-        return CatCodes.of("target", String.valueOf(contact.getUid())).type("AT").toString();
+        if (contact != null) {
+            return CatCodes.ofProps("target", String.valueOf(contact.getUid())).type("AT").toString();
+        }
+        return CatCodes.ofProps(
+                "platform", platformId,
+                "target", platformUid
+        ).type("AT").toString();
     }
 
     @Override

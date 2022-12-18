@@ -56,6 +56,10 @@ public class MessageChain extends ArrayList<IMessageComponent> {
         return newChain;
     }
 
+    public static MessageChain of(IMessageComponent... components) {
+        return new MessageChain(List.of(components));
+    }
+
     public static MessageChain fromCatCode(IComponentSerializer serializer, List<CatCodes.CatCode> str) {
         return fromCatCode(serializer, true, str);
     }

@@ -30,7 +30,7 @@ public abstract class ResourceMessage implements IMessageComponent {
 
     @Override
     public String toCatCode() {
-        return CatCodes.of(
+        return CatCodes.ofProps(
                 "path", path
         ).type(type).toString();
     }
