@@ -47,6 +47,10 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
         return source.reply(id, message).isSent();
     }
 
+    public boolean reply(String mesg) {
+        return reply(MessageChain.fromCatCode(mesg));
+    }
+
     @Override
     public PlatformAdapter getPlatform() {
         return source.getPlatform();
