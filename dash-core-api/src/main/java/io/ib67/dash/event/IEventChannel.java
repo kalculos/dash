@@ -100,28 +100,28 @@ public interface IEventChannel<E extends AbstractEvent> extends Comparable<IEven
      */
     @NotNull IEventChannel<E> subscribe(@NotNull IEventHandler<E> handler);
 
-    default IEventChannel<E> subscribeAlways(@NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeAlways(@NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
         return this.subscribe((event, channel) -> {
             subscriber.accept(event, channel);
             return HandleResult.CONTINUE;
         });
     }
 
-    default IEventChannel<E> subscribeOnce(@NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeOnce(@NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
         return this.subscribe((event, channel) -> {
             subscriber.accept(event, channel);
             return HandleResult.UNSUBSCRIBE;
         });
     }
 
-    default IEventChannel<E> subscribeUntil(@NotNull Predicate<AbstractEvent> shouldContinue, @NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeUntil(@NotNull Predicate<E> shouldContinue, @NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
         return this.subscribe((event, channel) -> {
             subscriber.accept(event, channel);
             return shouldContinue.test(event) ? HandleResult.CONTINUE : HandleResult.UNSUBSCRIBE;
         });
     }
 
-    default IEventChannel<E> subscribeCatchy(@NotNull BiConsumer<AbstractEvent, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeCatchy(@NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
         if (!getScheduleType().isOrdered())
             throw new IllegalStateException("subscribeCatchy doesn't support ASYNC EventChannels");
         return this.subscribe(new CatchyHandler<>(subscriber));

@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
 @RequiredArgsConstructor
 @ApiStatus.Internal
 public final class CatchyHandler<T extends AbstractEvent> implements IEventHandler<T> {
-    private final BiConsumer<AbstractEvent, IEventChannel<T>> handler;
+    private final BiConsumer<T, IEventChannel<T>> handler;
 
     private boolean handled;
 

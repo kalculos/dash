@@ -1,5 +1,7 @@
 package io.ib67.dash;
 
+import io.ib67.dash.event.AbstractEvent;
+import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.service.Lifecycle;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
@@ -24,4 +26,8 @@ public abstract class AbstractBot implements Lifecycle {
      */
     @Override
     public abstract void onEnable();
+
+    public IEventChannel<? extends AbstractEvent> getChannel() {
+        return Dash.getInstance().getGlobalChannel();
+    }
 }

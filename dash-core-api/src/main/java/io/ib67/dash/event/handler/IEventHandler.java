@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * An EventHandler receives {@link AbstractEvent}s
  */
 @ApiStatus.AvailableSince("0.1.0")
+@FunctionalInterface
 public interface IEventHandler<T extends AbstractEvent> {
 
     /**
