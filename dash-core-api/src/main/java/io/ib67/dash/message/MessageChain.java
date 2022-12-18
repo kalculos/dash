@@ -119,6 +119,10 @@ public class MessageChain extends ArrayList<IMessageComponent> {
         });
     }
 
+    public boolean contains(String str) {
+        return containString(str);
+    }
+
     public MessageChain append(IMessageComponent component) {
         add(component);
         return this;
