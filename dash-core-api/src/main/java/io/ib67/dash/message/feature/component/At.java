@@ -3,7 +3,6 @@ package io.ib67.dash.message.feature.component;
 import io.ib67.dash.contact.Contact;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.util.CatCodes;
-import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public record At(
         @Nullable Contact contact,
         @Nullable String platformId,
+        @Nullable String display,
         @Nullable String platformUid
 ) implements IMessageComponent {
     /**
@@ -25,7 +25,7 @@ public record At(
      * @return
      */
     public static At unsafeAt(String platformId, String platformUid) {
-        return new At(null, platformId, platformUid);
+        return new At(null, platformId, platformUid, null);
     }
 
     @Override

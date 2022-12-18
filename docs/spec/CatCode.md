@@ -34,6 +34,7 @@
 - 提及 `AT`  
   支持的属性:
   - `target` 目标的通用 userid.
+  - `display` AT 在聊天平台上体现的样子, 发送时可空.
   - `platform` 平台 id. 此项仅当 `target` 为非通用 userid 时启用
 - 图片 `IMAGE`  
   支持的属性:
