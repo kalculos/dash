@@ -11,4 +11,5 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     api 'org.slf4j:slf4j-api:2.0.6'
     api 'com.google.inject:guice:5.1.0'
+    api 'io.github.sproket:persism:2.2.0'
 }
