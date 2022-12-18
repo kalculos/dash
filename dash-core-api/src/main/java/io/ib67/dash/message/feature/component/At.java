@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Mention a user.
  * Also see: {@link #unsafeAt(String, String)}
+ * @param contact determines the universal user id.
  */
 @ApiStatus.AvailableSince("0.1.0")
 public record At(

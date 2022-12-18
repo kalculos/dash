@@ -1,16 +1,14 @@
 package io.ib67.dash.message.feature.component;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class Sticker extends Image {
     private final String platform;
 
     private final int id;
 
-    protected Sticker(String path, String platform, int id) {
+    public Sticker(String path, String platform, int id) {
         super(path);
         this.platform = platform;
         this.id = id;
