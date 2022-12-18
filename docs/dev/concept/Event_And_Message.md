@@ -26,19 +26,27 @@ public class Example {
 public class Example {
     @Inject
     private IEventBus bus;
+    private AbstractBot bot;
     @Test
     public void example(){
-        bus.register(Dash.getInstance().getGlobalChannel(), (event, channel)->{
+        bus.register(Bot.getDash().getGlobalChannel(), (event, channel)->{
             // do something securely...
-            return HandleResult.CONTINUE;
+            return HandleResult.CONTINUE; // 是否要继续传播事件
         });
     }
 }
 ```
+关于 [HandleResult](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/handler/HandleResult.java)
 
 你会发现, 即使是直接使用 `IEventBus`, `IEventChannel` 还是形影不离.  
 其实, `IEventChannel` 的本质是一个 *处理事件的 UnaryOperator*. 在新的事件来临之前, 你注册时用的 `IEventChannel` 会提前将事件处理一遍, 然后才交给你.  
-而对于不需要处理的情况, 只需要传入 dash 的全局频道即可: `Dash.getInstance().getGlobalChannel()`
+而对于不需要处理的情况, 只需要传入 dash 的全局频道即可: `dash.getGlobalChannel()`
+
+### 使用注解注册
+
+```java
+//todo
+```
 
 ### 和 EventChannel 打交道
 
@@ -124,7 +132,7 @@ public class Example {
 具体的消息类型, 请参考 [消息](messages/Messages.md)
 而具体的事件类型, 请参考 [事件](messages/Events.md)
 
-## 消息链
+### 消息链
 在创建消息之前, 你很可能需要先创建一条消息链.
 
 > **Note**
@@ -149,4 +157,93 @@ MessageChain.fromCatCode("haha! [dash:IMAGE,path=nc%3A%2F%2Fsb]");
 
  需要注意的是, 聊天组件有的可以使用 `Builder` 构造, 而有的只能用构造器.  
 关于具体支持的聊天组件情况, 请参考 [猫码](../../spec/CatCode.md)
+
+## 发布事件 & 调度流程
+
+发布事件相当简单, 只需要调用 `IEventBus#postEvent` 即可.
+
+```java
+public class Example {
+    @Inject
+    private AbstractBot bot;
+
+    @Test
+    public void example() {
+        bot.getChannel().getBus().postEvent(new GroupChannelMessage(..), evt->{
+            // ...
+        });
+    }
+}
+```
+
+注意: `evt` 即为你发布的事件, 事件处理器可能对其进行了修改, 这个回调不一定在当前线程运行.  
+发布事件很简单, 但是我们还需要知道他的调度流程.
+
+### [ScheduleType](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/ScheduleType.java) / 调度类型
+
+这是 `EventChannel` 的属性, 其决定了 *其对应 EventHandler 处理器运行的线程*.
+例如:
+
+ - 当 `scheduleType == MONITOR` 时, 处理器将在 **发布者的同一条线程上** 运行.
+ - 当 `scheduleType == MAIN` 时, 处理器将在 **主线程** 上运行.  
+ - 当 `scheduleType == ASYNC` 时, 处理器将在 **某一条虚拟线程** 上运行.
+
+正确的选择可以带来性能提升, 默认的, 事件处理器总是使用 `scheduleType == MAIN`. 一方面是出于保持同步, 一方面是为了减少不确定性.  
+
+> **WARNING**  
+> 请务必不要在 `MONITOR` 或 `MAIN` 上运行堵塞代码, **你已经被警告过了**
+
+### [HandleResult](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/handler/HandleResult.java) / 处理结果
+
+当一个事件处理器处理完毕时, 它会返回一个处理结果来决定 `事件是否继续传播` 或 `它要不要继续订阅`.
+
+```java
+public static class SimpleListener implements IEventHandler<GroupChannelMessage> {
+    @Override
+    public @NotNull HandleResult handleMessage(@NotNull GroupChannelMessage event, @NotNull IEventChannel<GroupChannelMessage> channel) {
+        // some logic
+        return HandleResult.CONTINUE;
+    }
+}
+```
+
+ - 当返回 `CANCELLED` 时, 事件的传递到此为止.
+ - 当返回 `CONTINUE` 时, 事件向下一个处理器传递.
+ - 当返回 `UNSUBSCRIBE` 时, 事件将继续传递, 但该处理器将不会再被调用(除非额外注册)
+
+**注意: 在 `scheduleType` 为 `ASYNC` 时, 这一功能不起作用.**
+
+### [EventPriorities](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/EventPriorities.java) / 事件优先级
+
+很遗憾, 这一小节的主角并不是 `EventPriorites` 本身, 而是 `IEventChannel` 的属性 -- `priority`.
+
+`priority` 决定了处理器触发的先后顺序. 默认的 priority 为 `50`, 越小的 priority 越先触发. 选择 priority 时, **请尽量根据需求使用 `EventPriorities` 里面的常量.**  
+此外, `scheduleType` 也参与先后顺序, 分别是: `MONITOR` -> `MAIN` -> `ASYNC`
+
+**注意: 在 `scheduleType` 为 `ASYNC` 时, 这一功能无法保障先后顺序.**
+
+## 构造 EventChannel
+
+虽然大多数情况下对 `AbstractBot#getChannel` 或 `Dash#getGlobalChannel` 切割就可以达到目的, 但是有时候我们需要自己构造一个满足需求的 `EventChannel`.
+
+```java
+public class Example {
+    @Inject
+    private AbstractBot bot;
+
+    @Test
+    public void example() {
+        var channelFactory = bot.getDash().getChannelFactory();
+        channelFactory.forMonitor("Message Preprocessor", 1)
+                .subscribeAlways((evt, chn) -> {});
+    }
+}
+```
+
+`Dash` 提供了 `IEventChannelFactory`, 可以直接利用他构造一个新的 channel.
+
+## 关于中间件
+
+借助于 dash 的调度机制, 只需要选择 `EventPriorites` 中的 `EARLIER_THAN_NORMAL` 或者 `EARLIST` 即可.
+
 
