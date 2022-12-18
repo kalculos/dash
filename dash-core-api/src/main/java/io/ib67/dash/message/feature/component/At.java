@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
  * Also see: {@link #unsafeAt(String, String)}
  */
 @ApiStatus.AvailableSince("0.1.0")
-@Getter
 public record At(
         @Nullable Contact contact,
         @Nullable String platformId,
