@@ -67,6 +67,7 @@ public class SortedArrayList<E extends Comparable<E>> implements List<E> {
                 return true;
             } else {
                 list.add(object);
+                return true;
             }
         }
         int l = 0;
