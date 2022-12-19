@@ -7,14 +7,11 @@ import org.jetbrains.annotations.NotNull;
 
 record RegisteredHandler<E extends AbstractEvent>(
         @NotNull IEventChannel<E> channel,
-        @NotNull IEventHandler<E> handler,
-        int increasingCounter // to allow same priority in TreeSet.
+        @NotNull IEventHandler<E> handler
 ) implements Comparable<RegisteredHandler<?>> {
     @Override
     @SuppressWarnings("unchecked")
     public int compareTo(@NotNull RegisteredHandler o) {
-        var delta = channel.compareTo(o.channel);
-        if (delta != 0) return delta;
-        return increasingCounter - o.increasingCounter;
+        return channel.compareTo(o.channel);
     }
 }

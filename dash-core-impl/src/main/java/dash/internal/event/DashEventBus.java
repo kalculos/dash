@@ -1,5 +1,6 @@
 package dash.internal.event;
 
+import dash.internal.util.SortedArrayList;
 import dash.internal.util.Threads;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
@@ -9,23 +10,27 @@ import io.ib67.dash.event.handler.HandleResult;
 import io.ib67.dash.event.handler.IEventHandler;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static io.ib67.dash.event.ScheduleType.*;
 import static java.util.Objects.requireNonNull;
 
 public class DashEventBus implements IEventBus {
-    private final Map<ScheduleType, SortedSet<RegisteredHandler<?>>> handlers = new EnumMap<>(ScheduleType.class);
+    private final Map<ScheduleType, List<RegisteredHandler<?>>> handlers = new EnumMap<>(ScheduleType.class);
 
     private final ExecutorService asyncExecutor;
 
     private final ScheduledExecutorService mainExecutor;
 
-    private final AtomicInteger handlerCounter = new AtomicInteger(0);
+    private final Lock registerLock = new ReentrantLock();
 
     public DashEventBus(ExecutorService asyncExecutor, ScheduledExecutorService mainExecutor) {
         requireNonNull(this.asyncExecutor = asyncExecutor);
@@ -45,8 +50,8 @@ public class DashEventBus implements IEventBus {
     @Override
     public <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler) {
         requireNonNull(channel.getScheduleType());
-        handlers.computeIfAbsent(channel.getScheduleType(), k -> new TreeSet<>())
-                .add(new RegisteredHandler<>(channel, handler, handlerCounter.addAndGet(1)));
+        handlers.computeIfAbsent(channel.getScheduleType(), k -> new SortedArrayList<>())
+                .add(new RegisteredHandler<>(channel, handler));
     }
 
     public <E extends AbstractEvent> void postEvent(E event, Consumer<E> whenDone) {
@@ -68,7 +73,7 @@ public class DashEventBus implements IEventBus {
     }
 
     private <E extends AbstractEvent> void postEvent1(E event, ScheduleType type) {
-        var _handlers = handlers.getOrDefault(type, Collections.emptySortedSet());
+        var _handlers = handlers.getOrDefault(type, Collections.emptyList());
         var iter = _handlers.iterator();
         while (iter.hasNext()) {
             var it = iter.next();
