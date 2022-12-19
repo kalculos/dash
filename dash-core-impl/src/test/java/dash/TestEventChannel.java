@@ -24,6 +24,24 @@ public class TestEventChannel {
     }
 
     @Test
+    public void testEventChannelPriority() {
+        var anotherChannel = new AcceptingChannel<>(
+                ScheduleType.MAIN,
+                null,
+                1,
+                null, null
+        );
+        assertTrue(channel.compareTo(anotherChannel) < 0, "Sort by priority");
+        anotherChannel = new AcceptingChannel<>(
+                ScheduleType.MONITOR,
+                null,
+                0,
+                null, null
+        );
+        assertTrue(anotherChannel.compareTo(channel) < 0, "Sort by scheduleType");
+    }
+
+    @Test
     public void testEventChannelFilter() {
         var c = channel.filter(it -> it instanceof TestEvent);
         assertNotNull(c.apply(new TestEvent(0)));

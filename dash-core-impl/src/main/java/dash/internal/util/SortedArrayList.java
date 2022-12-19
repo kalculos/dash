@@ -59,17 +59,24 @@ public class SortedArrayList<E extends Comparable<E>> implements List<E> {
     // layout: 0 1 2 3 4 5 6 .... 999
     @Override
     public boolean add(E object) {
-        if(size()==0){
+        if (size() == 0) {
             return list.add(object);
+        } else if (size() == 1) {
+            if (list.get(0).compareTo(object) > 0) {
+                list.add(0, object);
+                return true;
+            } else {
+                list.add(object);
+            }
         }
         int l = 0;
         int r = list.size() - 1;
-        while(l!=r){
-            int mid = (l+r+1) >> 1;
-            if(get(mid).compareTo(object) > 0)r=mid-1;
+        while (l != r) {
+            int mid = (l + r + 1) >> 1;
+            if (get(mid).compareTo(object) > 0) r = mid - 1;
             else l = mid;
         }
-        list.add(l+1,object);
+        list.add(l + 1, object);
         return true;
     }
 

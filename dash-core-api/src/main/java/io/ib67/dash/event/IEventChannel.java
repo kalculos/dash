@@ -58,7 +58,7 @@ public interface IEventChannel<E extends AbstractEvent> extends Comparable<IEven
         if (o.getScheduleType() != getScheduleType()) {
             return o.getScheduleType().compareTo(this.getScheduleType());
         }
-        return getPriority() - o.getPriority();
+        return Integer.compare(getPriority(),o.getPriority());
     }
 
     /**
