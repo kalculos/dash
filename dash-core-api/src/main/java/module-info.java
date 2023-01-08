@@ -1,5 +1,8 @@
 module dash.core.api {
     uses io.ib67.dash.Dash;
+    uses io.ib67.dash.AbstractBot;
+    uses io.ib67.dash.BotContext;
+    exports io.ib67.dash;
     exports io.ib67.dash.contact;
     exports io.ib67.dash.contact.group;
     exports io.ib67.dash.contact.group.channel;

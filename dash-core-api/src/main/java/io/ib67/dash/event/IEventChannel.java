@@ -25,7 +25,7 @@ public interface IEventChannel<E extends AbstractEvent> extends Comparable<IEven
     /**
      * The default priority for all IEventChannels.
      */
-    int DEFAULT_PRIORITY = 50;
+    int DEFAULT_PRIORITY = EventPriorities.NORMAL;
 
     /**
      * The {@link ScheduleType} for this EventChannel.
