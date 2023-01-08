@@ -246,4 +246,9 @@ public class Example {
 
 借助于 dash 的调度机制, 只需要选择 `EventPriorites` 中的 `EARLIER_THAN_NORMAL` 或者 `EARLIST` 即可.
 
+同时，dash 中提供了许多 IPC 事件（本地过程调用，为分布式dash实例提供支持），事件的反应本质上也依赖于 IPC 事件工作。dash 负责 IPC 事件的传输，而中间件则需要负责处理这些到达实例的IPC事件。  
+dash 的大部分功能都是基于 eventbus 运作的。  
+
+例：一条消息发送时，用户使用的 api 会直接发送一条 `MessagePreSendEvent` 到事件总线中，随后经过总线不同优先级的 handler，最后到达作为中间件的 adapter（监听在 `LATEST`) 对该事件作出反应（发送到平台）  
+发送后，adapter 将会发布一个 `MessagePostSendEvent` 到事件总线中以供其他处理器使用。  
 
