@@ -79,7 +79,6 @@ public class SimpleEventRegistry implements IEventRegistry {
         }
     }
 
-    @RequiredArgsConstructor
     private record BoolEventHandler<E extends AbstractEvent>(
             MethodHandle methodHandle,
             EventListener caller) implements IEventHandler<E> {

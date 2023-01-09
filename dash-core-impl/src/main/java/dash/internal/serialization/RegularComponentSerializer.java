@@ -33,6 +33,7 @@ public class RegularComponentSerializer implements IComponentSerializer {
             case "AUDIO" -> Audio.builder().path(Path.of(code.getProp("path"))).build();
             case "STICKER" -> new Sticker(code.getProp("path") != null ? Path.of(code.getProp("path")) : null
                     , code.getProp("platform"), Integer.parseInt(code.getProp("id")));
+            default -> throw new IllegalArgumentException("Unknown catcode type for RegularComponentSerializer, this is unexpected.");
         };
     }
 }
