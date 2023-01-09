@@ -1,5 +1,6 @@
 package io.ib67.dash.util;
 
+import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.net.URLDecoder;
@@ -53,7 +54,9 @@ public class CatCodes {
     }
 
     public static class CatCode {
+        public static final String TEXT_PROP_KEY = "content";
         private final Map<String, String> properties = new HashMap<>();
+        @Getter
         private String type;
 
         public CatCode type(String type) {
@@ -65,10 +68,13 @@ public class CatCodes {
             properties.put(key, URLEncoder.encode(value, StandardCharsets.UTF_8));
             return this;
         }
+        public String getProp(String key){
+            return properties.get(key);
+        }
 
         @Override
         public String toString() {
-            if (type.equals("TEXT")) return properties.get("content");
+            if (type.equals("TEXT")) return properties.get(TEXT_PROP_KEY);
             if (properties.isEmpty()) return "[dash:" + type + "]";
             return "[dash:" + type + "," +
                     properties.entrySet().stream()

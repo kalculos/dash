@@ -4,6 +4,8 @@ import io.ib67.dash.message.feature.IMessageComponent;
 import lombok.Builder;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.nio.file.Path;
+
 /**
  * A {@link Image} is a concrete implementation of {@link IMessageComponent} that contains photo.
  */
@@ -11,7 +13,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class Image extends ResourceMessage implements IMessageComponent {
 
     @Builder
-    protected Image(String path) {
+    protected Image(Path path) {
         super("IMAGE", path);
     }
 

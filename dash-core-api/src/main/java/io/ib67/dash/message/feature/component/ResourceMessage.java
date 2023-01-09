@@ -7,7 +7,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.InputStream;
-import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * A {@link ResourceMessage} is a {@link IMessageComponent} that is linked to external resources.
@@ -16,22 +16,22 @@ import java.net.URL;
 public abstract class ResourceMessage implements IMessageComponent {
     private final String type;
     @Getter
-    private final String path;
+    private final Path path;
 
-    protected ResourceMessage(String type, String path) {
+    protected ResourceMessage(String type, Path path) {
         this.type = type;
         this.path = path;
     }
 
     @SneakyThrows
     public InputStream openInputStream() {
-        return new URL(path).openStream();
+        return path.toUri().toURL().openStream();
     }
 
     @Override
     public String toCatCode() {
         return CatCodes.ofProps(
-                "path", path
+                "path", path.toString()
         ).type(type).toString();
     }
 }
