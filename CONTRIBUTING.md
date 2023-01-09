@@ -7,4 +7,4 @@
 3. 在合理情况下，使用项目内的 lombok. 测试用代码放在 `**/local/**` 下。
 4. 记得更新文档
 
-此外， 此项目实施来自 SaltedFish Club 的[代码贡献指南](https://github.com/saltedfishclub/documents/blob/main/CONTRIBUTING.md)。
+此外， 此项目实施来自 SaltedFish Club 的[代码贡献指南](https://github.com/saltedfishclub/documents/blob/main/CONTRIBUTING.md)。shito
