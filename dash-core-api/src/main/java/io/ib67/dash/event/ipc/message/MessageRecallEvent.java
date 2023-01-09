@@ -4,8 +4,8 @@ import io.ib67.dash.message.AbstractMessage;
 
 import java.time.Instant;
 
-public class MessageRecallEvent extends MessageIpcEvent{
-    public MessageRecallEvent(boolean local, Instant time, AbstractMessage message) {
+public class MessageRecallEvent<M extends AbstractMessage<?>> extends MessageIpcEvent<M>{
+    public MessageRecallEvent(boolean local, Instant time, M message) {
         super(local, time, message);
     }
 }

@@ -18,11 +18,11 @@ public abstract class AbstractBot implements Lifecycle {
     protected final String name;
 
     @Getter
-    protected final Dash dash;
+    protected final BotContext context;
 
-    protected AbstractBot(String name, Dash dash) {
+    protected AbstractBot(String name, BotContext context) {
         this.name = name;
-        this.dash = dash;
+        this.context = context;
     }
 
     /**

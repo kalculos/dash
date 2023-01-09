@@ -8,6 +8,7 @@ version parent.version
 dependencies {
     compileOnly(project(":dash-core-api"))
     testImplementation(project(":dash-core-api"))
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14'
 }
 test {
     useJUnitPlatform()
