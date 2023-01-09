@@ -17,7 +17,7 @@ public class Action implements IMessageComponent {
     @Override
     public String toCatCode() {
         return CatCodes.ofProps(
-                "action", type.toString()
+                "type", type.toString()
         ).type("ACTION").toString();
     }
 

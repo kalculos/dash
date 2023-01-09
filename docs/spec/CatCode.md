@@ -40,7 +40,7 @@
 - 动作 `ACTION` | 对应的消息组件为 `io.ib67.dash.message.feature.component.Action`
   通常是 IM 平台下发的特殊消息. 反序列化时会舍弃此类消息, 因为此类消息可能与发起者强相关.
   支持的属性:
-  - `action` 平台的工作, 如将你踢出群聊, 将某人提升为管理员
+  - `type` 平台的工作, 如将你踢出群聊, 将某人提升为管理员
   - 其他 property 看具体而定.
 - 语音 `AUDIO` | 对应的消息组件为 `io.ib67.dash.message.feature.component.Audio`    
   支持的属性:
