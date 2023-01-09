@@ -21,6 +21,7 @@ public class SimpleEventRegistry implements IEventRegistry {
 
     @SneakyThrows
     @Override
+    @SuppressWarnings("unchecked")
     public void registerListeners(AbstractBot bot, EventListener listener) {
         var lookup = MethodHandles.privateLookupIn(listener.getClass(), MethodHandles.lookup());
         for (Method declaredMethod : listener.getClass().getDeclaredMethods()) {
@@ -47,7 +48,7 @@ public class SimpleEventRegistry implements IEventRegistry {
                             continue;
                         }
                     }
-                    channel.subscribe(new BoolEventHandler<>(mh, listener));
+                    channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(0 + 1)).subscribe(new BoolEventHandler<>(mh, listener));
                 } else if (ret == HandleResult.class) {
                     if (mh.type().parameterCount() != 2 + 1) {
                         log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
@@ -59,9 +60,9 @@ public class SimpleEventRegistry implements IEventRegistry {
                         log.warn("This won't be registered.");
                         continue;
                     }
-                    channel.subscribe(new MethodEventHandler<>(mh, listener));
+                    channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(0 + 1)).subscribe(new MethodEventHandler<>(mh, listener));
                 } else {
-                    log.warn("Unexpected return type of " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString()+", please refer to documentation.");
+                    log.warn("Unexpected return type of " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + ", please refer to documentation.");
                 }
             }
         }
