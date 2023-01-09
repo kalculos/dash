@@ -4,6 +4,7 @@ import dash.internal.event.DashEventBus;
 import dash.internal.event.SimpleEventChannelFactory;
 import dash.internal.registry.SimpleAdapterRegistry;
 import dash.internal.registry.SimpleEventRegistry;
+import dash.internal.serialization.RegularComponentSerializer;
 import dash.internal.serialization.SimpleSerializerRegistry;
 import io.ib67.dash.Dash;
 import io.ib67.dash.adapter.IAdapterRegistry;
@@ -39,6 +40,17 @@ public class DashImpl implements Dash {
         var _registry = new SimpleSerializerRegistry();
         componentSerializer = _registry;
         serializerRegistry = _registry;
+        registerStandardCatCodes();
+    }
+
+    private void registerStandardCatCodes() {
+        var regularSerializer = new RegularComponentSerializer();
+        serializerRegistry.registerSerializer("TEXT",regularSerializer);
+        serializerRegistry.registerSerializer("IMAGE",regularSerializer);
+        serializerRegistry.registerSerializer("AT",regularSerializer);
+        serializerRegistry.registerSerializer("FILE",regularSerializer);
+        serializerRegistry.registerSerializer("AUDIO",regularSerializer);
+        serializerRegistry.registerSerializer("STICKER",regularSerializer);
     }
 
     @Override

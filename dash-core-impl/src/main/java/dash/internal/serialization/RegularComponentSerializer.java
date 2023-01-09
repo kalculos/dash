@@ -1,5 +1,6 @@
 package dash.internal.serialization;
 
+import dash.internal.DashImpl;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.message.feature.component.*;
@@ -10,6 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 
 public class RegularComponentSerializer implements IComponentSerializer {
+    /**
+     * @implNote while a new parser strategy is added, also register it on {@link DashImpl#registerStandardCatCodes()}
+     * @param code
+     * @return
+     * @throws CatCodes.InvalidCatCodeException
+     */
     @Override
     public @NotNull IMessageComponent parse(CatCodes.CatCode code) throws CatCodes.InvalidCatCodeException {
         return switch (code.getType().toUpperCase()) {
