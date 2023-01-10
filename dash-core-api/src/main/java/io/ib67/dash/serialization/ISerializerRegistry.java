@@ -13,8 +13,4 @@ public interface ISerializerRegistry {
     void registerComponentSerializer(String codeType, IComponentSerializer serializer);
 
     IComponentSerializer getComponentSerializer(String codeType);
-
-    <T> void registerSerializer(Class<T> type, ISerializer<?,T> serializer);
-
-    <T> ISerializer<?,T> getSerializer(Class<T> type);
 }

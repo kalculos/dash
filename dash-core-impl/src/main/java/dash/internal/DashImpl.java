@@ -14,8 +14,6 @@ import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
-import io.ib67.dash.storage.IContainerFactory;
-import io.ib67.kiwi.Kiwi;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -58,10 +56,5 @@ public class DashImpl implements Dash {
     @Override
     public IComponentSerializer defaultComponentSerializer() {
         return componentSerializer;
-    }
-
-    @Override
-    public IContainerFactory getContainerFactory() {
-        return Kiwi.todo("container factory");
     }
 }

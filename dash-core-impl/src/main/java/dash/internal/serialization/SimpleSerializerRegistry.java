@@ -2,7 +2,6 @@ package dash.internal.serialization;
 
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.message.feature.IMessageComponent;
-import io.ib67.dash.serialization.ISerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
 import io.ib67.dash.util.CatCodes;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SimpleSerializerRegistry implements ISerializerRegistry, IComponentSerializer {
     private final Map<String, IComponentSerializer> serializers = new HashMap<>();
-    private final Map<Class<?>, ISerializer<?,?>> dataSerializers = new HashMap<>();
 
     @Override
     public void registerComponentSerializer(String codeType, IComponentSerializer serializer) {
@@ -27,16 +25,6 @@ public class SimpleSerializerRegistry implements ISerializerRegistry, IComponent
         return serializers.get(codeType.toUpperCase());
     }
 
-    @Override
-    public <T> void registerSerializer(Class<T> type, ISerializer<?, T> serializer) {
-        dataSerializers.put(type,serializer);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> ISerializer<?, T> getSerializer(Class<T> type) {
-        return (ISerializer<?, T>) dataSerializers.get(type);
-    }
 
     @Override
     public @NotNull IMessageComponent deserialize(CatCodes.CatCode code) throws CatCodes.InvalidCatCodeException {
