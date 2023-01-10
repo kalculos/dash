@@ -11,7 +11,7 @@ import java.util.Optional;
  * @param <V>
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface IDataTable<K,V> {
+public interface IDataTable<K,V> extends AutoCloseable{
     Optional<? extends V> fetchByKey(K key);
 
     Collection<? extends V> fetchAll();
