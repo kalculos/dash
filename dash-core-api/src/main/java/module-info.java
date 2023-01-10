@@ -14,6 +14,7 @@ module dash.core.api {
     exports io.ib67.dash.adapter;
     exports io.ib67.dash.service;
     exports io.ib67.dash.util;
+    exports io.ib67.dash.storage;
 
     exports io.ib67.dash.event.handler;
     exports io.ib67.dash.event;

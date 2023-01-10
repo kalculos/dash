@@ -14,6 +14,8 @@ import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
+import io.ib67.dash.storage.IContainerFactory;
+import io.ib67.kiwi.Kiwi;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -45,16 +47,21 @@ public class DashImpl implements Dash {
 
     private void registerStandardCatCodes() {
         var regularSerializer = new RegularComponentSerializer();
-        serializerRegistry.registerSerializer("TEXT",regularSerializer);
-        serializerRegistry.registerSerializer("IMAGE",regularSerializer);
-        serializerRegistry.registerSerializer("AT",regularSerializer);
-        serializerRegistry.registerSerializer("FILE",regularSerializer);
-        serializerRegistry.registerSerializer("AUDIO",regularSerializer);
-        serializerRegistry.registerSerializer("STICKER",regularSerializer);
+        serializerRegistry.registerComponentSerializer("TEXT",regularSerializer);
+        serializerRegistry.registerComponentSerializer("IMAGE",regularSerializer);
+        serializerRegistry.registerComponentSerializer("AT",regularSerializer);
+        serializerRegistry.registerComponentSerializer("FILE",regularSerializer);
+        serializerRegistry.registerComponentSerializer("AUDIO",regularSerializer);
+        serializerRegistry.registerComponentSerializer("STICKER",regularSerializer);
     }
 
     @Override
     public IComponentSerializer defaultComponentSerializer() {
         return componentSerializer;
+    }
+
+    @Override
+    public IContainerFactory getContainerFactory() {
+        return Kiwi.todo("container factory");
     }
 }

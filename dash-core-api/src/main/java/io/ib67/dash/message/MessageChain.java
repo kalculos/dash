@@ -45,12 +45,12 @@ public class MessageChain extends ArrayList<IMessageComponent> {
         for (CatCodes.CatCode catCode : str) {
             if (lenient) {
                 try {
-                    newChain.add(serializer.parse(catCode));
+                    newChain.add(serializer.deserialize(catCode));
                 } catch (CatCodes.InvalidCatCodeException exception) {
                     exception.printStackTrace();
                 }
             } else {
-                newChain.add(serializer.parse(catCode));
+                newChain.add(serializer.deserialize(catCode));
             }
         }
         return newChain;

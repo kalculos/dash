@@ -18,7 +18,7 @@ public class RegularComponentSerializer implements IComponentSerializer {
      * @throws CatCodes.InvalidCatCodeException
      */
     @Override
-    public @NotNull IMessageComponent parse(CatCodes.CatCode code) throws CatCodes.InvalidCatCodeException {
+    public @NotNull IMessageComponent deserialize(CatCodes.CatCode code) throws CatCodes.InvalidCatCodeException {
         return switch (code.getType().toUpperCase()) {
             case "TEXT" -> new Text(code.getProp(CatCodes.CatCode.TEXT_PROP_KEY));
             case "AT" -> {

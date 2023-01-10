@@ -2,6 +2,7 @@ package io.ib67.dash.contact;
 
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.adapter.PlatformRelated;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.AvailableSince("0.1.0")
 @Getter
+@EqualsAndHashCode
 public abstract class Contact implements PlatformRelated {
     /**
      * The user-id of the contact.
@@ -39,13 +41,5 @@ public abstract class Contact implements PlatformRelated {
     @Override
     public String toString() {
         return "Contact(" + uid + "/" + getIdOnPlatform() + " on " + getPlatform().getName() + ")";
-    }
-
-    @Override
-    public int hashCode() {
-        var i = 1;
-        i = i * 31 + Long.hashCode(uid);
-        i = i * 31 + idOnPlatform.hashCode();
-        return i;
     }
 }

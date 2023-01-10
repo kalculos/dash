@@ -1,5 +1,6 @@
 package io.ib67.dash.util;
 
+import io.ib67.dash.serialization.SerializerException;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -178,7 +179,7 @@ public class CatCodes {
         }
     }
 
-    public static class InvalidCatCodeException extends RuntimeException {
+    public static class InvalidCatCodeException extends SerializerException {
         public InvalidCatCodeException() {
             super();
         }

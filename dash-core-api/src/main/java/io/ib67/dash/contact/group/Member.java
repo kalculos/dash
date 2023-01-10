@@ -5,9 +5,11 @@ import io.ib67.dash.contact.Contact;
 import io.ib67.dash.contact.Friend;
 import io.ib67.dash.exception.NotFriendException;
 import io.ib67.dash.message.IMessageSource;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode(callSuper = false)
 public abstract class Member extends Contact implements IMessageSource {
     protected final ChatGroup group;
 
