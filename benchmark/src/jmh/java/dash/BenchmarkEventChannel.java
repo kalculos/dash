@@ -27,7 +27,7 @@ public class BenchmarkEventChannel {
     public void setup() {
         Threads.primaryThread = Thread.currentThread();
         var random = new Random(0);
-        bus = new DashEventBus(asyncExec, simpleScheduler);
+        bus = new DashEventBus(simpleScheduler,asyncExec);
         for (int i = 0; i < 1000; i++) {
             var channel = new AcceptingChannel<>(
                     type,
@@ -35,9 +35,7 @@ public class BenchmarkEventChannel {
                     random.nextInt(100),
                     null,
                     bus
-            ).subscribeAlways((b, c) -> {
-                //    latch.countDown();
-            });
+            ).subscribeAlways((b, c) -> b.fireNext());
         }
     }
 
