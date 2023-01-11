@@ -212,6 +212,10 @@ public class Example {
 
 对于 `ASYNC` 的 handler，无法通过 pipeline 注册/取消 订阅。
 
+> **WARNING**  
+> 
+> 虽然我们不推荐，但是你可以将 `dash.asyncHandlers.mutatePipeline` 设置为 `true` 来允许异步 handlers 取消注册他们。
+
 ## 构造 EventChannel
 
 虽然大多数情况下对 `AbstractBot#getChannel` 或 `Dash#getGlobalChannel` 切割就可以达到目的, 但是有时候我们需要自己构造一个满足需求的 `EventChannel`.
