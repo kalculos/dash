@@ -3,6 +3,7 @@ package dash.internal.event;
 import dash.internal.event.channels.AcceptingChannel;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
+import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.handler.IEventHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,31 +32,40 @@ final class RegisteredHandler<E extends AbstractEvent> implements Comparable<Reg
     @SuppressWarnings("unchecked")
     public void insertSorted(RegisteredHandler handler) {
         var delta = compareTo(handler);
-        if (delta == 0) { // same
-            handler.next = next;
-            this.next = handler.next;
-            handler.prev = this;
-        } else if (delta < 0) { // 1 2  <- 2
-            if (next == null) {
-                next = handler; // 1 2 [2], append
-                handler.prev = this;
-                return;
-            }
-            if (next.compareTo(handler) <= 0) {
+        if (delta == 0) {
+            insertAfter(handler);
+            return;
+        } else if (delta < 0) {
+            if (next != null) {
                 next.insertSorted(handler);
-            } else { // 1 [2] 3
-                handler.next = next;
-                this.next = handler.next;
-                handler.prev = this;
+            }else{
+                next = handler;
             }
-        } else { // delta > 0
-            throw new IllegalStateException("impossible");
+            return;
         }
+        // this > handler
+        insertBefore(handler);
     }
 
-    public static <E extends AbstractEvent> RegisteredHandler<E> createEmpty(){
+    @SuppressWarnings("unchecked")
+    private void insertBefore(RegisteredHandler handler) {
+        next = handler.next;
+        handler.next = this;
+        handler.prev = prev;
+        prev = handler;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void insertAfter(RegisteredHandler handler) {
+        if (next != null) next.prev = handler;
+        handler.next = next;
+        handler.prev = this;
+        next = handler;
+    }
+
+    public static <E extends AbstractEvent> RegisteredHandler<E> createEmpty(ScheduleType defaultScheduleType) {
         return new RegisteredHandler(
-                new AcceptingChannel(null,null,0,null,null),
+                new AcceptingChannel(defaultScheduleType, null, 0, null, null),
                 (pipeline, event) -> pipeline.fireNext()
         );
     }

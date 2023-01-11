@@ -13,15 +13,13 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
     @Setter
     private boolean cancelled;
 
-    private boolean subscribe;
-    private final IEventChannel<E> delegatedChannel;
+    private boolean subscribe=true;
     private final E event;
     //private final List<Runnable> pendingRegistrations = new ArrayList<>();
     private RegisteredHandler<E> node;
 
     public EventPipeline(E event, RegisteredHandler<E> node) {
         requireNonNull(this.event = event);
-        requireNonNull(this.delegatedChannel = node.channel());
         requireNonNull(this.node = node);
     }
 
@@ -41,13 +39,18 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
         if(node.next != null){
             node = node.next;
             subscribe = true;
-            node.handler().handleMessage(this,event);
+            var handleResult = channel().apply(event);
+            if(handleResult == null){
+                fireNext();
+                return;
+            }
+            ((RegisteredHandler<AbstractEvent>)node).handler().handleMessage((IEventPipeline<AbstractEvent>) this,handleResult);
         }
         // the end of handler list
     }
 
     @Override
     public IEventChannel<E> channel() {
-        return delegatedChannel;
+        return node.channel();
     }
 }

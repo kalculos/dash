@@ -23,37 +23,38 @@ public class DashEventBus implements IEventBus {
 
     private final ScheduledExecutorService mainExecutor;
 
-    public DashEventBus(ScheduledExecutorService mainLoop, ExecutorService asyncLoop){
+    public DashEventBus(ScheduledExecutorService mainLoop, ExecutorService asyncLoop) {
         requireNonNull(this.mainExecutor = mainLoop);
         requireNonNull(this.asyncExecutor = asyncLoop);
     }
 
     @Override
     public <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler) {
-        if(!handlers.containsKey(channel.getScheduleType())){
-            var _handler = RegisteredHandler.createEmpty();
-            _handler.insertSorted(new RegisteredHandler<>(channel,handler));
+        if (!handlers.containsKey(channel.getScheduleType())) {
+            var _handler = RegisteredHandler.createEmpty(channel.getScheduleType());
+            _handler.insertSorted(new RegisteredHandler<>(channel, handler));
             handlers.put(channel.getScheduleType(), _handler);
-        }else{
+        } else {
             var node = handlers.get(channel.getScheduleType());
-            node.insertSorted(new RegisteredHandler<>(channel,handler));
+            node.insertSorted(new RegisteredHandler<>(channel, handler));
         }
     }
 
     @Override
     public <E extends AbstractEvent> void postEvent(E event, Consumer<E> whenDone) {
         deliverEvent(MONITOR, event);
-        if(Threads.isPrimaryThread()){
-            deliverEvent(MAIN,event);
-        }else{
-            mainExecutor.submit(()->deliverEvent(MAIN,event));
+        if (Threads.isPrimaryThread()) {
+            deliverEvent(MAIN, event);
+        } else {
+            if (handlers.containsKey(MAIN)) mainExecutor.submit(() -> deliverEvent(MAIN, event));
         }
-        asyncExecutor.submit(()->deliverEvent(ASYNC,event));
+        if (handlers.containsKey(ASYNC))
+            mainExecutor.submit(() -> asyncExecutor.submit(() -> deliverEvent(ASYNC, event)));
     }
 
     @SuppressWarnings("unchecked")
     private <E extends AbstractEvent> void deliverEvent(ScheduleType type, E event) {
-        if(!handlers.containsKey(type)){
+        if (!handlers.containsKey(type)) {
             return;
         }
         var node = handlers.get(type);

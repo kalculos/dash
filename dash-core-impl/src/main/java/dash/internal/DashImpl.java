@@ -27,12 +27,14 @@ public class DashImpl implements Dash {
     private final IEventChannelFactory channelFactory;
     private final IEventChannel<? extends AbstractEvent> globalChannel;
     private final IEventRegistry eventRegistry;
-    private final ScheduledExecutorService pool;
+    private final ExecutorService asyncPool;
+    private final ScheduledExecutorService mainPool;
     private final IComponentSerializer componentSerializer;
     private final ISerializerRegistry serializerRegistry;
 
-    public DashImpl(ExecutorService main, ScheduledExecutorService async) {
-        pool = async;
+    public DashImpl(ScheduledExecutorService main, ExecutorService async) {
+        asyncPool = async;
+        mainPool = main;
         channelFactory = new SimpleEventChannelFactory(new DashEventBus(main, async));
         adapterRegistry = new SimpleAdapterRegistry();
         globalChannel = channelFactory.forMain("GLOBAL");
