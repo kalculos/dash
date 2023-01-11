@@ -9,6 +9,7 @@ import lombok.Setter;
 import static java.util.Objects.requireNonNull;
 
 public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E> {
+    private static final boolean ALLOW_ASYNC_UNSUBSCRIBE = Boolean.getBoolean("dash.asyncHandlers.mutatePipeline");
     @Getter
     @Setter
     private boolean cancelled;
@@ -32,6 +33,9 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
     public void fireNext() {
         // check for status
         if (!subscribe) {
+            if(!ALLOW_ASYNC_UNSUBSCRIBE){
+                throw new IllegalArgumentException("Async handlers cannot be unregistered");
+            }
             // unsubscribed. (current node)
             // assertion: the 1st node (which is an empty node) never unsubscribe itself.
             node.prev.next = node.next; // remove it from them

@@ -30,6 +30,10 @@ public class DashEventBus implements IEventBus {
 
     @Override
     public <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler) {
+        if(!Threads.isPrimaryThread()){
+            mainExecutor.submit(()->register(channel, handler));
+            return;
+        }
         if (!handlers.containsKey(channel.getScheduleType())) {
             var _handler = RegisteredHandler.createEmpty(channel.getScheduleType());
             _handler.insertSorted(new RegisteredHandler<>(channel, handler));
