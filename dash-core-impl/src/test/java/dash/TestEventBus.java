@@ -2,11 +2,13 @@ package dash;
 
 import dash.internal.event.DashEventBus;
 import dash.internal.event.channels.AcceptingChannel;
+import dash.internal.util.Threads;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutorService;
@@ -27,10 +29,13 @@ public class TestEventBus {
     public static void teardown() {
         stop = true;
     }
-
+    @BeforeAll
+    public static void setup(){
+        Threads.primaryThread = Thread.currentThread();
+    }
     @Test
     public void testEventDelivery() {
-        bus = new DashEventBus(executor, scheduler);
+        bus = new DashEventBus(scheduler, executor);
         var inte = new AtomicBoolean(false);
         var channel = new AcceptingChannel<>(
                 ScheduleType.MONITOR,
@@ -39,7 +44,7 @@ public class TestEventBus {
                 null,
                 bus
         );
-        channel.subscribeOnce((e, c) -> inte.set(((TestEvent) e).value == 0));
+        channel.subscribeOnce((e, c) -> inte.set(((TestEvent) c).value == 0));
         bus.postEvent(new TestEvent(0), event -> {
         });
         assertTrue(inte.get());
@@ -47,7 +52,7 @@ public class TestEventBus {
 
     @Test
     public void testEventDeliveryPriority() throws InterruptedException {
-        bus = new DashEventBus(executor, scheduler);
+        bus = new DashEventBus(scheduler, executor);
         var c1 = new AcceptingChannel<>(
                 ScheduleType.MAIN,
                 null,
@@ -64,8 +69,14 @@ public class TestEventBus {
         );
         var c2s = new AtomicLong();
         var c1s = new AtomicLong();
-        c2.subscribeAlways((e, c) -> c2s.set(System.nanoTime()));
-        c1.subscribeAlways((e, c) -> c1s.set(System.nanoTime()));
+        c2.subscribeAlways((e, c) -> {
+            c2s.set(System.nanoTime());
+            e.fireNext();
+        });
+        c1.subscribeAlways((e, c) -> {
+            c1s.set(System.nanoTime());
+            e.fireNext();
+        });
         bus.postEvent(new TestEvent(0), event -> {
         });
         Thread.sleep(100);
@@ -74,7 +85,7 @@ public class TestEventBus {
 
     @Test
     public void testEventDeliveryPriorityByScheduleType() throws InterruptedException {
-        bus = new DashEventBus(executor, scheduler);
+        bus = new DashEventBus(scheduler, executor);
         var c1 = new AcceptingChannel<>(
                 ScheduleType.ASYNC,
                 null,
@@ -91,8 +102,14 @@ public class TestEventBus {
         );
         var c2s = new AtomicLong();
         var c1s = new AtomicLong();
-        c2.subscribeAlways((e, c) -> c2s.set(System.nanoTime()));
-        c1.subscribeAlways((e, c) -> c1s.set(System.nanoTime()));
+        c2.subscribeAlways((e, c) -> {
+            c2s.set(System.nanoTime());
+            e.fireNext();
+        });
+        c1.subscribeAlways((e, c) -> {
+            c1s.set(System.nanoTime());
+            e.fireNext();
+        });
         bus.postEvent(new TestEvent(0), event -> {
         });
         Thread.sleep(100);
@@ -101,7 +118,7 @@ public class TestEventBus {
 
     @Test
     public void testEventDispatchAsync() throws InterruptedException {
-        bus = new DashEventBus(executor, scheduler);
+        bus = new DashEventBus(scheduler, executor);
         var tid = new AtomicLong(-9);
         new AcceptingChannel<>(
                 ScheduleType.ASYNC,
@@ -111,6 +128,7 @@ public class TestEventBus {
                 bus
         ).subscribeOnce((a, b) -> {
             tid.set(Thread.currentThread().getId());
+            a.fireNext();
         });
         bus.postEvent(new TestEvent(0), event -> {
         });
@@ -121,7 +139,7 @@ public class TestEventBus {
 
     @Test
     public void testPublishEventInHandler() throws InterruptedException {
-        bus = new DashEventBus(executor, scheduler);
+        bus = new DashEventBus(scheduler, executor);
         new AcceptingChannel<>(
                 ScheduleType.MAIN,
                 null,
@@ -129,14 +147,16 @@ public class TestEventBus {
                 null,
                 bus
         ).filterForType(TestEvent.class).subscribeAlways((a, b) -> {
-            b.getBus().postEvent(new TestEvent2(1), e -> {
+            a.channel().getBus().postEvent(new TestEvent2(1), e -> {
             });
+            a.fireNext();
         });
         AtomicBoolean bool = new AtomicBoolean(false);
         new AcceptingChannel<>(ScheduleType.MAIN, null, 0, null, bus)
                 .filterForType(TestEvent2.class)
                 .subscribeAlways((a, b) -> {
                     bool.set(true);
+                    a.fireNext();
                 });
         bus.postEvent(new TestEvent(0), evt -> {
         });

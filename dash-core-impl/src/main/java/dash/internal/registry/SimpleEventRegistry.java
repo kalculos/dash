@@ -2,8 +2,8 @@ package dash.internal.registry;
 
 import io.ib67.dash.AbstractBot;
 import io.ib67.dash.event.*;
-import io.ib67.dash.event.handler.HandleResult;
 import io.ib67.dash.event.handler.IEventHandler;
+import io.ib67.dash.event.handler.IEventPipeline;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,62 +32,38 @@ public class SimpleEventRegistry implements IEventRegistry {
                 var mh = lookup.unreflect(declaredMethod);
                 var handlerInfo = declaredMethod.getAnnotation(EventHandler.class);
                 var channel = factory.from(handlerInfo.scheduleType(), handlerInfo.name(), handlerInfo.priority());
-                var ret = mh.type().returnType();
-                if (ret == boolean.class || ret == Boolean.class) {
-                    if (mh.type().parameterCount() != 1 + 1) {
-                        log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
-                        log.warn("This won't be registered.");
-                        continue;
-                    }
-                    if (!AbstractEvent.class.isAssignableFrom(mh.type().parameterType(0 + 1))) {
-                        log.warn(listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " subscribes to an event that is not any subtypes of AbstractEvent.");
-                        if (Boolean.getBoolean("dash.allowIllegalEventType")) {
-                            log.warn("Due to dash.allowIllegalEventType is set, this will be registered normally.");
-                        } else {
-                            log.warn("This won't be registered.");
-                            continue;
-                        }
-                    }
-                    channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(0 + 1)).subscribe(new BoolEventHandler<>(mh, listener));
-                } else if (ret == HandleResult.class) {
-                    if (mh.type().parameterCount() != 2 + 1) {
-                        log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
-                        log.warn("This won't be registered.");
-                        continue;
-                    }
-                    if (!AbstractEvent.class.isAssignableFrom(mh.type().parameterType(0 + 1)) || !IEventChannel.class.isAssignableFrom(mh.type().parameterType(1 + 1))) {
-                        log.warn(listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " subscribes to an event that is not any subtypes of AbstractEvent OR 2nd parameter is not any subtypes of IEventChannel");
-                        log.warn("This won't be registered.");
-                        continue;
-                    }
-                    channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(0 + 1)).subscribe(new MethodEventHandler<>(mh, listener));
-                } else {
-                    log.warn("Unexpected return type of " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + ", please refer to documentation.");
+
+                if (mh.type().parameterCount() != 3) { // this, pipeline, event
+                    log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
+                    log.warn("This won't be registered.");
+                    continue;
                 }
+                if (!AbstractEvent.class.isAssignableFrom(mh.type().parameterType(2))) {
+                    log.warn(listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " subscribes to an event that is not any subtypes of AbstractEvent.");
+                    if (Boolean.getBoolean("dash.allowIllegalEventType")) {
+                        log.warn("Due to dash.allowIllegalEventType is set, this will be registered normally.");
+                    } else {
+                        log.warn("This won't be registered.");
+                        continue;
+                    }
+                }
+                if (!IEventPipeline.class.isAssignableFrom(mh.type().parameterType(1))) {
+                    log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
+                    log.warn("This won't be registered.");
+                    continue;
+                }
+                channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(0 + 1)).subscribe(handlerInfo.ignoreCancelled(), new DelegatedEventHandler<>(mh, listener));
+
             }
         }
     }
 
-    private record MethodEventHandler<E extends AbstractEvent>(
-            MethodHandle methodHandle,
-            EventListener caller
-    ) implements IEventHandler<E> {
-
-        @Override
-        @SneakyThrows
-        public @NotNull HandleResult handleMessage(@NotNull E event, @NotNull IEventChannel<E> channel) {
-            return (HandleResult) methodHandle.invokeExact(caller, event, channel);
-        }
-    }
-
-    private record BoolEventHandler<E extends AbstractEvent>(
-            MethodHandle methodHandle,
-            EventListener caller) implements IEventHandler<E> {
+    private record DelegatedEventHandler<T extends AbstractEvent>(MethodHandle mh,
+                                                                  EventListener listener) implements IEventHandler<T> {
         @SneakyThrows
         @Override
-        public @NotNull HandleResult handleMessage(@NotNull E event, @NotNull IEventChannel<E> channel) {
-            var ret = methodHandle.invokeExact(caller, event);
-            return (boolean) ret ? HandleResult.CONTINUE : HandleResult.CANCELLED;
+        public void handleMessage(@NotNull IEventPipeline<T> pipeline, T event) {
+            mh.invoke(listener, pipeline, event);
         }
     }
 }

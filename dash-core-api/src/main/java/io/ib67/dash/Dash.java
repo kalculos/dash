@@ -10,6 +10,7 @@ import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -35,7 +36,9 @@ public interface Dash {
 
     IEventRegistry getEventRegistry();
 
-    ScheduledExecutorService getPool();
+    ExecutorService getAsyncPool();
+
+    ScheduledExecutorService getMainPool();
 
     IComponentSerializer defaultComponentSerializer();
 

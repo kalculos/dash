@@ -10,7 +10,10 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface EventHandler {
     int priority() default EventPriorities.NORMAL;
+
     ScheduleType scheduleType() default ScheduleType.MAIN;
+
     String name() default "anonymous listener";
 
+    boolean ignoreCancelled() default true;
 }
