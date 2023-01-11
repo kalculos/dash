@@ -5,16 +5,18 @@ import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.handler.IEventPipeline;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.util.Objects.requireNonNull;
 
+@Slf4j
 public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E> {
     private static final boolean ALLOW_ASYNC_UNSUBSCRIBE = Boolean.getBoolean("dash.asyncHandlers.mutatePipeline");
     @Getter
     @Setter
     private boolean cancelled;
 
-    private boolean subscribe=true;
+    private boolean subscribe = true;
     private final E event;
     //private final List<Runnable> pendingRegistrations = new ArrayList<>();
     private RegisteredHandler<E> node;
@@ -33,22 +35,27 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
     public void fireNext() {
         // check for status
         if (!subscribe) {
-            if(!ALLOW_ASYNC_UNSUBSCRIBE){
+            if (!ALLOW_ASYNC_UNSUBSCRIBE) {
                 throw new IllegalArgumentException("Async handlers cannot be unregistered");
             }
             // unsubscribed. (current node)
             // assertion: the 1st node (which is an empty node) never unsubscribe itself.
             node.prev.next = node.next; // remove it from them
         }
-        if(node.next != null){
+        if (node.next != null) {
             node = node.next;
             subscribe = true;
             var handleResult = channel().apply(event);
-            if(handleResult == null){
+            if (handleResult == null) {
                 fireNext();
                 return;
             }
-            ((RegisteredHandler<AbstractEvent>)node).handler().handleMessage((IEventPipeline<AbstractEvent>) this,handleResult);
+            try {
+                ((RegisteredHandler<AbstractEvent>) node).handler().handleMessage((IEventPipeline<AbstractEvent>) this, handleResult);
+            } catch (Throwable t) {
+                log.warn("Cannot invoke handler " + node.handler(),t);
+                fireNext();
+            }
         }
         // the end of handler list
     }
