@@ -1,15 +1,13 @@
 package io.ib67.dash.event;
 
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.event.handler.HandleResult;
 import io.ib67.dash.event.handler.IEventHandler;
-import io.ib67.dash.event.handler.internal.CatchyHandler;
+import io.ib67.dash.event.handler.IEventPipeline;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -58,7 +56,7 @@ public interface IEventChannel<E extends AbstractEvent> extends Comparable<IEven
         if (o.getScheduleType() != getScheduleType()) {
             return o.getScheduleType().compareTo(this.getScheduleType());
         }
-        return Integer.compare(getPriority(),o.getPriority());
+        return Integer.compare(getPriority(), o.getPriority());
     }
 
     /**
@@ -93,37 +91,31 @@ public interface IEventChannel<E extends AbstractEvent> extends Comparable<IEven
     <N extends AbstractEvent> IEventChannel<N> map(Function<? super E, ? extends N> mapper);
 
     /**
-     * Subscribes to this EventChannel. Your handler will receive messages until it returns {@link HandleResult#UNSUBSCRIBE}
+     * Subscribes to this EventChannel. Your handler will receive messages until it call {@link IEventPipeline#unsubscribe()}
      *
      * @param handler subscriber
      * @return this
      */
-    @NotNull IEventChannel<E> subscribe(@NotNull IEventHandler<E> handler);
+    @NotNull IEventChannel<E> subscribe(boolean ignoreCancelled, @NotNull IEventHandler<E> handler);
 
-    default IEventChannel<E> subscribeAlways(@NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
-        return this.subscribe((event, channel) -> {
-            subscriber.accept(event, channel);
-            return HandleResult.CONTINUE;
+    default IEventChannel<E> subscribeAlways(@NotNull IEventHandler<E> subscriber) {
+        return this.subscribe(true, subscriber);
+    }
+
+    default IEventChannel<E> subscribeOnce(@NotNull IEventHandler<E> subscriber) {
+        return this.subscribe(true, (pipeline, event) -> {
+            pipeline.unsubscribe();
+            subscriber.handleMessage(pipeline,event);
         });
     }
 
-    default IEventChannel<E> subscribeOnce(@NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
-        return this.subscribe((event, channel) -> {
-            subscriber.accept(event, channel);
-            return HandleResult.UNSUBSCRIBE;
-        });
-    }
-
-    default IEventChannel<E> subscribeUntil(@NotNull Predicate<E> shouldContinue, @NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
-        return this.subscribe((event, channel) -> {
-            subscriber.accept(event, channel);
-            return shouldContinue.test(event) ? HandleResult.CONTINUE : HandleResult.UNSUBSCRIBE;
-        });
-    }
-
-    default IEventChannel<E> subscribeCatchy(@NotNull BiConsumer<E, IEventChannel<E>> subscriber) {
+    default IEventChannel<E> subscribeCatchy(@NotNull IEventHandler<E> subscriber) {
         if (!getScheduleType().isOrdered())
             throw new IllegalStateException("subscribeCatchy doesn't support ASYNC EventChannels");
-        return this.subscribe(new CatchyHandler<>(subscriber));
+        return this.subscribe(true, (a,b)->{
+            a.unsubscribe();
+            a.setCancelled(true);
+            subscriber.handleMessage(a,b);
+        });
     }
 }

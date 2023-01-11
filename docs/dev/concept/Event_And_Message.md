@@ -10,7 +10,7 @@ public class Example {
     @Test
     public void example(){
         bot.getChannel()
-                .subscribeAlways((event,channel)->{
+                .subscribeAlways((pipeline,event)->{
                     // do something securely
                 });
     }
@@ -29,14 +29,13 @@ public class Example {
     private AbstractBot bot;
     @Test
     public void example(){
-        bus.register(Bot.getDash().getGlobalChannel(), (event, channel)->{
+        bus.register(Bot.getDash().getGlobalChannel(), (pipeline, event)->{
             // do something securely...
-            return HandleResult.CONTINUE; // 是否要继续传播事件
+            pipeline.fireNext(); // 把事件传播下去
         });
     }
 }
 ```
-关于 [HandleResult](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/handler/HandleResult.java)
 
 你会发现, 即使是直接使用 `IEventBus`, `IEventChannel` 还是形影不离.  
 其实, `IEventChannel` 的本质是一个 *处理事件的 UnaryOperator*. 在新的事件来临之前, 你注册时用的 `IEventChannel` 会提前将事件处理一遍, 然后才交给你.  
@@ -60,7 +59,7 @@ public class Example {
         bot.getChannel()
                 .filter(it -> it instanceof GroupMessage)
                 .map(it -> (GroupMessage) it)
-                .subscribeAlways((message,channel)->{
+                .subscribeAlways((pipeline,message)->{
                     // do something securely
                 });
     }
@@ -74,7 +73,7 @@ public class Example {
     bot.getChannel()
 +       .filter(it -> it instanceof GroupMessage)
 +       .map(it -> (GroupMessage) it)
-        .subscribeAlways((message,channel)->{
+        .subscribeAlways((pipeline,message)->{
 ```
 
 这两行的作用分别是:
@@ -94,11 +93,11 @@ public class Example {
     public void example() {
         bot.getChannel()
                 .filterForType(GroupChannelMessage.class) // filter + map
-                .subscribeAlways((event, channel) -> {
+                .subscribeAlways((pipeline,event) -> {
                     event.reply("Hello!");
                 })
                 .filter(it -> it.containString("hello!"))
-                .subscribeAlways((event, channel) -> {
+                .subscribeAlways((pipeline,event) -> {
                     event.reply("World!");
                 });
     }
@@ -109,9 +108,7 @@ public class Example {
 
 关于更多: [IEventChannel](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/IEventChannel.java)
 
-实际上, dash 的 IEventChannel 设计也启发自 [Mirai 的事件通道](https://github.com/mamoe/mirai/blob/dev/docs/Events.md#%E4%BA%8B%E4%BB%B6%E9%80%9A%E9%81%93), 在此表示致敬.
-
-## 事件类型
+### 事件类型
 
 事件大体上分两种, 一种是 `事件`, 一种是`消息`
 
@@ -193,26 +190,6 @@ public class Example {
 > **WARNING**  
 > 请务必不要在 `MONITOR` 或 `MAIN` 上运行堵塞代码, **你已经被警告过了**
 
-### [HandleResult](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/handler/HandleResult.java) / 处理结果
-
-当一个事件处理器处理完毕时, 它会返回一个处理结果来决定 `事件是否继续传播` 或 `它要不要继续订阅`.
-
-```java
-public static class SimpleListener implements IEventHandler<GroupChannelMessage> {
-    @Override
-    public @NotNull HandleResult handleMessage(@NotNull GroupChannelMessage event, @NotNull IEventChannel<GroupChannelMessage> channel) {
-        // some logic
-        return HandleResult.CONTINUE;
-    }
-}
-```
-
- - 当返回 `CANCELLED` 时, 事件的传递到此为止.
- - 当返回 `CONTINUE` 时, 事件向下一个处理器传递.
- - 当返回 `UNSUBSCRIBE` 时, 事件将继续传递, 但该处理器将不会再被调用(除非额外注册)
-
-**注意: 在 `scheduleType` 为 `ASYNC` 时, 这一功能不起作用.**
-
 ### [EventPriorities](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/event/EventPriorities.java) / 事件优先级
 
 很遗憾, 这一小节的主角并不是 `EventPriorites` 本身, 而是 `IEventChannel` 的属性 -- `priority`.
@@ -221,6 +198,19 @@ public static class SimpleListener implements IEventHandler<GroupChannelMessage>
 此外, `scheduleType` 也参与先后顺序, 分别是: `MONITOR` -> `MAIN` -> `ASYNC`
 
 **注意: 在 `scheduleType` 为 `ASYNC` 时, 这一功能无法保障先后顺序.**
+
+### [IEventPipeline]() / 事件管道
+
+![img.png](../../assets/event-pipeline.png)
+
+当一个事件被广播时，他首先会进入主线程上的 handler 链表挨个传递。每个 handler 都可以决定 `是否传递下去`, `是否标记(cancelled)`, `是否要取消订阅` 并且 `加入新的 handler`。
+借助 IEventPipeline, 你可以更加自由的控制事件的调度流程，但需要遵循一些规则：
+
+1. 总是使用 `IEventPipeline` 提供的 `channel()` 注册新的 handler，否则会出现不可预料的错误。
+2. 除非你的 handler 的 `scheduleType` 为 `ASYNC`，否则禁止将管道带跑到当前线程上下文之外
+3. handlers 并不是立即注册的，它们在事件传播完毕后统一进行注册。
+
+对于 `ASYNC` 的 handler，无法通过 pipeline 注册/取消 订阅。
 
 ## 构造 EventChannel
 
@@ -235,7 +225,7 @@ public class Example {
     public void example() {
         var channelFactory = bot.getDash().getChannelFactory();
         channelFactory.forMonitor("Message Preprocessor", 1)
-                .subscribeAlways((evt, chn) -> {});
+                .subscribeAlways((pipe, evt) -> {});
     }
 }
 ```
