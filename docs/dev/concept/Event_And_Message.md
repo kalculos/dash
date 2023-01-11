@@ -207,7 +207,7 @@ public class Example {
 借助 IEventPipeline, 你可以更加自由的控制事件的调度流程，但需要遵循一些规则：
 
 1. 总是使用 `IEventPipeline` 提供的 `channel()` 注册新的 handler，否则会出现不可预料的错误。
-2. 除非你的 handler 的 `scheduleType` 为 `ASYNC`，否则禁止将管道带跑到当前线程上下文之外
+2. pipeline 是不线程安全的。如果你把 pipeline 丢到目前线程之外（除非你是 `ASYNC`）可能会出现意料之外的结果
 3. handlers 并不是立即注册的，它们在事件传播完毕后统一进行注册。
 
 对于 `ASYNC` 的 handler，无法通过 pipeline 注册/取消 订阅。

@@ -48,8 +48,11 @@ public abstract class AbstractEventChannel<E extends AbstractEvent> implements I
     }
 
     @Override
-    public @NotNull IEventChannel<E> subscribe(@NotNull IEventHandler<E> handler) {
-        bus.register(this, handler);
+    public @NotNull IEventChannel<E> subscribe(boolean ignorecCancelled, @NotNull IEventHandler<E> handler) {
+        bus.register(this, ((pipeline, event) -> {
+            if (ignorecCancelled && pipeline.isCancelled()) pipeline.fireNext();
+            handler.handleMessage(pipeline, event);
+        }));
         return this;
     }
 
