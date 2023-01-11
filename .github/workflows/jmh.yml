@@ -1,10 +1,7 @@
-name: Unit Tests
+name: Benchmarks
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,10 +15,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
-        with:
-          arguments: test
       - name: Run JMH
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         if: startsWith(github.event.head_commit.message, '[JMH]')
