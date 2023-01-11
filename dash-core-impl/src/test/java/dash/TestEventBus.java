@@ -2,11 +2,13 @@ package dash;
 
 import dash.internal.event.DashEventBus;
 import dash.internal.event.channels.AcceptingChannel;
+import dash.internal.util.Threads;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutorService;
@@ -27,7 +29,10 @@ public class TestEventBus {
     public static void teardown() {
         stop = true;
     }
-
+    @BeforeAll
+    public static void setup(){
+        Threads.primaryThread = Thread.currentThread();
+    }
     @Test
     public void testEventDelivery() {
         bus = new DashEventBus(scheduler, executor);
