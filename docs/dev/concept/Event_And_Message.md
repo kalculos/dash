@@ -12,6 +12,7 @@ public class Example {
         bot.getChannel()
                 .subscribeAlways((pipeline,event)->{
                     // do something securely
+                    pipeline.fireNext();
                 });
     }
 }
@@ -43,9 +44,54 @@ public class Example {
 
 ### 使用注解注册
 
+除了使用流式 API 注册，你也可以用注解标注的方式注册。
 ```java
-//todo
+public class Example implements EventListener {
+    @EventHandler
+    public void onMessage(IEventPipeline<GroupChannelMessage> pipeline, GroupChannelMessage message){
+        if(message.containString("hello")){
+            message.reply("world!");
+        }
+        pipeline.fireNext();
+    }
+}
 ```
+
+随后只需要调用 `IEventRegistry#registerListeners` 即可完成注册。  
+更具体一些，你的监听器需要满足以下需求：
+
+1. 类需要实现用作标记的 `EventListener` 接口，监听器方法不可以是静态的 (`static`)
+2. 方法需要用 `@EventHandler` 标注，同时第一个参数必须是 `IEventPipeline` 或其子类型，第二个参数必须是 `AbstractEvent` 的类型。  
+  如果你用不到 pipeline 提供的 `channel()` 你也可以直接用 `IEventPipeline<?>` 作为第一个参数类型。
+3. 别忘了 `fireNext`, 否则事件到此为止。
+
+此外，`@EventHandler` 还可以配置参数:
+
+```java
+    @EventHandler(
+            ignoreCancelled = true,
+            priority = EventPriorities.EARLIEST,
+            scheduleType = ScheduleType.ASYNC,
+            name = "message handler"
+    )
+```
+
+参数的内容和 `IEventChannel` 的参数没有太大区别。需要注意，此类监听器注册时使用的是 bot 的 channel.  
+另外，对于 `AbstractMessage`，我们特地实现了泛型支持。
+
+```java
+public class Example implements EventListener {
+    @EventHandler
+    public void onMessage(IEventPipeline<?> pipeline, CompoundMessage<ChatChannel> message){
+        if(message.containString("hello")){
+            message.reply("world!");
+        }
+        pipeline.fireNext();
+    }
+}
+```
+
+此处 `CompoundMessage` 是 `AbstractMessage` 的子类型。当没有提供泛型参数时（或者是用 `?`），将不会对发送者类型做检查。
 
 ### 和 EventChannel 打交道
 
