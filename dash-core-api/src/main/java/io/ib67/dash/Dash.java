@@ -8,6 +8,8 @@ import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.internal.DashInstFiner;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
+import io.ib67.dash.user.IPermissionFactory;
+import io.ib67.dash.user.IUserManager;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.ExecutorService;
@@ -43,4 +45,8 @@ public interface Dash {
     IComponentSerializer defaultComponentSerializer();
 
     ISerializerRegistry getSerializerRegistry();
+
+    IPermissionFactory getPermissionFactory();
+
+    IUserManager getUserManager();
 }

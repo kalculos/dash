@@ -20,6 +20,10 @@ module dash.core.api {
     exports io.ib67.dash.event.bus;
     exports io.ib67.dash.serialization;
 
+    exports io.ib67.dash.tag;
+    exports io.ib67.dash.user;
+    exports io.ib67.dash.user.permission;
+
     requires kiwi.core;
     requires lombok;
     requires java.net.http;
