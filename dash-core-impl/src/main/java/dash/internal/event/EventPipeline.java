@@ -3,8 +3,6 @@ package dash.internal.event;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.handler.IEventPipeline;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import static java.util.Objects.requireNonNull;
@@ -12,9 +10,6 @@ import static java.util.Objects.requireNonNull;
 @Slf4j
 public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E> {
     private static final boolean ALLOW_ASYNC_UNSUBSCRIBE = Boolean.getBoolean("dash.asyncHandlers.mutatePipeline");
-    @Getter
-    @Setter
-    private boolean cancelled;
 
     private boolean subscribe = true;
     private final E event;

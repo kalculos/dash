@@ -3,6 +3,7 @@ package dash.internal.event;
 import dash.internal.event.channels.FilteringChannel;
 import dash.internal.event.channels.MappingChannel;
 import io.ib67.dash.event.AbstractEvent;
+import io.ib67.dash.event.ICancellable;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
@@ -50,7 +51,10 @@ public abstract class AbstractEventChannel<E extends AbstractEvent> implements I
     @Override
     public @NotNull IEventChannel<E> subscribe(boolean ignoreCancelled, @NotNull IEventHandler<E> handler) {
         bus.register(this, ((pipeline, event) -> {
-            if (ignoreCancelled && pipeline.isCancelled()) pipeline.fireNext();
+            if (ignoreCancelled && event instanceof ICancellable a && a.isCancelled()) {
+                pipeline.fireNext();
+                return;
+            }
             handler.handleMessage(pipeline, event);
         }));
         return this;
