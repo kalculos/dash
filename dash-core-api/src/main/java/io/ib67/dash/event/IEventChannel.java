@@ -108,14 +108,4 @@ public interface IEventChannel<E extends AbstractEvent> extends Comparable<IEven
             subscriber.handleMessage(pipeline,event);
         });
     }
-
-    default IEventChannel<E> subscribeCatchy(@NotNull IEventHandler<E> subscriber) {
-        if (!getScheduleType().isOrdered())
-            throw new IllegalStateException("subscribeCatchy doesn't support ASYNC EventChannels");
-        return this.subscribe(true, (a,b)->{
-            a.unsubscribe();
-            a.setCancelled(true);
-            subscriber.handleMessage(a,b);
-        });
-    }
 }
