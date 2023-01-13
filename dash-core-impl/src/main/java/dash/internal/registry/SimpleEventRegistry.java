@@ -2,6 +2,7 @@ package dash.internal.registry;
 
 import io.ib67.dash.AbstractBot;
 import io.ib67.dash.event.*;
+import io.ib67.dash.event.handler.EventHandlerAdapter;
 import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.dash.event.handler.IEventPipeline;
 import lombok.RequiredArgsConstructor;
@@ -34,27 +35,52 @@ public class SimpleEventRegistry implements IEventRegistry {
                 var channel = factory.from(handlerInfo.scheduleType(), handlerInfo.name(), handlerInfo.priority());
 
                 if (mh.type().parameterCount() != 3) { // this, pipeline, event
-                    log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
-                    log.warn("This won't be registered.");
-                    continue;
-                }
-                if (!AbstractEvent.class.isAssignableFrom(mh.type().parameterType(2))) {
-                    log.warn(listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " subscribes to an event that is not any subtypes of AbstractEvent.");
-                    if (Boolean.getBoolean("dash.allowIllegalEventType")) {
-                        log.warn("Due to dash.allowIllegalEventType is set, this will be registered normally.");
+                    if (mh.type().parameterCount() == 2) {
+                        if (!AbstractEvent.class.isAssignableFrom(mh.type().parameterType(1))) {
+                            log.warn(listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " subscribes to an event that is not any subtypes of AbstractEvent.");
+                            if (Boolean.getBoolean("dash.allowIllegalEventType")) {
+                                log.warn("Due to dash.allowIllegalEventType is set, this will be registered normally.");
+                            } else {
+                                log.warn("This won't be registered.");
+                                continue;
+                            }
+                        }
+                        channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(1)).subscribe(handlerInfo.ignoreCancelled(), ,new DelegatedSimpleHandler<>(mh,listener));
                     } else {
+                        log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
                         log.warn("This won't be registered.");
                         continue;
                     }
+                } else {
+                    if (!AbstractEvent.class.isAssignableFrom(mh.type().parameterType(2))) {
+                        log.warn(listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " subscribes to an event that is not any subtypes of AbstractEvent.");
+                        if (Boolean.getBoolean("dash.allowIllegalEventType")) {
+                            log.warn("Due to dash.allowIllegalEventType is set, this will be registered normally.");
+                        } else {
+                            log.warn("This won't be registered.");
+                            continue;
+                        }
+                    }
+                    if (!IEventPipeline.class.isAssignableFrom(mh.type().parameterType(1))) {
+                        log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
+                        log.warn("This won't be registered.");
+                        continue;
+                    }
+                    channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(2)).subscribe(handlerInfo.ignoreCancelled(), new DelegatedEventHandler<>(mh, listener));
                 }
-                if (!IEventPipeline.class.isAssignableFrom(mh.type().parameterType(1))) {
-                    log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
-                    log.warn("This won't be registered.");
-                    continue;
-                }
-                channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(0 + 1)).subscribe(handlerInfo.ignoreCancelled(), new DelegatedEventHandler<>(mh, listener));
-
             }
+        }
+    }
+
+    @RequiredArgsConstructor
+    private final class DelegatedSimpleHandler<T extends AbstractEvent> extends EventHandlerAdapter<T> {
+        private final MethodHandle mh;
+        private final EventListener listener;
+
+        @Override
+        @SneakyThrows
+        public void handleMessage(T event) {
+            mh.invoke(listener, event);
         }
     }
 

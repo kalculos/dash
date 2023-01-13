@@ -42,6 +42,22 @@ public class Example {
 其实, `IEventChannel` 的本质是一个 *处理事件的 UnaryOperator*. 在新的事件来临之前, 你注册时用的 `IEventChannel` 会提前将事件处理一遍, 然后才交给你.  
 而对于不需要处理的情况, 只需要传入 dash 的全局频道即可: `dash.getGlobalChannel()`
 
+## 只监听消息
+
+一般来说，每个事件处理器都要手动调用 `fireNext` 将事件传下去，但是我只是想监听事件，不做动作，有什么办法简化呢？  
+当然有。那就是使用 dash 提供的 `EventHandlerAdapter`.
+
+```java
+class SimpleListener extends EventHandlerAdapter<GroupChannelMessage>{
+        @Override
+        public void handleMessage(GroupChannelMessage event) {
+            event.reply("hello");
+        }
+    }
+```
+
+这同时也适用于下一节 `使用注解注册`
+
 ### 使用注解注册
 
 除了使用流式 API 注册，你也可以用注解标注的方式注册。
@@ -61,9 +77,10 @@ public class Example implements EventListener {
 更具体一些，你的监听器需要满足以下需求：
 
 1. 类需要实现用作标记的 `EventListener` 接口，监听器方法不可以是静态的 (`static`)
-2. 方法需要用 `@EventHandler` 标注，同时第一个参数必须是 `IEventPipeline` 或其子类型，第二个参数必须是 `AbstractEvent` 的类型。  
+2. 方法需要用 `@EventHandler` 标注，同时第一个参数必须是 `IEventPipeline` 或其子类，第二个参数必须是 `AbstractEvent` 的子类。  
   如果你用不到 pipeline 提供的 `channel()` 你也可以直接用 `IEventPipeline<?>` 作为第一个参数类型。
-3. 别忘了 `fireNext`, 否则事件到此为止。
+3. 如果你像 [只监听消息] 一节中提到的只想监听事件，那么请确保方法参数只有一个，并且是 `AbstractEvent` 或其子类。
+4. 如果你接受了 pipeline, 别忘了 `fireNext`, 否则事件到此为止。
 
 此外，`@EventHandler` 还可以配置参数:
 
