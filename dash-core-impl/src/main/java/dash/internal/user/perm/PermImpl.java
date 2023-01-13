@@ -31,6 +31,7 @@ public class PermImpl implements Permission {
                 return !reversed | current == null;
             };
         }
+        return permission.getNode().equals(getNode());
     }
 
     @Override
