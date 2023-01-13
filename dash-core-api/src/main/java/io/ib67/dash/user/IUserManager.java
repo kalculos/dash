@@ -6,8 +6,9 @@ import java.util.function.Consumer;
 
 public interface IUserManager {
 
-    Result<User,?> findUserById(long id);
-    Result<User,?> findUserByName(String name);
+    Result<? extends User,?> findUserById(long id);
 
     User createUser(Consumer<UserBuilder> configurator);
+
+    void saveUser(User user);
 }

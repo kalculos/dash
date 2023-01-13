@@ -4,4 +4,6 @@ module dash.core.impl {
     requires lombok;
     requires org.jetbrains.annotations;
     requires org.slf4j;
+
+    requires sproket.github.io.persism;
 }

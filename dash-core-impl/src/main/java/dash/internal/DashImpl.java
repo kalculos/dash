@@ -6,6 +6,8 @@ import dash.internal.registry.SimpleAdapterRegistry;
 import dash.internal.registry.SimpleEventRegistry;
 import dash.internal.serialization.RegularComponentSerializer;
 import dash.internal.serialization.SimpleSerializerRegistry;
+import dash.internal.user.SimplePermissionFactory;
+import dash.internal.user.UserManagerImpl;
 import io.ib67.dash.Dash;
 import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
@@ -14,8 +16,11 @@ import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
+import io.ib67.dash.user.IPermissionFactory;
+import io.ib67.dash.user.IUserManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.sf.persism.Session;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,8 +36,10 @@ public class DashImpl implements Dash {
     private final ScheduledExecutorService mainPool;
     private final IComponentSerializer componentSerializer;
     private final ISerializerRegistry serializerRegistry;
+    private final IPermissionFactory permissionFactory;
+    private final IUserManager userManager;
 
-    public DashImpl(ScheduledExecutorService main, ExecutorService async) {
+    public DashImpl(Session session, ScheduledExecutorService main, ExecutorService async) {
         asyncPool = async;
         mainPool = main;
         channelFactory = new SimpleEventChannelFactory(new DashEventBus(main, async));
@@ -42,17 +49,19 @@ public class DashImpl implements Dash {
         var _registry = new SimpleSerializerRegistry();
         componentSerializer = _registry;
         serializerRegistry = _registry;
+        permissionFactory = new SimplePermissionFactory();
+        userManager = new UserManagerImpl(session, permissionFactory, adapterRegistry);
         registerStandardCatCodes();
     }
 
     private void registerStandardCatCodes() {
         var regularSerializer = new RegularComponentSerializer();
-        serializerRegistry.registerComponentSerializer("TEXT",regularSerializer);
-        serializerRegistry.registerComponentSerializer("IMAGE",regularSerializer);
-        serializerRegistry.registerComponentSerializer("AT",regularSerializer);
-        serializerRegistry.registerComponentSerializer("FILE",regularSerializer);
-        serializerRegistry.registerComponentSerializer("AUDIO",regularSerializer);
-        serializerRegistry.registerComponentSerializer("STICKER",regularSerializer);
+        serializerRegistry.registerComponentSerializer("TEXT", regularSerializer);
+        serializerRegistry.registerComponentSerializer("IMAGE", regularSerializer);
+        serializerRegistry.registerComponentSerializer("AT", regularSerializer);
+        serializerRegistry.registerComponentSerializer("FILE", regularSerializer);
+        serializerRegistry.registerComponentSerializer("AUDIO", regularSerializer);
+        serializerRegistry.registerComponentSerializer("STICKER", regularSerializer);
     }
 
     @Override

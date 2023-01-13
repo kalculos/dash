@@ -13,7 +13,7 @@ public interface User extends Permissible, Taggable {
 
     String getName();
 
-    List<Contact> getKnownContacts();
+    List<? extends Contact> getKnownContacts();
 
     PermissionContext getDefaultContext();
 
