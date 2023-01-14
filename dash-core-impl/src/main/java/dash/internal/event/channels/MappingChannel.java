@@ -9,7 +9,7 @@ import java.util.function.Function;
 public class MappingChannel<IN extends AbstractEvent, OUT extends AbstractEvent> extends AbstractEventChannel<IN> {
     private final Function<? super IN, ? extends OUT> mapper;
 
-    @SuppressWarnings("unchecked") //todo fuck generics
+    @SuppressWarnings("unchecked")
     public MappingChannel(Object parent, Function mapper) {
         super((AbstractEventChannel<IN>) parent);
         Objects.requireNonNull(this.mapper = mapper);
