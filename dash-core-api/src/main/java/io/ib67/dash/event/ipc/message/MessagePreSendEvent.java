@@ -15,7 +15,4 @@ public class MessagePreSendEvent<M extends AbstractMessage<?>> extends MessageIp
         super(local, time, message);
     }
 
-    public MessagePostSendEvent<M> toPostSend() {
-        return new MessagePostSendEvent<>(local, time, message);
-    }
 }
