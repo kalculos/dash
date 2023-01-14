@@ -5,6 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * A {@link Lifecycle} is an object that subscribe to server status changes, and react them.
  */
+@SuppressWarnings("EmptyMethod")
 @ApiStatus.AvailableSince("0.1.0")
 public interface Lifecycle {
     /**

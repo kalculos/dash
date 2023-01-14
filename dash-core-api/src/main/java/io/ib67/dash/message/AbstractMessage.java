@@ -58,7 +58,11 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
     }
 
     public static class Context {
-        private Map<Enum<?>, Object> context = new HashMap<>();
+        private final Map<String, Object> context = new HashMap<>();
+        
+        public void set(String key,Object value){
+            context.put(key,value);
+        }
 
         /**
          * Gets a nullable data from context map.<br />
@@ -69,22 +73,22 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
          * @return data, maybe null
          */
         @SuppressWarnings("unchecked")
-        public <T> T getAs(Enum<?> enu) {
+        public <T> T getAs(String enu) {
             return (T) context.get(enu);
         }
 
         /**
          * Some boilerplate.
          **/
-        public String getString(Enum<?> enu) {
+        public String getString(String enu) {
             return this.getAs(enu);
         }
 
-        public int getInt(Enum<?> enu) {
+        public int getInt(String enu) {
             return getAs(enu);
         }
 
-        public Object get(Enum<?> enu) {
+        public Object get(String enu) {
             return getAs(enu);
         }
     }

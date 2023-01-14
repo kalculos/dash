@@ -75,7 +75,7 @@ public final class MathUtil {
      */
     public static int compare(final int x, final int y) {
         // do not subtract for comparison, it could overflow
-        return x < y ? -1 : (x > y ? 1 : 0);
+        return Integer.compare(x, y);
     }
 
     /**
@@ -90,6 +90,6 @@ public final class MathUtil {
      * </ul>
      */
     public static int compare(long x, long y) {
-        return (x < y) ? -1 : (x > y) ? 1 : 0;
+        return Long.compare(x, y);
     }
 }

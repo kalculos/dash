@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestEventChannel {
-    IEventChannel<AbstractEvent> channel = new AcceptingChannel<>(
+    final IEventChannel<AbstractEvent> channel = new AcceptingChannel<>(
             ScheduleType.MAIN,
             null,
             0,

@@ -54,7 +54,7 @@ public class UserManagerImpl implements IUserManager {
             if (result == null) return Result.err();
             try (var w = new ClosableLock(cacheWriteLock)) {
                 var user = new UserImpl(result.getId(),
-                        result.getPermissions().stream().map(it -> it.getPerm()).map(permissionFactory::parseNode).toList(),
+                        result.getPermissions().stream().map(PermData::getPerm).map(permissionFactory::parseNode).toList(),
                         result.getKnownContacts());
                 for (TagData tag : result.getTags()) {
                     user.addTag(Tag.of(tag.getTag()));

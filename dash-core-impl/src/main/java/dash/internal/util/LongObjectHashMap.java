@@ -88,8 +88,7 @@ public class LongObjectHashMap<V>
 
     @Override
     public void putAll(@NotNull Map<? extends Long, ? extends V> sourceMap) {
-        if (sourceMap instanceof LongObjectHashMap) {
-            LongObjectHashMap source = (LongObjectHashMap)sourceMap;
+        if (sourceMap instanceof LongObjectHashMap source) {
             for (int i = 0; i < source.values.length; ++i) {
                 V sourceValue = (V) source.values[i];
                 if (sourceValue == null) continue;
@@ -152,12 +151,13 @@ public class LongObjectHashMap<V>
 
     @Override
     public Collection<V> values() {
-        return new AbstractCollection<V>(){
+        return new AbstractCollection<>() {
 
             @Override
             public Iterator<V> iterator() {
-                return new Iterator<V>(){
+                return new Iterator<V>() {
                     final PrimitiveIterator iter;
+
                     {
                         this.iter = new PrimitiveIterator();
                     }
@@ -200,10 +200,9 @@ public class LongObjectHashMap<V>
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof LongObjectMap)) {
+        if (!(obj instanceof LongObjectMap other)) {
             return false;
         }
-        LongObjectMap other = (LongObjectMap)obj;
         if (this.size != other.size()) {
             return false;
         }

@@ -62,7 +62,7 @@ public class DashEventBus implements IEventBus {
             return;
         }
         var node = handlers.get(type);
-        var pipeline = new EventPipeline<E>(event, (RegisteredHandler<E>) node);
+        var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node);
         pipeline.fireNext();
     }
 }

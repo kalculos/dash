@@ -29,7 +29,7 @@ public class PermImpl implements Permission {
                 return !reversed | (current == null || current.equals(impl.current));
             }else if(impl.parent.startsWith(parent)){
                 return !reversed | current == null;
-            };
+            }
         }
         return permission.getNode().equals(getNode());
     }

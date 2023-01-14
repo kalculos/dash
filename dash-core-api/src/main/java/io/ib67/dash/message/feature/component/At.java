@@ -47,6 +47,7 @@ public record At(
 
     @Override
     public String toString() {
-        return "@" + contact.getName() + " ";
+        return contact != null ? "@" + contact.getName() + " " :
+                display != null ? "@"+display : "@"+platformId;
     }
 }

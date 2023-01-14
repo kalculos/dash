@@ -134,15 +134,11 @@ public class CatCodes {
             var begin = buffer.position();
             while (buffer.hasRemaining()) {
                 var b = buffer.get();
-                switch (b) {
-                    case (byte) ']' -> {
-                        //end
-                        return code;
-                    }
-                    default -> {
-                        buffer.position(buffer.position() - 1);
-                        readProperty(code);
-                    }
+                if (b == (byte) ']') {//end
+                    return code;
+                } else {
+                    buffer.position(buffer.position() - 1);
+                    readProperty(code);
                 }
             }
             return code;
@@ -165,7 +161,6 @@ public class CatCodes {
                         var value = URLDecoder.decode(readString(begin, buffer.position() - 1), StandardCharsets.UTF_8);
                         if (isHead) {
                             cc.type = value;
-                            isHead = false;
                         } else {
                             cc.prop(key, value);
                         }

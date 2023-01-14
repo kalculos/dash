@@ -7,6 +7,7 @@ import lombok.Getter;
 import java.time.Instant;
 
 public abstract class MessageIpcEvent<M extends AbstractMessage<?>> extends IpcEvent {
+    @SuppressWarnings("CanBeFinal")
     @Getter // immutable by default.
     protected M message;
     public MessageIpcEvent(boolean local, Instant time,M message) {

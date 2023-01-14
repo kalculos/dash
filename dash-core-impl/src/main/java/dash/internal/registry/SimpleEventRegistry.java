@@ -45,7 +45,7 @@ public class SimpleEventRegistry implements IEventRegistry {
                                 continue;
                             }
                         }
-                        channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(1)).subscribe(handlerInfo.ignoreCancelled() ,new DelegatedSimpleHandler<>(mh,listener));
+                        channel.filterForType((Class<? extends AbstractEvent>) mh.type().parameterType(1)).subscribe(handlerInfo.ignoreCancelled() , new DelegatedSimpleHandler<>(mh, listener));
                     } else {
                         log.warn("Cannot register " + listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " as a listener, please refer to documentation for solution.");
                         log.warn("This won't be registered.");
@@ -73,7 +73,7 @@ public class SimpleEventRegistry implements IEventRegistry {
     }
 
     @RequiredArgsConstructor
-    private final class DelegatedSimpleHandler<T extends AbstractEvent> extends EventHandlerAdapter<T> {
+    private static final class DelegatedSimpleHandler<T extends AbstractEvent> extends EventHandlerAdapter<T> {
         private final MethodHandle mh;
         private final EventListener listener;
 
