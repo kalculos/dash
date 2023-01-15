@@ -49,8 +49,16 @@ public class DashEventBus implements IEventBus {
         deliverEvent(MONITOR, event);
         if (Threads.isPrimaryThread()) {
             deliverEvent(MAIN, event);
+            whenDone.accept(event);
         } else {
-            if (handlers.containsKey(MAIN)) mainExecutor.submit(() -> deliverEvent(MAIN, event));
+            if (handlers.containsKey(MAIN)) {
+                mainExecutor.submit(() -> {
+                    deliverEvent(MAIN, event);
+                    whenDone.accept(event);
+                });
+            }else{
+                whenDone.accept(event);
+            }
         }
         if (handlers.containsKey(ASYNC))
             mainExecutor.submit(() -> asyncExecutor.submit(() -> deliverEvent(ASYNC, event)));

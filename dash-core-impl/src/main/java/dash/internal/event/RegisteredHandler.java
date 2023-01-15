@@ -6,14 +6,15 @@ import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.handler.IEventHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 final class RegisteredHandler<E extends AbstractEvent> implements Comparable<RegisteredHandler<?>> {
     private final @NotNull IEventChannel<E> channel;
     private final @NotNull IEventHandler<E> handler;
-    RegisteredHandler<E> next;
-    RegisteredHandler<E> prev;
+    @Nullable RegisteredHandler<E> next;
+    @Nullable RegisteredHandler<E> prev;
 
     RegisteredHandler(
             @NotNull IEventChannel<E> channel,
@@ -40,6 +41,7 @@ final class RegisteredHandler<E extends AbstractEvent> implements Comparable<Reg
                 next.insertSorted(handler);
             }else{
                 next = handler;
+                handler.prev = this; // append
             }
             return;
         }
