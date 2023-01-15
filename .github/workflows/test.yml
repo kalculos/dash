@@ -21,13 +21,15 @@ jobs:
       #        uses: github/codeql-action/init@v2
       #        with:
       #          languages: java
-      - name: Build with Infer
-        uses: docker://ghcr.io/martinwitt/infer-train:master
-        with:
-          build-command: "./gradlew build"
-          use-annotations: "true"
-      - name: tree
-        run: "tree"
+#      - name: Build with Infer
+#        uses: docker://ghcr.io/martinwitt/infer-train:master
+#        with:
+#          build-command: "./gradlew build"
+#          use-annotations: "true"
+      - name: Build with Gradle
+        run: | 
+          "chmod +x ./gradlew"
+          "./gradlew build"
       - name: Add coverage to PR (dash-core-impl)
         uses: madrapps/jacoco-report@v1.3
         with:
