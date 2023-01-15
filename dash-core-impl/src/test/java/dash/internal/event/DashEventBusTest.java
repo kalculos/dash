@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static dash.test.SharedResources.asyncPool;
 import static dash.test.SharedResources.mainLoop;
@@ -66,15 +67,90 @@ class DashEventBusTest {
         var mainChannel = channelFactory.forMain();
         var result = new boolean[1];
         mainChannel.subscribeAlways((pipe, evt) -> {
-            pipe.channel().subscribeOnce((a, b) -> {
-                result[0] = true;
-            });
+            pipe.channel().subscribeOnce((a, b) -> result[0] = true);
             pipe.fireNext();
         });
         forceSleep(1);
         bus.postEvent(new TestEventA(0), it -> {
         });
         await("subhandler is registered").atMost(ofSeconds(1)).until(() -> result[0]);
+    }
+
+    @Test
+    public void testPipelineUnsubscribe() {
+        var mainChannel = channelFactory.forMain();
+        AtomicInteger result = new AtomicInteger(0);
+        mainChannel
+                .filterForType(TestEventA.class)
+                .subscribeAlways((pipe, evt) -> {
+                    result.getAndIncrement();
+                    pipe.unsubscribe();
+                });
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0), it -> {
+        });
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0), it -> {
+        });
+        await("pipeline is unsubscribed").atMost(ofSeconds(1)).until(() -> result.get() == 1);
+    }
+
+    @Test
+    public void testPipelineFireNext1() {
+        var mainChannel = channelFactory.forMain();
+        var result = new AtomicInteger(0);
+        mainChannel
+                .filterForType(TestEventA.class)
+                .subscribeAlways((pipe, evt) -> result.getAndIncrement());
+        mainChannel
+                .filterForType(TestEventA.class)
+                .subscribeAlways((pipe, evt) -> result.getAndIncrement());
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0), it -> {
+        });
+        await("pipeline is not fired").atMost(ofSeconds(1)).until(() -> result.get() == 1);
+    }
+
+    @Test
+    public void testPipelineFireNext2() {
+        var mainChannel = channelFactory.forMain();
+        var result = new AtomicInteger(0);
+        mainChannel
+                .filterForType(TestEventA.class)
+                .subscribeAlways((pipe, evt) -> {
+                    result.getAndIncrement();
+                    pipe.fireNext();
+                });
+        mainChannel
+                .filterForType(TestEventA.class)
+                .subscribeAlways((pipe, evt) -> result.getAndIncrement());
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0), it -> {
+        });
+        await("pipeline is fired").atMost(ofSeconds(1)).until(() -> result.get() == 2);
+    }
+
+    @Test
+    public void testPipelineFireNext3() {
+        var mainChannel = channelFactory.forMain();
+        AtomicInteger result = new AtomicInteger(0);
+
+        mainChannel
+                .filterForType(TestEventA.class)
+                .subscribeAlways((pipe, evt) -> {
+                    try {
+                        pipe.unsubscribe();
+                        pipe.unsubscribe();
+                    } catch (IllegalStateException e) {
+                        result.getAndIncrement();
+                    }
+                });
+
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0), it -> {
+        });
+
+        await("test pipeline exception").atMost(ofSeconds(1)).until(() -> result.get() == 1);
     }
 
     @Test
