@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 public class UserBuilder {
     private String username;
-    private List<Permission> initialPermissions;
-    private List<Tag> tags;
+    private List<Permission> initialPermissions = List.of();
+    private List<Tag> tags = List.of();
     private Contact initialContact;
 }
