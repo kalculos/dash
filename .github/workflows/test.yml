@@ -32,6 +32,14 @@ jobs:
           arguments: test
       #      - name: Perform CodeQL Analysis
       #        uses: github/codeql-action/analyze@v2
+      - name: Upload to Coverity
+        uses: checkity/upload@v1
+        with:
+          # Comma separated list of coverage files to upload, supports globs.
+          file-pattern: '**/jacocoTestReport.xml'
+
+          # The GitHub token used to validate repository access when uploading coverage reports.
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run JMH
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         if: startsWith(github.event.head_commit.message, '[JMH]')
