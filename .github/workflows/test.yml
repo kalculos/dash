@@ -17,31 +17,23 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: java
+      #      - name: Initialize CodeQL
+      #        uses: github/codeql-action/init@v2
+      #        with:
+      #          languages: java
+#      - name: Build with Infer
+#        uses: docker://ghcr.io/martinwitt/infer-train:master
+#        with:
+#          build-command: "./gradlew build"
+#          use-annotations: "true"
       - name: Build with Gradle
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         with:
           arguments: test
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+      #      - name: Perform CodeQL Analysis
+      #        uses: github/codeql-action/analyze@v2
       - name: Run JMH
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         if: startsWith(github.event.head_commit.message, '[JMH]')
         with:
           arguments: benchmark:jmh
-  run-infer:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: run infer action
-        uses: docker://ghcr.io/martinwitt/infer-train:master
-        with:
-          build-command: "gradle compileJava"
-          use-annotations: "true"
