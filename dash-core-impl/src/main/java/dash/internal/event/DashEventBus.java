@@ -54,11 +54,11 @@ public class DashEventBus implements IEventBus {
             return;
         }
         if (Threads.isPrimaryThread()) {
-            whenDone.accept(result.and(deliverEvent(MAIN, event)));
+            whenDone.accept(deliverEvent(MAIN, event));
         } else {
             if (handlers.containsKey(MAIN)) {
                 mainExecutor.submit(() -> {
-                    whenDone.accept(result.and(deliverEvent(MAIN, event)));
+                    whenDone.accept(deliverEvent(MAIN, event));
                 });
             }else{
                 whenDone.accept(result);
@@ -75,6 +75,7 @@ public class DashEventBus implements IEventBus {
         }
         var node = handlers.get(type);
         var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node);
-        return Kiwi.runAny(pipeline::fireNext).and(Result.ok(event));
+        var result = Kiwi.runAny(pipeline::fireNext);
+        return result.isFailed() ? (Result<E, ?>) result : Result.ok(event);
     }
 }
