@@ -6,6 +6,8 @@ import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
+import io.ib67.kiwi.Kiwi;
+import io.ib67.kiwi.Result;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -45,19 +47,21 @@ public class DashEventBus implements IEventBus {
     }
 
     @Override
-    public <E extends AbstractEvent> void postEvent(E event, Consumer<E> whenDone) {
-        deliverEvent(MONITOR, event);
+    public <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E,?>> whenDone) {
+        var result = deliverEvent(MONITOR, event);
+        if(result.isFailed()){
+            whenDone.accept(result);
+            return;
+        }
         if (Threads.isPrimaryThread()) {
-            deliverEvent(MAIN, event);
-            whenDone.accept(event);
+            whenDone.accept(result.and(deliverEvent(MAIN, event)));
         } else {
             if (handlers.containsKey(MAIN)) {
                 mainExecutor.submit(() -> {
-                    deliverEvent(MAIN, event);
-                    whenDone.accept(event);
+                    whenDone.accept(result.and(deliverEvent(MAIN, event)));
                 });
             }else{
-                whenDone.accept(event);
+                whenDone.accept(result);
             }
         }
         if (handlers.containsKey(ASYNC))
@@ -65,12 +69,12 @@ public class DashEventBus implements IEventBus {
     }
 
     @SuppressWarnings("unchecked")
-    private <E extends AbstractEvent> void deliverEvent(ScheduleType type, E event) {
+    private <E extends AbstractEvent> Result<E,?> deliverEvent(ScheduleType type, E event) {
         if (!handlers.containsKey(type)) {
-            return;
+            return Result.ok(event);
         }
         var node = handlers.get(type);
         var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node);
-        pipeline.fireNext();
+        return Kiwi.runAny(pipeline::fireNext).and(Result.ok(event));
     }
 }
