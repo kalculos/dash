@@ -1,6 +1,8 @@
 package dash.internal.event;
 
+import dash.test.event.CancellableEvent;
 import dash.test.event.TestEventA;
+import dash.test.event.TestEventB;
 import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.bus.IEventBus;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +62,37 @@ class DashEventBusTest {
     }
 
     @Test
+    public void testRegisterInHandler() {
+        var mainChannel = channelFactory.forMain();
+        var result = new boolean[1];
+        mainChannel.subscribeAlways((pipe, evt) -> {
+            pipe.channel().subscribeOnce((a, b) -> {
+                result[0] = true;
+            });
+            pipe.fireNext();
+        });
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0), it -> {
+        });
+        await("subhandler is registered").atMost(ofSeconds(1)).until(() -> result[0]);
+    }
+
+    @Test
+    public void testPublishInHandler() {
+        var mainChannel = channelFactory.forMain();
+        var result = new boolean[1];
+        mainChannel.subscribeOnce((a, b) -> {
+            a.channel().getBus().postEvent(new TestEventB(0), it -> {
+            });
+        });
+        mainChannel.filterForType(TestEventB.class).subscribeOnce((a, b) -> result[0] = true);
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0), it -> {
+        });
+        await("publish in handler").atMost(ofSeconds(1)).until(() -> result[0]);
+    }
+
+    @Test
     public void testPostCallback() {
         var succeed = new boolean[1];
         bus.postEvent(new TestEventA(0), it -> succeed[0] = true);
@@ -93,7 +126,18 @@ class DashEventBusTest {
         });
         forceSleep(2);
         System.out.println(Arrays.toString(time));
-        assertTrue(time[0] < time[1],"MONITOR < MAIN");
-        assertTrue(time[1]<time[2], "MAIN < ASYNC");
+        assertTrue(time[0] < time[1], "MONITOR < MAIN");
+        assertTrue(time[1] < time[2], "MAIN < ASYNC");
+    }
+
+    @Test
+    public void testIgnoreCancelled() {
+        var result = new boolean[1];
+        channelFactory.forMonitor().filterForType(CancellableEvent.class).subscribe(false, (a, b) -> b.setCancelled(true));
+        channelFactory.forMonitor().subscribe(true, (a, b) -> result[0] = true);
+        forceSleep(1);
+        bus.postEvent(new CancellableEvent(), it -> {
+        });
+        await().atMost(ofSeconds(1)).until(() -> !result[0]);
     }
 }
