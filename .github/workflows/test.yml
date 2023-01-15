@@ -29,18 +29,18 @@ jobs:
       - name: Build with Gradle
         run: "./gradlew build"
       - name: Tree new bee
-        run: "tree"
+        run: "pwd"
       - name: Add coverage to PR (dash-core-impl)
         uses: madrapps/jacoco-report@v1.3
         with:
-          paths: ${{ env.GITHUB_WORKSPACE }}/dash-core-impl/build/reports/jacoco/test/jacocoTestReport.xml
+          paths: ${{ github.workspace }}/dash-core-impl/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 70
           min-coverage-changed-files: 60
       - name: Add coverage to PR (dash-core-api)
         uses: madrapps/jacoco-report@v1.3
         with:
-          paths: ${{ env.GITHUB_WORKSPACE }}/dash-core-api/build/reports/jacoco/test/jacocoTestReport.xml
+          paths: ${{ github.workspace }}/dash-core-api/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 70
           min-coverage-changed-files: 60
