@@ -29,7 +29,7 @@ jobs:
       - name: Build with Gradle
         run: "./gradlew build"
       - name: Tree new bee
-        run: "tree"
+        run: "pwd"
       - name: Add coverage to PR (dash-core-impl)
         uses: madrapps/jacoco-report@v1.3
         with:
