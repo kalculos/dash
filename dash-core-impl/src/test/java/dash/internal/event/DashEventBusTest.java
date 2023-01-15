@@ -89,14 +89,13 @@ class DashEventBusTest {
         forceSleep(1);
         bus.postEvent(new TestEventA(0), it -> {
         });
-        forceSleep(1);
         bus.postEvent(new TestEventA(0), it -> {
         });
         await("pipeline is unsubscribed").atMost(ofSeconds(1)).until(() -> result.get() == 1);
     }
 
     @Test
-    public void testPipelineFireNext1() {
+    public void testPipelineWithoutFireNext() {
         var mainChannel = channelFactory.forMain();
         var result = new AtomicInteger(0);
         mainChannel
@@ -112,7 +111,7 @@ class DashEventBusTest {
     }
 
     @Test
-    public void testPipelineFireNext2() {
+    public void testPipelineWithFireNext() {
         var mainChannel = channelFactory.forMain();
         var result = new AtomicInteger(0);
         mainChannel
@@ -131,7 +130,7 @@ class DashEventBusTest {
     }
 
     @Test
-    public void testPipelineFireNext3() {
+    public void testPipelineFireNextException() {
         var mainChannel = channelFactory.forMain();
         AtomicInteger result = new AtomicInteger(0);
 
