@@ -2,6 +2,7 @@ package dash.internal.event;
 
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
+import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.handler.IEventPipeline;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,20 +24,22 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
 
     @Override
     public void unsubscribe() {
-        subscribe = false;
+        if (subscribe) {
+            subscribe = false;
+        } else {
+            throw new IllegalStateException("Listener is already unsubscribed!");
+        }
+        if (!ALLOW_ASYNC_UNSUBSCRIBE && node.channel().getScheduleType() == ScheduleType.ASYNC) {
+            throw new IllegalStateException("Async handlers cannot be unregistered");
+        }
+        // unsubscribed. (current node)
+        // assertion: the 1st node (which is an empty node) never unsubscribe itself.
+        node.prev.next = node.next; // remove it from them
+        if (node.next != null) node.next.prev = node.prev;
     }
 
     @Override
     public void fireNext() {
-        // check for status
-        if (!subscribe) {
-            if (!ALLOW_ASYNC_UNSUBSCRIBE) {
-                throw new IllegalArgumentException("Async handlers cannot be unregistered");
-            }
-            // unsubscribed. (current node)
-            // assertion: the 1st node (which is an empty node) never unsubscribe itself.
-            node.prev.next = node.next; // remove it from them
-        }
         if (node.next != null) {
             node = node.next;
             subscribe = true;
@@ -48,7 +51,7 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
             try {
                 ((RegisteredHandler<AbstractEvent>) node).handler().handleMessage((IEventPipeline<AbstractEvent>) this, handleResult);
             } catch (Throwable t) {
-                log.warn("Cannot invoke handler " + node.handler(),t);
+                log.warn("Cannot invoke handler " + node.handler(), t);
                 fireNext();
             }
         }
