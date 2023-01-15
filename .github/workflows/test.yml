@@ -32,7 +32,7 @@ jobs:
         if: startsWith(github.event.head_commit.message, '[JMH]')
         with:
           arguments: benchmark:jmh
-  run-infer:
+  infer-and-coverage:
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -45,3 +45,19 @@ jobs:
         with:
           build-command: "gradle compileJava"
           use-annotations: "true"
+      - name: Add coverage to PR (dash-core-impl)
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          paths: ${{ github.workspace }}/dash-core-impl/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 70
+          min-coverage-changed-files: 60
+      - name: Add coverage to PR (dash-core-api)
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          paths: ${{ github.workspace }}/dash-core-api/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 70
+          min-coverage-changed-files: 60
