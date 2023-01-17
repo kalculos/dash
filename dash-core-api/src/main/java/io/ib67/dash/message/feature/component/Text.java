@@ -1,6 +1,7 @@
 package io.ib67.dash.message.feature.component;
 
 import io.ib67.dash.message.feature.IMessageComponent;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 @RequiredArgsConstructor
 @ApiStatus.AvailableSince("0.1.0")
 public class Text implements IMessageComponent {
+    @Getter
     private final String content;
 
     @Override
