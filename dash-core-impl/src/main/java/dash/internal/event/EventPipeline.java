@@ -1,5 +1,6 @@
 package dash.internal.event;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.ScheduleType;
@@ -17,6 +18,7 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
     //private final List<Runnable> pendingRegistrations = new ArrayList<>();
     private RegisteredHandler<E> node;
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EventPipeline(E event, RegisteredHandler<E> node) {
         requireNonNull(this.event = event);
         requireNonNull(this.node = node);

@@ -1,5 +1,6 @@
 package io.ib67.dash.message.feature;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.ib67.dash.message.AbstractMessage;
 import io.ib67.dash.message.IMessageSource;
 import io.ib67.dash.message.MessageChain;
@@ -22,6 +23,7 @@ public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S
      */
     private final MessageChain components;
 
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public CompoundMessage(S source, long id, MessageChain components) {
         super(source, id);
         Objects.requireNonNull(this.components = components);

@@ -28,4 +28,5 @@ module dash.core.api {
     requires lombok;
     requires org.jetbrains.annotations;
     requires sproket.github.io.persism;
+    requires com.github.spotbugs.annotations;
 }
