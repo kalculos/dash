@@ -41,7 +41,8 @@ public record At(
         }
         return CatCodes.ofProps(
                 "platform", platformId,
-                "target", platformUid
+                "target", platformUid,
+                "display",display
         ).type("AT").toString();
     }
 

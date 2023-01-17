@@ -102,7 +102,9 @@ public class CatCodes {
                         }
                     }
                     case (byte) '[' -> {
-                        result.add(saveLiteral(begin, buffer.position() - 1));
+                        if(buffer.position() - 1 - begin != 0){
+                            result.add(saveLiteral(begin, buffer.position() - 1));
+                        }
                         result.add(readCatCode());
                         begin = buffer.position(); // ]a
                     }
