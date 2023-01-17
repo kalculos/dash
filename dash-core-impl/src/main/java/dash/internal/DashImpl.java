@@ -7,7 +7,6 @@ import dash.internal.registry.SimpleEventRegistry;
 import dash.internal.serialization.RegularComponentSerializer;
 import dash.internal.serialization.SimpleSerializerRegistry;
 import dash.internal.user.SimplePermissionFactory;
-import dash.internal.user.UserManagerImpl;
 import io.ib67.dash.Dash;
 import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
@@ -50,7 +49,7 @@ public class DashImpl implements Dash {
         componentSerializer = _registry;
         serializerRegistry = _registry;
         permissionFactory = new SimplePermissionFactory();
-        userManager = new UserManagerImpl(session, permissionFactory, adapterRegistry);
+        userManager = null;//new UserManagerImpl(session, permissionFactory, adapterRegistry);
         registerStandardCatCodes();
     }
 
