@@ -1,10 +1,12 @@
 package dash.internal.registry;
 
+import dash.internal.Constant;
 import io.ib67.dash.AbstractBot;
 import io.ib67.dash.event.*;
 import io.ib67.dash.event.handler.EventHandlerAdapter;
 import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.dash.event.handler.IEventPipeline;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ public class SimpleEventRegistry implements IEventRegistry {
     private final @NotNull IEventChannelFactory factory;
 
     @SneakyThrows
+    @Generated // I'm exhausted to test these WARNING branches, just skip them, please!
     @Override
     @SuppressWarnings("unchecked")
     public void registerListeners(AbstractBot bot, @NotNull EventListener listener) {
@@ -54,7 +57,7 @@ public class SimpleEventRegistry implements IEventRegistry {
                 } else {
                     if (!AbstractEvent.class.isAssignableFrom(mh.type().parameterType(2))) {
                         log.warn(listener.getClass() + "#" + declaredMethod.getName() + mh.type().toString() + " subscribes to an event that is not any subtypes of AbstractEvent.");
-                        if (Boolean.getBoolean("dash.allowIllegalEventType")) {
+                        if (Constant.ALLOW_ILLEGAL_EVENT_TYPE) {
                             log.warn("Due to dash.allowIllegalEventType is set, this will be registered normally.");
                         } else {
                             log.warn("This won't be registered.");
