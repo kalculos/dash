@@ -40,7 +40,9 @@ public class PermImpl implements Permission {
             return false;
         }
         if (perm instanceof PermImpl p) {
-            return matches(p);
+            return p.reversed & reversed
+                    && p.parent.equals(parent)
+                    && p.current!=null ? p.current.equals(current) : current == null;
         }
         return perm.getNode().equals(getNode());
     }
