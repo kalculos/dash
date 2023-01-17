@@ -4,6 +4,7 @@ import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.serialization.ISerializerRegistry;
 import io.ib67.dash.util.CatCodes;
+import io.ib67.kiwi.option.Option;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -21,13 +22,14 @@ public class SimpleSerializerRegistry implements ISerializerRegistry, IComponent
     }
 
     @Override
-    public IComponentSerializer getComponentSerializer(String codeType) {
-        return serializers.get(codeType.toUpperCase());
+    public Option<IComponentSerializer> getComponentSerializer(String codeType) {
+        return Option.of(serializers.get(codeType.toUpperCase()));
     }
 
 
     @Override
     public @NotNull IMessageComponent deserialize(CatCodes.CatCode code) throws CatCodes.InvalidCatCodeException {
+        if(code == null) throw new CatCodes.InvalidCatCodeException("code is null");
         return serializers.getOrDefault(code.getType(), FailureSerializer.INSTANCE).deserialize(code);
     }
 
