@@ -14,7 +14,12 @@ public class SimplePermissionFactory implements IPermissionFactory {
 
     @Override
     public Permission parseNode(String node) {
-        return cache.computeIfAbsent(node.trim().toLowerCase(),it->registerPermission(it,null));
+        return parseNode0(node,null);
+    }
+
+    @Override
+    public Permission getNode(String node) {
+        return cache.computeIfAbsent(node,this::parseNode);
     }
 
     @Override
@@ -23,6 +28,12 @@ public class SimplePermissionFactory implements IPermissionFactory {
         if(cache.containsKey(node)){
             log.warn(node+" is already registered.");
         }
+        var perm = parseNode0(node,description);
+        cache.put(node,perm);
+        return perm;
+    }
+
+    private Permission parseNode0(String node, String description){
         boolean reversed = false;
         String parent;
         String current = null;
@@ -40,8 +51,6 @@ public class SimplePermissionFactory implements IPermissionFactory {
                 current = null;
             }
         }
-        var perm = new PermImpl(parent,reversed,current,description);
-        cache.put(node,perm);
-        return perm;
+        return new PermImpl(parent,reversed,current,description);
     }
 }
