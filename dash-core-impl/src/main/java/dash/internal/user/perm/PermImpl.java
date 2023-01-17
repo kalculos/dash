@@ -19,16 +19,18 @@ public class PermImpl implements Permission {
     /**
      * This : a.b.*
      * Target: a.b.c.d
+     *
      * @param permission
      * @return
      */
     @Override
     public boolean matches(Permission permission) {
-        if(permission instanceof PermImpl impl){
-            if(parent.equals(impl.parent)){
-                return !reversed | (current == null || current.equals(impl.current));
-            }else if(impl.parent.startsWith(parent)){
-                return !reversed | current == null;
+        if (permission instanceof PermImpl impl) {
+            if (parent.equals(impl.parent)) {
+                return reversed == impl.reversed == // same direction, reverse result
+                        (current == null || current.equals(impl.current)); // match node
+            } else if (impl.parent.startsWith(parent)) {
+                return reversed == impl.reversed == (current == null);
             }
         }
         return permission.getNode().equals(getNode());
@@ -40,15 +42,20 @@ public class PermImpl implements Permission {
             return false;
         }
         if (perm instanceof PermImpl p) {
-            return p.reversed & reversed
+            return p.reversed == reversed
                     && p.parent.equals(parent)
-                    && p.current!=null ? p.current.equals(current) : current == null;
+                    && p.current != null ? p.current.equals(current) : current == null;
         }
         return perm.getNode().equals(getNode());
     }
 
     @Override
     public @NotNull String getNode() {
-        return reversed ? "-" : "" + (current == null ? parent + ".*" : parent + "." + current);
+        return (reversed ? "-" : "") + parent + (current == null ? ".*" : "." + current);
+    }
+
+    @Override
+    public String toString() {
+        return getNode();
     }
 }
