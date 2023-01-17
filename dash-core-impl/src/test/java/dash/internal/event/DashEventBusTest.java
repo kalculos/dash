@@ -215,4 +215,18 @@ class DashEventBusTest {
         });
         await().atMost(ofSeconds(1)).until(() -> !result[0]);
     }
+
+    @Test
+    public void testAsyncUnsubscribe(){
+        var result = new boolean[2];
+        channelFactory.forAsync()
+                .subscribeOnce((a,b)->{
+                    result[0] = true;
+                }).subscribeAlways((a,b)->{
+                    result[1] = true;
+                });
+        forceSleep(1);
+        bus.postEvent(new CancellableEvent(),it->{});
+        await().atMost(ofSeconds(1)).until(()-> !result[0] && result[1]);
+    }
 }

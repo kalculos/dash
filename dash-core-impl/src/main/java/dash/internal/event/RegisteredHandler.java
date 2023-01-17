@@ -8,8 +8,6 @@ import io.ib67.dash.event.handler.IEventHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 final class RegisteredHandler<E extends AbstractEvent> implements Comparable<RegisteredHandler<?>> {
     private final @NotNull IEventChannel<E> channel;
     private final @NotNull IEventHandler<E> handler;
@@ -80,19 +78,6 @@ final class RegisteredHandler<E extends AbstractEvent> implements Comparable<Reg
         return handler;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (RegisteredHandler) obj;
-        return Objects.equals(this.channel, that.channel) &&
-                Objects.equals(this.handler, that.handler);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(channel, handler);
-    }
 
     @Override
     public String toString() {

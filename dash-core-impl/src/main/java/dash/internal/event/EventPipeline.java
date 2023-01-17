@@ -6,11 +6,11 @@ import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.handler.IEventPipeline;
 import lombok.extern.slf4j.Slf4j;
 
+import static dash.internal.Constant.ALLOW_ASYNC_UNSUBSCRIBE;
 import static java.util.Objects.requireNonNull;
 
 @Slf4j
 public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E> {
-    private static final boolean ALLOW_ASYNC_UNSUBSCRIBE = Boolean.getBoolean("dash.asyncHandlers.mutatePipeline");
 
     private boolean subscribe = true;
     private final E event;
