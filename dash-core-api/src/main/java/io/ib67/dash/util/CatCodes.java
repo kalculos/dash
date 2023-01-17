@@ -124,7 +124,7 @@ public class CatCodes {
             buffer.position(begin);
             buffer.get(dst, 0, len);
             buffer.position(now);
-            return new String(dst);
+            return new String(dst,StandardCharsets.UTF_8);
         }
 
         private CatCode saveLiteral(int begin, int dst) {

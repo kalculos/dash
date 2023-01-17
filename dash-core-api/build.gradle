@@ -11,6 +11,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     api 'org.slf4j:slf4j-api:2.0.6'
     api 'io.github.sproket:persism:2.2.0'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.0.1'
 }
 
 test {

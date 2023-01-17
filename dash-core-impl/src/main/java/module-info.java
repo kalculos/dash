@@ -6,4 +6,5 @@ module dash.core.impl {
     requires org.slf4j;
 
     requires sproket.github.io.persism;
+    requires com.github.spotbugs.annotations;
 }

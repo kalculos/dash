@@ -18,12 +18,12 @@ import java.lang.reflect.Modifier;
 @Slf4j
 @RequiredArgsConstructor
 public class SimpleEventRegistry implements IEventRegistry {
-    private final IEventChannelFactory factory;
+    private final @NotNull IEventChannelFactory factory;
 
     @SneakyThrows
     @Override
     @SuppressWarnings("unchecked")
-    public void registerListeners(AbstractBot bot, EventListener listener) {
+    public void registerListeners(AbstractBot bot, @NotNull EventListener listener) {
         var lookup = MethodHandles.privateLookupIn(listener.getClass(), MethodHandles.lookup());
         for (Method declaredMethod : listener.getClass().getDeclaredMethods()) {
             if (declaredMethod.isAnnotationPresent(EventHandler.class)) {
@@ -74,8 +74,8 @@ public class SimpleEventRegistry implements IEventRegistry {
 
     @RequiredArgsConstructor
     private static final class DelegatedSimpleHandler<T extends AbstractEvent> extends EventHandlerAdapter<T> {
-        private final MethodHandle mh;
-        private final EventListener listener;
+        private final @NotNull MethodHandle mh;
+        private final @NotNull EventListener listener;
 
         @Override
         @SneakyThrows
