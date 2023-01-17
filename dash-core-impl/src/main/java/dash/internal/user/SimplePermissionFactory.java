@@ -14,12 +14,12 @@ public class SimplePermissionFactory implements IPermissionFactory {
 
     @Override
     public Permission parseNode(String node) {
-        return cache.computeIfAbsent(node,it->registerPermission(it,null));
+        return cache.computeIfAbsent(node.trim().toLowerCase(),it->registerPermission(it,null));
     }
 
     @Override
     public Permission registerPermission(String node, String description) {
-        node = node.trim();
+        node = node.trim().toLowerCase();
         if(cache.containsKey(node)){
             log.warn(node+" is already registered.");
         }
