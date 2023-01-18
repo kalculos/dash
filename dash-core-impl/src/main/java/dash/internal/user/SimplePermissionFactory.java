@@ -12,8 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SimplePermissionFactory implements IPermissionFactory {
     private final Map<String, Permission> cache = new ConcurrentHashMap<>();
 
+    public SimplePermissionFactory(){
+        cache.put("*",new PermImpl("",false,null,"Any"));
+        cache.put("-*",new PermImpl("",true,null,"Never"));
+    }
+
     @Override
     public Permission parseNode(String node) {
+        node = node.trim();
+        if(node.equals("*") || node.equals("-*")) return getNode(node);
         return parseNode0(node,null);
     }
 
@@ -34,6 +41,9 @@ public class SimplePermissionFactory implements IPermissionFactory {
     }
 
     private Permission parseNode0(String node, String description){
+        if(node.isEmpty()){
+            throw new IllegalArgumentException("node is an empty string");
+        }
         boolean reversed = false;
         String parent;
         String current = null;
@@ -46,6 +56,9 @@ public class SimplePermissionFactory implements IPermissionFactory {
             parent = node;
         }else{
             parent = node.substring(0,delimiter);
+            if(parent.isEmpty()){
+                throw new IllegalArgumentException("parent cannot be empty");
+            }
             current = node.substring(delimiter+1);
             if("*".equals(current) || current.isEmpty()){
                 current = null;

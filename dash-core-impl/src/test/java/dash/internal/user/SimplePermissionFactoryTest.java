@@ -4,8 +4,7 @@ import io.ib67.dash.user.IPermissionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SimplePermissionFactoryTest {
     private IPermissionFactory permissionFactory;
@@ -30,5 +29,13 @@ class SimplePermissionFactoryTest {
 
     private void testParseEqual(String s) {
         assertEquals(s,permissionFactory.parseNode(s).getNode());
+    }
+
+    @Test
+    public void testParseSpecial(){
+        assertThrows(IllegalArgumentException.class,() ->permissionFactory.parseNode("."));
+        assertThrows(IllegalArgumentException.class,() ->permissionFactory.parseNode(""));
+        assertTrue(permissionFactory.parseNode("*").matches(permissionFactory.parseNode("any")));
+        assertFalse(permissionFactory.parseNode("-*").matches(permissionFactory.parseNode("any")));
     }
 }
