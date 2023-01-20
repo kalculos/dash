@@ -34,7 +34,7 @@ subprojects {
             version = "1.18.24"
         }
 
-        task delombok(type: DelombokTask, dependsOn: compileJava) {
+        tasks.register("delombok", DelombokTask.class) {
             ext.outputDir = file("$buildDir/delombok")
             outputs.dir(outputDir)
             sourceSets.main.java.srcDirs.each {
@@ -45,6 +45,7 @@ subprojects {
                 outputDir.deleteDir()
             }
         }
+
 /*
   Javadoc
  */
