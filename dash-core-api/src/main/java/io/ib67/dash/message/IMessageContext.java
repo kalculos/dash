@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * Getting or putting data from MessageContext is very fast, however you'll have to waste some memory when you have a large amount of context keys.<br>
  * Usually you don't need to care about that memory issue. An Object[128] is actually small if compared to your business objects.
  */
-public interface MessageContext {
+public interface IMessageContext {
 
     /**
      * Put a value indexed by the key into the context.
