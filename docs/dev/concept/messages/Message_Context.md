@@ -19,13 +19,15 @@ var contextKey = ContextKey.<T>of("the_identifier_of_your_key");
 ```java
     @Subscribe
     public void onMessage(GroupChannelMessage message){
-        message.getContext().put(SOME_CONTEXT_KEY,someValue);
-        var something = message.hasContext(MY_CONTEXT_KEY) ? message.getContext().get(MY_CONTEXT_KEY) : null;
+        message.getContext().put(SOME_CONTEXT_KEY,someValue); // 存放
+        var something = message.hasContext(MY_CONTEXT_KEY) ? message.getContext().get(MY_CONTEXT_KEY) : null; // 获取
         // or message.getContext().has(MY_CONTEXT_KEY)
     }
 ```
 
 `ContextKey` 的类型参数（也就是泛型）和你存入的数据类型应该保持一致。dash 并不会对其做运行时类型检查，如果存入了类型不匹配的数据在取出时可能会产生未定义的行为。
+
+然后，在此处放入 context 的对象就能被下游的处理器得到了，你可以在库中共享你的 `ContextKey` 以此让他们接入得到你的附加信息。
 
 # ContextKey
 
