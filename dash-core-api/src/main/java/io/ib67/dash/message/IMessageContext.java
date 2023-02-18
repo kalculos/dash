@@ -16,30 +16,30 @@ public interface IMessageContext {
      * @param key index
      * @param value to be stored
      */
-    void put(@NotNull ContextKey key, Object value);
+    <V> void put(@NotNull ContextKey<V> key, V value);
 
     /**
      * Get an object from the context. Improper use may lead to {@link ClassCastException}.<br />
-     * Example: <code>context.<Order>get(KEY);</code>
+     * Example: <code>context.get(KEY);</code>
      * @param key the key
      * @return user object or null
-     * @param <T> type of yoor object
+     * @param <T> type of value
      */
-    <T> T get(@NotNull ContextKey key);
+    <T> T get(@NotNull ContextKey<T> key);
 
     /**
      * Check if the context contains something related to the key.
      * @param key key
      * @return if found. Also return false if you set the value to null.
      */
-    boolean has(@NotNull ContextKey key);
+    boolean has(@NotNull ContextKey<?> key);
 
     /**
      * Remove something from the context.
      * @param key the key
      * @return if there was a key-value pair present.
      */
-    default boolean remove(@NotNull ContextKey key){
+    default boolean remove(@NotNull ContextKey<?> key){
         boolean hasPreviously = has(key);
         put(key,null);
         return hasPreviously;
