@@ -10,11 +10,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.Objects.requireNonNull;
 
 /**
- * ContextKeys are used to index a value in a context from {@link AbstractMessage}. They are immutable and shared between instances.
+ * ContextKeys are used to index a value in a context from {@link AbstractMessage}. They are immutable and shared between instances.<br />
+ * Also see {@link IMessageContext}
+ * @param <T> the type of the value index by this key, only for type-safe checks.
  */
 @ToString
-public class ContextKey {
-    private static final Map<String, ContextKey> keys = new ConcurrentHashMap<>();
+public class ContextKey<T> {
+    private static final Map<String, ContextKey<?>> keys = new ConcurrentHashMap<>();
     private static final AtomicInteger CURRENT_INDEX = new AtomicInteger();
     @Getter
     private final String name;
@@ -26,8 +28,8 @@ public class ContextKey {
         requireNonNull(name = s.toLowerCase());
     }
 
-    public static ContextKey of(String key) {
-        return keys.computeIfAbsent(key, s -> new ContextKey(s, CURRENT_INDEX.getAndIncrement()));
+    public static ContextKey<?> of(String key) {
+        return keys.computeIfAbsent(key, s -> new ContextKey<>(s, CURRENT_INDEX.getAndIncrement()));
     }
 
     public static int getCurrentIndex(){
