@@ -7,6 +7,9 @@ import io.ib67.dash.message.internal.ArrayMessageContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A {@link AbstractMessage} is an object that is composed of {@code context}, {@code sender} and {@code content}. <br />
@@ -53,6 +56,10 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
     @Override
     public PlatformAdapter getPlatform() {
         return source.getPlatform();
+    }
+
+    public boolean hasContext(@Nullable ContextKey<?> key){
+        return context.has(requireNonNull(key));
     }
 
     @Override
