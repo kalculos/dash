@@ -3,12 +3,10 @@ package io.ib67.dash.message;
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.adapter.PlatformRelated;
 import io.ib67.dash.event.AbstractEvent;
+import io.ib67.dash.message.internal.ArrayMessageContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A {@link AbstractMessage} is an object that is composed of {@code context}, {@code sender} and {@code content}. <br />
@@ -27,19 +25,19 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
     protected final S source;
 
     /**
-     * The context of message, created lazily by default.
+     * The context of the message
      */
-    @Getter(lazy = true)
-    private final Context context = new Context();
+    @Getter
+    private final IMessageContext context = new ArrayMessageContext();
 
     /**
-     * Universal message id.
+     * An universal message id.
      */
     @Getter
     protected final long id;
 
     /**
-     * To quickly reply
+     * Some utility for writing reply codes quickly
      *
      * @param message response
      * @return if succeed
@@ -55,42 +53,6 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
     @Override
     public PlatformAdapter getPlatform() {
         return source.getPlatform();
-    }
-
-    public static class Context {
-        private final Map<String, Object> context = new HashMap<>();
-        
-        public void set(String key,Object value){
-            context.put(key,value);
-        }
-
-        /**
-         * Gets a nullable data from context map.<br />
-         * Example: {@code context.<Order>getAs(KEY_USER_ORDER);}
-         *
-         * @param enu enum
-         * @param <T> type of data.
-         * @return data, maybe null
-         */
-        @SuppressWarnings("unchecked")
-        public <T> T getAs(String enu) {
-            return (T) context.get(enu);
-        }
-
-        /**
-         * Some boilerplate.
-         **/
-        public String getString(String enu) {
-            return this.getAs(enu);
-        }
-
-        public int getInt(String enu) {
-            return getAs(enu);
-        }
-
-        public Object get(String enu) {
-            return getAs(enu);
-        }
     }
 
     @Override
