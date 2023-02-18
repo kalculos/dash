@@ -18,6 +18,10 @@ public class Example {
 }
 ```
 
+> **Note**  
+> 编写业务逻辑时，请不要漏了 `pipeline.fireNext()`, 此方法将事件传递下去。  
+> 或者使用 [EventHandlerAdapter](https://github.com/kalculos/dash/blob/main/docs/dev/concept/Event_And_Message.md#%E5%8F%AA%E7%9B%91%E5%90%AC%E6%B6%88%E6%81%AF)
+
 ## 订阅事件
 
 有两种方式可以订阅事件, 一种是通过 `IEventChannel`(事件管道), 而另一种是直接和 `IEventBus` 打交道.
@@ -124,6 +128,7 @@ public class Example {
                 .map(it -> (GroupMessage) it)
                 .subscribeAlways((pipeline,message)->{
                     // do something securely
+                    pipeline.fireNext(); // don't forget to do this!
                 });
     }
 }
@@ -158,10 +163,12 @@ public class Example {
                 .filterForType(GroupChannelMessage.class) // filter + map
                 .subscribeAlways((pipeline,event) -> {
                     event.reply("Hello!");
+                    pipeline.fireNext();
                 })
                 .filter(it -> it.containString("hello!"))
                 .subscribeAlways((pipeline,event) -> {
                     event.reply("World!");
+                    pipeline.fireNext();
                 });
     }
 }
@@ -273,7 +280,11 @@ public class Example {
 2. pipeline 是不线程安全的。如果你把 pipeline 丢到目前线程之外（除非你是 `ASYNC`）可能会出现意料之外的结果
 3. handlers 并不是立即注册的，它们在事件传播完毕后统一进行注册。
 
-对于 `ASYNC` 的 handler，无法通过 pipeline 注册/取消 订阅。
+对于 `ASYNC` 的 handler，无法通过 pipeline 注册/取消 订阅。  
+
+> **Note**  
+> 此处再提醒一次，当 `IEventPipeline` 交到你手上的时候，请务必将事件传递下去。  
+> 对于 `EventHandlerAdapter` 和使用只有一个参数的方法注解注册的用户可以不用担心这件事情，因为他们已经帮你做好了。  
 
 > **WARNING**  
 > 
