@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ArrayMessageContextTest {
-    private static final ContextKey<Integer> KEY_A = ContextKey.of("a");
-    private static final ContextKey<Integer> KEY_B = ContextKey.of("b");
+    private static final ContextKey<Integer> KEY_A = ContextKey.of("c");
+    private static final ContextKey<Integer> KEY_B = ContextKey.of("d");
     @Test
     public void testContextPut(){
         var context = new ArrayMessageContext();
