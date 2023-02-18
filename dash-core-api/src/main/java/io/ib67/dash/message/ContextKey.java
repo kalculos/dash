@@ -25,11 +25,12 @@ public class ContextKey<T> {
 
     public ContextKey(String s, int index) {
         this.index = index;
-        requireNonNull(name = s.toLowerCase());
+        requireNonNull(name = s);
     }
 
-    public static ContextKey<?> of(String key) {
-        return keys.computeIfAbsent(key, s -> new ContextKey<>(s, CURRENT_INDEX.getAndIncrement()));
+    @SuppressWarnings("unchecked")
+    public static <T> ContextKey<T> of(String key) {
+        return (ContextKey<T>) keys.computeIfAbsent(key.toLowerCase(), s -> new ContextKey<>(s, CURRENT_INDEX.getAndIncrement()));
     }
 
     public static int getCurrentIndex(){
