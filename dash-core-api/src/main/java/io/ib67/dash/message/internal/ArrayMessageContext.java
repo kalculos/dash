@@ -33,14 +33,14 @@ public class ArrayMessageContext implements IMessageContext {
     }
 
     @Override
-    public void put(@NotNull ContextKey key, Object value) {
+    public <V> void put(@NotNull ContextKey<V> key, V value) {
         if (shouldResize(key.getIndex())) resize(key.getIndex());
         context[key.getIndex()] = value;
     }
 
     @Override
     @SuppressWarnings("unchecked") // user took the responsibility to handle CCEs.
-    public <T> T get(@NotNull ContextKey key) {
+    public <T> T get(@NotNull ContextKey<T> key) {
         if (shouldResize(key.getIndex())) { // the index is bigger than the array
             return null;
         }
@@ -48,7 +48,7 @@ public class ArrayMessageContext implements IMessageContext {
     }
 
     @Override
-    public boolean has(@NotNull ContextKey key) {
+    public boolean has(@NotNull ContextKey<?> key) {
         return get(key) != null;
     }
 }
