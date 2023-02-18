@@ -188,7 +188,7 @@ public class Example {
 2. *构成* 消息由三个部分构成:  
   - **消息源([IMessageSource](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/message/IMessageSource.java))** -- 谁发送的消息?  
     得到了消息源, 你还可以往消息源里面发回消息.  
-  - **上下文([IMessageContext](https://github.com/kalculos/dash/blob/511c221074bc5ebec548b00a2b6b8bf20dede55e/dash-core-api/src/main/java/io/ib67/dash/message/IMessageContext.java))** -- 在你之前的消息处理器给你提供的附加信息，例如 `role`, `platform`
+  - **[上下文](./messages/Message_Context.md)** -- 在你之前的消息处理器给你提供的附加信息，例如 `role`, `platform`
   - **内容** 虽然 `AbstractMessage` 没有定义内容的字段, 但是消息一般来说带有某种内容.  
     实际上事件一般也有, 但是这里要强调一下, 因为消息本身就是承载平台信息的事件
 
