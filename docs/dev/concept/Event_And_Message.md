@@ -18,6 +18,10 @@ public class Example {
 }
 ```
 
+> **Note**  
+> 编写业务逻辑时，请不要漏了 `pipeline.fireNext()`, 此方法将事件传递下去。  
+> 或者使用 [EventHandlerAdapter](https://github.com/kalculos/dash/blob/main/docs/dev/concept/Event_And_Message.md#%E5%8F%AA%E7%9B%91%E5%90%AC%E6%B6%88%E6%81%AF)
+
 ## 订阅事件
 
 有两种方式可以订阅事件, 一种是通过 `IEventChannel`(事件管道), 而另一种是直接和 `IEventBus` 打交道.
@@ -120,10 +124,11 @@ public class Example {
     @Test
     public void example(){
         bot.getChannel()
-                .filter(it -> it instanceof GroupMessage)
-                .map(it -> (GroupMessage) it)
+                .filter(it -> it instanceof GroupChannelMessage)
+                .map(it -> (GroupChannelMessage) it)
                 .subscribeAlways((pipeline,message)->{
                     // do something securely
+                    pipeline.fireNext(); // don't forget to do this!
                 });
     }
 }
@@ -134,8 +139,8 @@ public class Example {
 而在这段代码中, 
 ```patch
     bot.getChannel()
-+       .filter(it -> it instanceof GroupMessage)
-+       .map(it -> (GroupMessage) it)
++       .filter(it -> it instanceof GroupChannelMessage)
++       .map(it -> (GroupChannelMessage) it)
         .subscribeAlways((pipeline,message)->{
 ```
 
@@ -158,10 +163,12 @@ public class Example {
                 .filterForType(GroupChannelMessage.class) // filter + map
                 .subscribeAlways((pipeline,event) -> {
                     event.reply("Hello!");
+                    pipeline.fireNext();
                 })
                 .filter(it -> it.containString("hello!"))
                 .subscribeAlways((pipeline,event) -> {
                     event.reply("World!");
+                    pipeline.fireNext();
                 });
     }
 }
@@ -181,7 +188,7 @@ public class Example {
 2. *构成* 消息由三个部分构成:  
   - **消息源([IMessageSource](https://github.com/kalculos/dash/blob/main/dash-core-api/src/main/java/io/ib67/dash/message/IMessageSource.java))** -- 谁发送的消息?  
     得到了消息源, 你还可以往消息源里面发回消息.  
-  - **上下文([AbstractMessage.Context](https://github.com/kalculos/dash/blob/511c221074bc5ebec548b00a2b6b8bf20dede55e/dash-core-api/src/main/java/io/ib67/dash/message/AbstractMessage.java#L59))** -- 上游(处理器,适配器)给你提供的附加信息
+  - **[上下文](./messages/Message_Context.md)** -- 在你之前的消息处理器给你提供的附加信息，例如 `role`, `platform`
   - **内容** 虽然 `AbstractMessage` 没有定义内容的字段, 但是消息一般来说带有某种内容.  
     实际上事件一般也有, 但是这里要强调一下, 因为消息本身就是承载平台信息的事件
 
@@ -273,7 +280,11 @@ public class Example {
 2. pipeline 是不线程安全的。如果你把 pipeline 丢到目前线程之外（除非你是 `ASYNC`）可能会出现意料之外的结果
 3. handlers 并不是立即注册的，它们在事件传播完毕后统一进行注册。
 
-对于 `ASYNC` 的 handler，无法通过 pipeline 注册/取消 订阅。
+对于 `ASYNC` 的 handler，无法通过 pipeline 注册/取消 订阅。  
+
+> **Note**  
+> 此处再提醒一次，当 `IEventPipeline` 交到你手上的时候，请务必将事件传递下去。  
+> 对于 `EventHandlerAdapter` 和使用只有一个参数的方法注解注册的用户可以不用担心这件事情，因为他们已经帮你做好了。  
 
 > **WARNING**  
 > 
