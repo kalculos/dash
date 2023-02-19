@@ -6,7 +6,7 @@ import dash.internal.registry.SimpleAdapterRegistry;
 import dash.internal.registry.SimpleEventRegistry;
 import dash.internal.serialization.RegularComponentSerializer;
 import dash.internal.serialization.SimpleSerializerRegistry;
-import dash.internal.user.SimplePermissionFactory;
+import dash.internal.user.SimplePermissionRegistry;
 import io.ib67.dash.Dash;
 import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
@@ -15,7 +15,7 @@ import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
-import io.ib67.dash.user.IPermissionFactory;
+import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class DashImpl implements Dash {
     private final ScheduledExecutorService mainPool;
     private final IComponentSerializer componentSerializer;
     private final ISerializerRegistry serializerRegistry;
-    private final IPermissionFactory permissionFactory;
+    private final IPermissionRegistry permissionFactory;
     private final IUserManager userManager;
 
     public DashImpl(Session session, ScheduledExecutorService main, ExecutorService async) {
@@ -48,7 +48,7 @@ public class DashImpl implements Dash {
         var _registry = new SimpleSerializerRegistry();
         componentSerializer = _registry;
         serializerRegistry = _registry;
-        permissionFactory = new SimplePermissionFactory();
+        permissionFactory = new SimplePermissionRegistry();
         userManager = null;//new UserManagerImpl(session, permissionFactory, adapterRegistry);
         registerStandardCatCodes();
     }

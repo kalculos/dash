@@ -20,6 +20,11 @@ public abstract class AbstractBot implements Lifecycle {
     @Getter
     protected final BotContext context;
 
+    /**
+     * If you want to use minimal-console for initialization, make sure that you have a constructor with only {@link BotContext} as your argument.
+     * @param name
+     * @param context
+     */
     protected AbstractBot(String name, BotContext context) {
         this.name = name;
         this.context = context;

@@ -12,9 +12,6 @@ subprojects {
     apply plugin: 'io.franzbecker.gradle-lombok'
     apply plugin: 'jacoco'
     afterEvaluate {
-        test {
-            useJUnitPlatform()
-        }
 /*
   Java
  */

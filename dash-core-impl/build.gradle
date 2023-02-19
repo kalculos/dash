@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'java-library'
 }
 
 group parent.group
@@ -11,7 +12,7 @@ dependencies {
     testImplementation(project(":dash-core-api"))
     compileOnly 'com.google.auto.service:auto-service:1.0.1'
     annotationProcessor 'com.google.auto.service:auto-service:1.0.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'io.github.sproket:persism:2.2.0'
     testImplementation 'com.h2database:h2:2.1.214'

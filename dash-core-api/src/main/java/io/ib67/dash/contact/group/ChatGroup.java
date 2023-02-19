@@ -33,6 +33,6 @@ public abstract class ChatGroup extends Contact {
 
     @Override
     public String toString() {
-        return "Group(" + uid + "/" + idOnPlatform + " on " + platform.getName() + ")";
+        return "Group(" + uid + "/" + platformUserId + " on " + platform.getName() + ")";
     }
 }

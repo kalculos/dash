@@ -1,7 +1,7 @@
 package dash.internal.user;
 
 import dash.internal.user.perm.PermImpl;
-import io.ib67.dash.user.IPermissionFactory;
+import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.permission.Permission;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class SimplePermissionFactory implements IPermissionFactory {
+public class SimplePermissionRegistry implements IPermissionRegistry {
     private final Map<String, Permission> cache = new ConcurrentHashMap<>();
 
-    public SimplePermissionFactory(){
+    public SimplePermissionRegistry(){
         cache.put("*",new PermImpl("",false,null,"Any"));
         cache.put("-*",new PermImpl("",true,null,"Never"));
     }

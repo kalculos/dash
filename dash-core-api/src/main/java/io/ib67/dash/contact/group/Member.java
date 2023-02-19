@@ -27,6 +27,6 @@ public abstract class Member extends Contact implements IMessageSource {
 
     @Override
     public String toString() {
-        return "Member(" + uid + "/" + idOnPlatform + " on " + platform.getName() + ")";
+        return "Member(" + uid + "/" + platformUserId + " on " + platform.getName() + ")";
     }
 }

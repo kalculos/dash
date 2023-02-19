@@ -1,16 +1,16 @@
 package dash.internal.user;
 
-import io.ib67.dash.user.IPermissionFactory;
+import io.ib67.dash.user.IPermissionRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimplePermissionFactoryTest {
-    private IPermissionFactory permissionFactory;
+    private IPermissionRegistry permissionFactory;
     @BeforeEach
     public void setup(){
-        permissionFactory = new SimplePermissionFactory();
+        permissionFactory = new SimplePermissionRegistry();
     }
     @Test
     public void testPermCache(){

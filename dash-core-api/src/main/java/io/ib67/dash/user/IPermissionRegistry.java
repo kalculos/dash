@@ -2,7 +2,7 @@ package io.ib67.dash.user;
 
 import io.ib67.dash.user.permission.Permission;
 
-public interface IPermissionFactory {
+public interface IPermissionRegistry {
     Permission parseNode(String node);
 
     /**
