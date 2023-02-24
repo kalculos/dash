@@ -36,4 +36,9 @@ public class ContextKey<T> {
     public static int getCurrentIndex(){
         return CURRENT_INDEX.get();
     }
+
+    @Override
+    public int hashCode() {
+        return index;
+    }
 }
