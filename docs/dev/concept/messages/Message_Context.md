@@ -28,15 +28,3 @@ var contextKey = ContextKey.<T>of("the_identifier_of_your_key");
 `ContextKey` 的类型参数（也就是泛型）和你存入的数据类型应该保持一致。dash 并不会对其做运行时类型检查，如果存入了类型不匹配的数据在取出时可能会产生未定义的行为。
 
 然后，在此处放入 context 的对象就能被下游的处理器得到了，你可以在库中共享你的 `ContextKey` 以此让他们接入得到你的附加信息。
-
-# ContextKey
-
-`ContextKey` 和现有的 `IMessageContext` 底层都是基于数组和自增索引实现的，因此从消息中查询/写入索引都非常快。  
-然而，每当新的 `ContextKey` 被创建时，这个索引都会被递增，从而可能会让 `IMessageContext` 实现数组初始容量增大，最终造成内存浪费。  
-
-因此，请不要大量创建 `ContextKey` 用在一些没有意义的事情上（比如 `key-12345` 这样的程序自动生成的序列被自动的注册为 `ContextKey` ）。
-开发时也并不需要太担心内存浪费问题，因为 `Object[]` 只是一团指针，而正常的，良好设计的程序一般也不会有 32768 个 `ContextKey`。（虽然默认值是32）
-
-此外，现有的 `IMessageContext` 实现会在创建时候按照 `ContextKey.getCurrentIndex()` 的返回值来决定数组大小，如果出现了意外的情况（例如新增了 key ）会进行扩增，
-因此，请总是尽可能早的初始化你的所有 ContextKey.（例如作为常量使用）。
-
