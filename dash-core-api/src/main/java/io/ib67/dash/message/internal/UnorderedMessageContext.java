@@ -27,4 +27,11 @@ public class UnorderedMessageContext implements IMessageContext {
     public boolean has(@NotNull ContextKey<?> key) {
         return context.containsKey(key);
     }
+
+    @Override
+    public boolean remove(@NotNull ContextKey<?> key) {
+        if(!has(key))return false;
+        context.remove(key);
+        return true;
+    }
 }
