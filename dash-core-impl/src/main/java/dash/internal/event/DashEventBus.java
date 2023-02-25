@@ -1,13 +1,14 @@
 package dash.internal.event;
 
+import dash.internal.registry.SimpleEventRegistry;
 import dash.internal.util.Threads;
-import io.ib67.dash.event.AbstractEvent;
-import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.ScheduleType;
+import io.ib67.dash.AbstractBot;
+import io.ib67.dash.event.*;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.kiwi.Kiwi;
 import io.ib67.kiwi.Result;
+import lombok.Getter;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -25,15 +26,26 @@ public class DashEventBus implements IEventBus {
 
     private final ScheduledExecutorService mainExecutor;
 
+    @Getter
+    private final IEventChannelFactory channelFactory;
+    private final IEventRegistry delegatedRegistry;
+
     public DashEventBus(ScheduledExecutorService mainLoop, ExecutorService asyncLoop) {
         requireNonNull(this.mainExecutor = mainLoop);
         requireNonNull(this.asyncExecutor = asyncLoop);
+        channelFactory = new SimpleEventChannelFactory(this);
+        delegatedRegistry = new SimpleEventRegistry(channelFactory);
+    }
+
+    @Override
+    public void registerListeners(AbstractBot bot, EventListener listener) {
+        delegatedRegistry.registerListeners(bot, listener);
     }
 
     @Override
     public <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler) {
-        if(!Threads.isPrimaryThread()){
-            mainExecutor.submit(()->register(channel, handler));
+        if (!Threads.isPrimaryThread()) {
+            mainExecutor.submit(() -> register(channel, handler));
             return;
         }
         if (!handlers.containsKey(channel.getScheduleType())) {
@@ -47,9 +59,9 @@ public class DashEventBus implements IEventBus {
     }
 
     @Override
-    public <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E,?>> whenDone) {
+    public <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E, ?>> whenDone) {
         var result = deliverEvent(MONITOR, event);
-        if(result.isFailed()){
+        if (result.isFailed()) {
             whenDone.accept(result);
             return;
         }
@@ -60,7 +72,7 @@ public class DashEventBus implements IEventBus {
                 mainExecutor.submit(() -> {
                     whenDone.accept(deliverEvent(MAIN, event));
                 });
-            }else{
+            } else {
                 whenDone.accept(result);
             }
         }
@@ -69,7 +81,7 @@ public class DashEventBus implements IEventBus {
     }
 
     @SuppressWarnings("unchecked")
-    private <E extends AbstractEvent> Result<E,?> deliverEvent(ScheduleType type, E event) {
+    private <E extends AbstractEvent> Result<E, ?> deliverEvent(ScheduleType type, E event) {
         if (!handlers.containsKey(type)) {
             return Result.ok(event);
         }

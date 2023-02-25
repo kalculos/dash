@@ -1,7 +1,6 @@
 package dash.internal;
 
 import dash.internal.event.DashEventBus;
-import dash.internal.event.SimpleEventChannelFactory;
 import dash.internal.registry.SimpleAdapterRegistry;
 import dash.internal.registry.SimpleEventRegistry;
 import dash.internal.serialization.RegularComponentSerializer;
@@ -11,8 +10,8 @@ import io.ib67.dash.Dash;
 import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.IEventRegistry;
+import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
 import io.ib67.dash.user.IPermissionRegistry;
@@ -28,7 +27,6 @@ import java.util.concurrent.ScheduledExecutorService;
 @AllArgsConstructor
 public class DashImpl implements Dash {
     private final IAdapterRegistry adapterRegistry;
-    private final IEventChannelFactory channelFactory;
     private final IEventChannel<? extends AbstractEvent> globalChannel;
     private final IEventRegistry eventRegistry;
     private final ExecutorService asyncPool;
@@ -37,11 +35,13 @@ public class DashImpl implements Dash {
     private final ISerializerRegistry serializerRegistry;
     private final IPermissionRegistry permissionFactory;
     private final IUserManager userManager;
+    private final IEventBus bus;
 
     public DashImpl(Session session, ScheduledExecutorService main, ExecutorService async) {
         asyncPool = async;
         mainPool = main;
-        channelFactory = new SimpleEventChannelFactory(new DashEventBus(main, async));
+        bus = new DashEventBus(main, async);
+        var channelFactory = bus.getChannelFactory();
         adapterRegistry = new SimpleAdapterRegistry();
         globalChannel = channelFactory.forMain("GLOBAL");
         eventRegistry = new SimpleEventRegistry(channelFactory);
