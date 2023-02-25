@@ -75,6 +75,11 @@ public class SimpleEventRegistry implements IEventRegistry {
         }
     }
 
+    @Override
+    public <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler) {
+        throw new UnsupportedOperationException();
+    }
+
     @RequiredArgsConstructor
     private static final class DelegatedSimpleHandler<T extends AbstractEvent> extends EventHandlerAdapter<T> {
         private final @NotNull MethodHandle mh;

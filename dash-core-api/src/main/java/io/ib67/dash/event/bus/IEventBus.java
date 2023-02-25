@@ -1,8 +1,8 @@
 package io.ib67.dash.event.bus;
 
 import io.ib67.dash.event.AbstractEvent;
-import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.handler.IEventHandler;
+import io.ib67.dash.event.IEventChannelFactory;
+import io.ib67.dash.event.IEventRegistry;
 import io.ib67.kiwi.Result;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -12,17 +12,7 @@ import java.util.function.Consumer;
  * An IEventBus delivers event to its registered handlers.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface IEventBus {
-    /**
-     * Registers an listener
-     *
-     * @param channel the real channel
-     * @param handler message handler
-     * @param <E>     original message
-     */
-    @ApiStatus.Internal
-    <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler);
-
+public interface IEventBus extends IEventRegistry {
     /**
      * Post an event into the bus.
      * Always call this on where the event is created.
@@ -30,4 +20,10 @@ public interface IEventBus {
      * @param event the event
      */
     <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E,?>> whenDone);
+
+    /**
+     * Gets the channel factory belonging to this bus
+     * @return channel factory
+     */
+    IEventChannelFactory getChannelFactory();
 }

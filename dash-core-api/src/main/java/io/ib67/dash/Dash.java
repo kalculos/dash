@@ -3,8 +3,7 @@ package io.ib67.dash;
 import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.IEventChannelFactory;
-import io.ib67.dash.event.IEventRegistry;
+import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.internal.DashInstFiner;
 import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.serialization.ISerializerRegistry;
@@ -34,9 +33,7 @@ public interface Dash {
      */
     IEventChannel<? extends AbstractEvent> getGlobalChannel();
 
-    IEventChannelFactory getChannelFactory();
-
-    IEventRegistry getEventRegistry();
+    IEventBus getBus();
 
     ExecutorService getAsyncPool();
 
