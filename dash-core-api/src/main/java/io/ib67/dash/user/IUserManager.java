@@ -1,6 +1,6 @@
 package io.ib67.dash.user;
 
-import io.ib67.kiwi.Result;
+import io.ib67.kiwi.future.Result;
 
 import java.util.function.Consumer;
 

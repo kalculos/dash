@@ -7,7 +7,7 @@ import io.ib67.dash.event.*;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.kiwi.Kiwi;
-import io.ib67.kiwi.Result;
+import io.ib67.kiwi.future.Result;
 import lombok.Getter;
 
 import java.util.EnumMap;

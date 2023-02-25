@@ -4,6 +4,7 @@ import io.ib67.dash.AbstractBot;
 import io.ib67.dash.BotContext;
 import io.ib67.dash.console.IConsole;
 import io.ib67.dash.console.plugin.info.PluginInfo;
+import io.ib67.dash.service.Lifecycle;
 import io.ib67.kiwi.Kiwi;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
-public abstract class AbstractPlugin {
+public abstract class AbstractPlugin implements Lifecycle {
     @Getter
     private final PluginInfo info;
     @Getter

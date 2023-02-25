@@ -5,19 +5,21 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.github.zafarkhaja.semver.Version;
 import com.google.common.graph.MutableNetwork;
-import io.ib67.dash.console.IConsole;
 import io.ib67.dash.console.internal.SemVerSerializer;
 import io.ib67.dash.console.plugin.exception.PluginException;
 import io.ib67.dash.console.plugin.info.PluginInfo;
 import io.ib67.kiwi.Kiwi;
 import io.ib67.kiwi.tuple.Pair;
 import lombok.extern.slf4j.Slf4j;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
@@ -25,6 +27,7 @@ import java.util.regex.Pattern;
 public class PluginLoader {
     private static final TomlMapper TOML = initMapper();
     private static final Pattern PLUGIN_NAME = Pattern.compile("^[a-zA-Z0-9_+]+");
+    private HashMap<String, PluginState> loadedPlugin;
 
     private static TomlMapper initMapper() {
         var mapper = new TomlMapper();
@@ -64,7 +67,6 @@ public class PluginLoader {
             markDependencies(name, info.dependencies(), DependencyType.DEPEND, stateMap);
             markDependencies(name, info.loadBefore(), DependencyType.SOFTDEPEND, stateMap);
         }
-        infoMap = null;
 
         // step.1.2 find undiscovered dependencies.
         boolean hasMissing;
@@ -92,30 +94,58 @@ public class PluginLoader {
         stateMap = null; // don't need it anymore
 
         // step.2 load into dash.
-        var loadedPlugin = new HashSet<String>();
+        loadedPlugin = new HashMap<>();
         for (String node : depNetwork.nodes()) {
-            loadPluginInGraph(node, infoMap, loadedPlugin);
+            try {
+                loadPlugin(node, loadedPlugin, infoMap);
+            } catch (PluginException exception) {
+                exception.printStackTrace();
+            }
+        }
+        loadedPlugin.entrySet().removeIf(it -> it.getValue() == PluginState.ERROR_LOADING); // remove error plugins
+
+        // call their onLoad.
+        callSortedByGraph(depNetwork, this::callLoad); // todo: FULLY REFACTOR
+    }
+
+    private void callLoad(String s) {
+        var plugin = pluginManager.findPlugin(s).orElseThrow();
+        try {
+            plugin.onInitialize();
+        } catch (Exception exception) {
+            log.warn("Cannot initialize plugin {}: {}", s, exception);
+            loadedPlugin.put(s,PluginState.ERROR_LOADING);
         }
     }
 
-    private boolean loadPluginInGraph(String node, Map<String, Pair<Path, PluginInfo>> infoMap, Set<String> loaded) {
-        if (loaded.contains(node)) return true;
-        for (String predecessor : depNetwork.predecessors(node)) {
-            loadPluginInGraph(predecessor, infoMap, loaded); // tail recursive
+    private void callSortedByGraph(MutableNetwork<String, DependencyType> depNetwork, Consumer<String> o) {
+        var called = new HashSet<String>();
+        for (String node : depNetwork.nodes()) {
+            recCall(node, called, depNetwork, o);
         }
-        var pair = infoMap.get(node);
+    }
 
-        try {
-            var plugin = loadPlugin0(pair.left, pair.right);
-            var loader = (PluginClassLoader) plugin.getClass().getClassLoader();
-            var holder = new JavaPluginHolder(plugin, PluginState.LOADING, loader);
-            pluginManager.pluginMap.put(node, holder);
-            loaded.add(node);
-            return true;
-        }catch(Throwable t){
-            t.printStackTrace();
-            return false;
+    private void recCall(String node, HashSet<String> called, MutableNetwork<String, DependencyType> depNetwork, Consumer<String> o) {
+        if (called.contains(node)) {
+            return;
         }
+        for (String predecessor : depNetwork.predecessors(node)) {
+            recCall(predecessor, called, depNetwork, o);
+        }
+        o.accept(node);
+    }
+
+    private void loadPlugin(String node, Map<String, PluginState> loadedPlugin, Map<String, Pair<Path, PluginInfo>> infoMap) {
+        if (loadedPlugin.containsKey(node)) return;
+        // fetch dependencies.
+        loadedPlugin.put(node, PluginState.ERROR_LOADING);
+        for (String loadBefore : depNetwork.predecessors(node)) {
+            loadPlugin(loadBefore, loadedPlugin, infoMap);
+        }
+
+        var pair = infoMap.get(node);
+        var plugin = pluginManager.loadPlugin0(pair.left, pair.right).orElseThrow();
+        loadedPlugin.put(node, PluginState.LOADING);
     }
 
     private void markDependencies(String name, List<String> dependencies, DependencyType depend, Map<String, DependencyNodeState> stateMap) {
@@ -142,7 +172,7 @@ public class PluginLoader {
         return result;
     }
 
-    private PluginInfo extractInfo(Path path) {
+    PluginInfo extractInfo(Path path) {
         try {
             var jarFile = new JarFile(path.toFile());
             var pluginDesc = jarFile.getJarEntry("plugin.toml");
@@ -150,24 +180,7 @@ public class PluginLoader {
                 return TOML.readValue(is, PluginInfo.class);
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot find any valid plugin.toml in " + path.getFileName(), e);
-        }
-    }
-
-    private AbstractPlugin loadPlugin0(Path pluginPath, PluginInfo info) {
-        // initialize
-        var pcl = new PluginClassLoader(
-                pluginPath, info, this.getClass().getClassLoader(), this
-        );
-        try {
-            var clazz = Class.forName(info.main().trim(), true, pcl);
-            //PluginInfo info, ConfigurationNode configRoot, Path dataFolder, IConsole console
-            var constructor = clazz.getDeclaredConstructor(PluginInfo.class, ConfigurationNode.class,Path.class, IConsole.class);
-            // initialize plugin configurations?
-        } catch (ClassNotFoundException e) {
-            throw new PluginException("Cannot load plugin main " + info.main().trim(), pluginPath);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Cannot find a valid constructor for "+info.main().trim(),e);
+            throw new PluginException("Cannot find any valid plugin.toml in " + path.getFileName(), e, path);
         }
     }
 }
