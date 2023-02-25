@@ -19,7 +19,7 @@ public abstract class AbstractPlugin {
     @Getter
     private final PluginInfo info;
     @Getter
-    private final ConfigurationNode configRoot;
+    private ConfigurationNode configRoot;
     @Getter
     private final Logger logger;
     @Getter
@@ -27,7 +27,9 @@ public abstract class AbstractPlugin {
     @Getter
     private final IConsole console;
 
-
+    /**
+     * You'll have to modify codes in PluginLoader as well.
+     */
     public AbstractPlugin(PluginInfo info, ConfigurationNode configRoot, Path dataFolder, IConsole console) {
         this.info = info;
         requireNonNull(this.dataFolder = dataFolder);

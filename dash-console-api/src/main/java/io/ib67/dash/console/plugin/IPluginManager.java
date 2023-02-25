@@ -8,11 +8,13 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface IPluginManager {
-    Optional<? extends AbstractPlugin> getPluginByName(String name);
+    Optional<? extends AbstractPlugin> findPlugin(String name);
 
     Collection<? extends PluginHolder> getPlugins();
 
     boolean isPluginLoaded(String name);
 
     Result<AbstractPlugin, ? extends PluginException> loadPlugin(Path pathToPlugin);
+
+    void loadPlugins(Path pathToPlugins);
 }

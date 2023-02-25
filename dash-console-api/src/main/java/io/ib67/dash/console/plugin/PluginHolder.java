@@ -1,18 +1,11 @@
 package io.ib67.dash.console.plugin;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-
-import static java.util.Objects.requireNonNull;
 
 @Getter
+@AllArgsConstructor
 public class PluginHolder {
-    private final AbstractPlugin plugin;
-    @Setter
-    private PluginState state;
-
-    public PluginHolder(AbstractPlugin plugin, PluginState initialState) {
-        requireNonNull(this.plugin = plugin);
-        requireNonNull(this.state = initialState);
-    }
+    protected AbstractPlugin plugin;
+    protected PluginState state;
 }

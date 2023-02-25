@@ -10,11 +10,14 @@ repositories {
     mavenCentral()
 }
 
+def jacksonVersion = property("jacksonVersion")
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     api project(":dash-core-impl")
     api project(":dash-console-api")
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    implementation 'com.google.guava:guava:31.1-jre'
 }
 
 test {
