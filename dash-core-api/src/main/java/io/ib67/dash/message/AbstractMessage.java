@@ -3,6 +3,7 @@ package io.ib67.dash.message;
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.adapter.PlatformRelated;
 import io.ib67.dash.event.AbstractEvent;
+import io.ib67.dash.event.ContextualEvent;
 import io.ib67.dash.message.internal.UnorderedMessageContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import static java.util.Objects.requireNonNull;
  */
 @ApiStatus.AvailableSince("0.1.0")
 @RequiredArgsConstructor
-public abstract class AbstractMessage<S extends IMessageSource> extends AbstractEvent implements PlatformRelated {
+public abstract class AbstractMessage<S extends IMessageSource> extends AbstractEvent implements PlatformRelated, ContextualEvent {
     /**
      * The source of the message.
      */
@@ -58,6 +59,7 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
         return source.getPlatform();
     }
 
+    @Override
     public boolean hasContext(@Nullable ContextKey<?> key){
         return context.has(requireNonNull(key));
     }
