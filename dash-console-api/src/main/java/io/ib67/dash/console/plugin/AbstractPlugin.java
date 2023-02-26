@@ -20,7 +20,7 @@ public abstract class AbstractPlugin implements Lifecycle {
     @Getter
     private final PluginInfo info;
     @Getter
-    private ConfigurationNode configRoot;
+    private ConfigurationNode configRoot; //todo: loadConfig
     @Getter
     private final Logger logger;
     @Getter
@@ -29,12 +29,11 @@ public abstract class AbstractPlugin implements Lifecycle {
     private final IConsole console;
 
     /**
-     * You'll have to modify codes in PluginLoader as well.
+     * You'll have to modify codes in BatchPluginLoader as well.
      */
-    public AbstractPlugin(PluginInfo info, ConfigurationNode configRoot, Path dataFolder, IConsole console) {
+    public AbstractPlugin(PluginInfo info, Path dataFolder, IConsole console) {
         this.info = info;
         requireNonNull(this.dataFolder = dataFolder);
-        requireNonNull(this.configRoot = configRoot);
         requireNonNull(this.console = console);
         logger = LoggerFactory.getLogger(info.name());
     }

@@ -8,4 +8,12 @@ import lombok.Getter;
 public class PluginHolder {
     protected AbstractPlugin plugin;
     protected PluginState state;
+
+    public void setState(PluginState newState){
+        switch (newState){
+            case LOADING -> {
+
+            }
+        }
+    }
 }

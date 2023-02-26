@@ -3,34 +3,43 @@ package io.ib67.dash.console.plugin;
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
 import io.ib67.dash.console.IConsole;
+import io.ib67.dash.console.plugin.exception.IllegalPluginException;
+import io.ib67.dash.console.plugin.exception.InvalidPluginInfoException;
 import io.ib67.dash.console.plugin.exception.PluginException;
 import io.ib67.dash.console.plugin.info.PluginInfo;
+import io.ib67.dash.console.plugin.loader.DependencyType;
 import io.ib67.kiwi.Kiwi;
 import io.ib67.kiwi.future.Result;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.spongepowered.configurate.ConfigurationNode;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
+@RequiredArgsConstructor
 public class SimplePluginManager implements IPluginManager {
-
-    final Map<String, JavaPluginHolder> pluginMap = new ConcurrentHashMap<>();
+    private final Map<String, PluginHolder> pluginMap = new ConcurrentHashMap<>();
+    @SuppressWarnings("all")
     private final MutableNetwork<String, DependencyType> depNetwork = NetworkBuilder.directed().build();
-    private final PluginLoader loader = new PluginLoader(this, depNetwork);
+    private final IConsole console;
+    private final Path pluginDataRoot;
+
 
     @Override
-    public Optional<? extends AbstractPlugin> findPlugin(String name) {
-        return Optional.ofNullable(pluginMap.get(name)).map(PluginHolder::getPlugin);
+    public Optional<? extends PluginHolder> findPlugin(String name) {
+        return Optional.ofNullable(pluginMap.get(name));
     }
 
     @Override
-    public Collection<JavaPluginHolder> getPlugins() {
+    public Collection<PluginHolder> getPlugins() {
         return pluginMap.values();
     }
 
@@ -42,36 +51,38 @@ public class SimplePluginManager implements IPluginManager {
     @Override
     @SuppressWarnings("unchecked")
     public Result<AbstractPlugin, ? extends PluginException> loadPlugin(Path pathToPlugin) {
-        var r1 = Kiwi.fromAny(() -> loader.extractInfo(pathToPlugin));
-        if (r1.isFailed()) return (Result<AbstractPlugin, ? extends PluginException>) (Object) r1;
-        return loadPlugin0(pathToPlugin, r1.get());
-    }
-
-    Result<AbstractPlugin, ? extends PluginException> loadPlugin0(Path pluginPath, PluginInfo info) {
-        log.info("Initializing Plugin: {} ({})", info.name(), info.version().toString());
-        // initialize
-        var pcl = new PluginClassLoader(
-                pluginPath, info, this.getClass().getClassLoader()
-        );
-        try {
-            var clazz = Class.forName(info.main().trim(), true, pcl);
-            //PluginInfo info, ConfigurationNode configRoot, Path dataFolder, IConsole console
-            var constructor = clazz.getDeclaredConstructor(PluginInfo.class, ConfigurationNode.class, Path.class, IConsole.class);
-            // initialize plugin configurations?
-            var plugin = (AbstractPlugin) constructor.newInstance(); // todo
-            pluginMap.put(info.name(), new JavaPluginHolder(plugin, PluginState.LOADING, pcl));
-            return Result.ok(plugin);
-        } catch (ClassNotFoundException e) {
-            return Result.fail(new PluginException("Cannot load plugin main " + info.main().trim(), pluginPath));
-        } catch (NoSuchMethodException e) {
-            return Result.fail(new PluginException("Cannot find a valid constructor for " + info.main().trim(), e, pluginPath));
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            return Result.fail(new PluginException("Cannot instantiate object", e, pluginPath));
-        }
+        return Kiwi.todo();
     }
 
     @Override
-    public void loadPlugins(Path pathToPlugins) {
-        loader.loadPlugins(pathToPlugins);
+    public void loadPlugins(List<Path> pathToPlugins) {
+        new BatchPluginLoader(depNetwork, this, null).load(pathToPlugins);
+    }
+
+    PluginHolder instantiate(PluginClassLoader pcl) throws PluginException {
+        var main = pcl.getPluginInfo().main();
+        var name = pcl.getPluginInfo().name();
+        try {
+            var clazz = Class.forName(main, true, pcl);
+            if (!AbstractPlugin.class.isAssignableFrom(clazz)) {
+                throw new IllegalPluginException("Main class \"" + clazz + "\" from plugin " + name + " is not any subtype of AbstractPlugin.", pcl.getPluginFile());
+            }
+            var defaultConstructor = clazz.getDeclaredConstructor(PluginInfo.class, Path.class, IConsole.class);
+            var dataFolder = pluginDataRoot.resolve(name);
+            if (!Files.isDirectory(dataFolder)) {
+                Files.createDirectory(dataFolder);
+            }
+            var pluginObj = (AbstractPlugin) defaultConstructor.newInstance(pcl.getPluginInfo(), dataFolder, console);
+            pluginMap.put(name, new PluginHolder(pluginObj, null));
+            return pluginMap.get(name);
+        } catch (ClassNotFoundException e) {
+            throw new InvalidPluginInfoException("Main class \"" + main + "\" isn't found for plugin " + name, e, pcl.getPluginFile());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalPluginException("Can't find the default constructor for the class.", e, pcl.getPluginFile());
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new IllegalPluginException("Can't instantitate plugin object for " + name, e, pcl.getPluginFile());
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot create datafolder for " + name);
+        }
     }
 }

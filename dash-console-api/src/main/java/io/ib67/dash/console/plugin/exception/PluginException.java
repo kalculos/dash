@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.nio.file.Path;
 
 @Getter
-public class PluginException extends RuntimeException{
+public class PluginException extends Exception{
     protected final Path pathToPlugin;
     public PluginException(Path pathToPlugin) {
         super();
