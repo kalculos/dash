@@ -25,8 +25,9 @@
 package io.ib67.dash.serialization;
 
 import io.ib67.dash.message.feature.IComponentSerializer;
-import io.ib67.kiwi.option.Option;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Optional;
 
 /**
  * A registry for {@link IComponentSerializer} <br>
@@ -37,5 +38,5 @@ import org.jetbrains.annotations.ApiStatus;
 public interface ISerializerRegistry {
     void registerComponentSerializer(String codeType, IComponentSerializer serializer);
 
-    Option<IComponentSerializer> getComponentSerializer(String codeType);
+    Optional<IComponentSerializer> getComponentSerializer(String codeType);
 }

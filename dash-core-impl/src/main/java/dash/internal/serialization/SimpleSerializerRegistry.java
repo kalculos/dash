@@ -28,13 +28,13 @@ import io.ib67.dash.message.feature.IComponentSerializer;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.serialization.ISerializerRegistry;
 import io.ib67.dash.util.CatCodes;
-import io.ib67.kiwi.option.Option;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class SimpleSerializerRegistry implements ISerializerRegistry, IComponentSerializer {
@@ -46,8 +46,8 @@ public class SimpleSerializerRegistry implements ISerializerRegistry, IComponent
     }
 
     @Override
-    public Option<IComponentSerializer> getComponentSerializer(String codeType) {
-        return Option.of(serializers.get(codeType.toUpperCase()));
+    public Optional<IComponentSerializer> getComponentSerializer(String codeType) {
+        return Optional.ofNullable(serializers.get(codeType.toUpperCase()));
     }
 
 
