@@ -27,6 +27,7 @@ package io.ib67.dash.event.bus;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.IEventRegistry;
+import io.ib67.kiwi.future.Future;
 import io.ib67.kiwi.future.Result;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -43,7 +44,12 @@ public interface IEventBus extends IEventRegistry {
      *
      * @param event the event
      */
-    <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E,?>> whenDone);
+    <E extends AbstractEvent> Future<E,?> postEvent(E event);
+
+    @Deprecated(forRemoval = true)
+    default <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E,?>> whenDone){
+        postEvent(event).onComplete(whenDone::accept);
+    }
 
     /**
      * Gets the channel factory belonging to this bus
