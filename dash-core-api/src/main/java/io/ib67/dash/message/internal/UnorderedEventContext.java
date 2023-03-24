@@ -24,8 +24,8 @@
 
 package io.ib67.dash.message.internal;
 
-import io.ib67.dash.message.ContextKey;
-import io.ib67.dash.message.IMessageContext;
+import io.ib67.dash.event.context.ContextKey;
+import io.ib67.dash.event.context.IEventContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ApiStatus.Internal
-public class UnorderedMessageContext implements IMessageContext {
+public class UnorderedEventContext implements IEventContext {
     private final Map<ContextKey<?>, Object> context = new HashMap<>();
 
     @Override

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.message;
+package io.ib67.dash.event.context;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -34,8 +34,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.Objects.requireNonNull;
 
 /**
- * ContextKeys are used to index a value in a context from {@link AbstractMessage}. They are immutable and shared between instances.<br />
- * Also see {@link IMessageContext}
+ * ContextKeys are used to index a value in a context from {@link io.ib67.dash.event.ContextualEvent}. They are immutable and shared between instances.<br />
+ * Also see {@link IEventContext}
  * @param <T> the type of the value index by this key, only for type-safe checks.
  */
 @ToString
