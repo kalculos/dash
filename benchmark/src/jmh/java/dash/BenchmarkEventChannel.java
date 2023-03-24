@@ -65,7 +65,8 @@ public class BenchmarkEventChannel {
 
     @Benchmark
     public void broadcastMessages() throws InterruptedException {
-        bus.postEvent(EVENT);
+        bus.postEvent(EVENT, whenDone -> {
+        });
         //  latch.await();
     }
 

@@ -31,15 +31,14 @@ import io.ib67.dash.event.*;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.kiwi.Kiwi;
-import io.ib67.kiwi.future.Future;
 import io.ib67.kiwi.future.Result;
-import io.ib67.kiwi.future.TaskPromise;
 import lombok.Getter;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Consumer;
 
 import static io.ib67.dash.event.ScheduleType.*;
 import static java.util.Objects.requireNonNull;
@@ -84,42 +83,37 @@ public class DashEventBus implements IEventBus {
     }
 
     @Override
-    public <E extends AbstractEvent> Future<E, ?> postEvent(E event) {
+    public <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E, ?>> whenDone) {
         var result = deliverEvent(MONITOR, event);
         if (result.isFailed()) {
-            return result;
+            whenDone.accept(result);
+            return;
         }
         if (Threads.isPrimaryThread()) {
-            result = deliverEvent(MAIN, event);
-            if (handlers.containsKey(ASYNC))
-                asyncExecutor.submit(() -> deliverEvent(ASYNC, event));
-            return result;
+            whenDone.accept(deliverEvent(MAIN, event));
         } else {
-            Future<E,Object> promise = result;
             if (handlers.containsKey(MAIN)) {
-                var _promise = new TaskPromise<E,Object>();
                 mainExecutor.submit(() -> {
-                    _promise.fromResult(deliverEvent(MAIN, event));
+                    whenDone.accept(deliverEvent(MAIN, event));
                 });
-                promise = _promise;
+            } else {
+                whenDone.accept(result);
             }
-            if (handlers.containsKey(ASYNC))
-                mainExecutor.submit(() -> asyncExecutor.submit(() -> deliverEvent(ASYNC, event)));
-            return promise;
         }
+        if (handlers.containsKey(ASYNC))
+            mainExecutor.submit(() -> asyncExecutor.submit(() -> deliverEvent(ASYNC, event)));
     }
 
     @SuppressWarnings("unchecked")
-    private <E extends AbstractEvent, T> Result<E, T> deliverEvent(ScheduleType type, E event) {
+    private <E extends AbstractEvent> Result<E, ?> deliverEvent(ScheduleType type, E event) {
         if (!handlers.containsKey(type)) {
             return Result.ok(event);
         }
         var node = handlers.get(type);
         var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node);
-        var result = Kiwi.fromAny(()->{
+        return Kiwi.fromAny(()->{
             pipeline.fireNext();
             return event;
         });
-        return (Result<E, T>) result;
     }
 }
