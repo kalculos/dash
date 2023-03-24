@@ -49,37 +49,39 @@ class SimpleEventRegistryTest {
     private AbstractBot bot;
 
     @BeforeEach
-    public void setup(){
-        eventBus = new DashEventBus(SharedResources.mainLoop,SharedResources.asyncPool);
+    public void setup() {
+        eventBus = new DashEventBus(SharedResources.mainLoop, SharedResources.asyncPool);
         var factory = new SimpleEventChannelFactory(eventBus);
         eventRegistry = new SimpleEventRegistry(factory);
         bot = new MockBot();
     }
 
     @Test
-    public void testRegularRegistration(){
+    public void testRegularRegistration() {
         boolean[] results = new boolean[3];
         class Listeners implements EventListener {
             @EventHandler
-            public void onMessage(IEventPipeline<?> pipe, TestEventA eventA){
+            public void onMessage(IEventPipeline<?> pipe, TestEventA eventA) {
                 results[0] = true;
                 pipe.fireNext();
             }
+
             @EventHandler
-            public void onMessage(TestEventA event){
+            public void onMessage(TestEventA event) {
                 results[1] = true;
             }
+
             @EventHandler
-            public void onMessage(TestEventB event){
+            public void onMessage(TestEventB event) {
                 results[2] = true;
             }
         }
-        eventRegistry.registerListeners(bot,new Listeners());
+        eventRegistry.registerListeners(bot, new Listeners());
         forceSleep(1);
-        eventBus.postEvent(new TestEventA(0),it->{});
+        eventBus.postEvent(new TestEventA(0));
         forceSleep(1);
-        assertFalse(results[2],"type dispatch");
-        assertTrue(results[0],"pipe+event");
-        assertTrue(results[1],"event only");
+        assertFalse(results[2], "type dispatch");
+        assertTrue(results[0], "pipe+event");
+        assertTrue(results[1], "event only");
     }
 }

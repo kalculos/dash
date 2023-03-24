@@ -95,12 +95,10 @@ class DashEventChannelTest {
         var result = new boolean[1];
         factory.forMonitor().subscribeAlways((p, a) -> result[0] = true);
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("test subscribeAlways #1").atMost(ofSeconds(1)).until(() -> result[0]);
         result[0] = false;
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("test subscribeAlways #2").atMost(ofSeconds(1)).until(() -> result[0]);
     }
 
@@ -109,10 +107,10 @@ class DashEventChannelTest {
         var result = new boolean[1];
         factory.forMonitor().subscribeOnce((p,a)->result[0]=true);
         forceSleep(1);
-        bus.postEvent(new TestEventA(0),it->{});
+        bus.postEvent(new TestEventA(0));
         await("test subscribeOnce #1").atMost(ofSeconds(1)).until(()->result[0]);
         result[0]=false;
-        bus.postEvent(new TestEventA(0),it->{});
+        bus.postEvent(new TestEventA(0));
         await("test subscribeOnce #2").atMost(ofSeconds(1)).until(()->!result[0]);
     }
 }

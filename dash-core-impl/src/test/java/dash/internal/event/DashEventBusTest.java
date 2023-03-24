@@ -64,8 +64,7 @@ class DashEventBusTest {
         // This is not the primary thread so the eventbus do submit a task to the loop.
         forceSleep(1);
         // post event
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         assertTrue(result[0], "Channel registration with scheduleType MONITOR");
     }
 
@@ -81,8 +80,7 @@ class DashEventBusTest {
             result[1] = nanoTime();
         });
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("Test async & main delivery and priority").atMost(ofSeconds(3)).until(() -> result[1] > result[0]);
     }
 
@@ -95,8 +93,7 @@ class DashEventBusTest {
             pipe.fireNext();
         });
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("subhandler is registered").atMost(ofSeconds(1)).until(() -> result[0]);
     }
 
@@ -111,10 +108,8 @@ class DashEventBusTest {
                     pipe.unsubscribe();
                 });
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
+        bus.postEvent(new TestEventA(0));
         await("pipeline is unsubscribed").atMost(ofSeconds(1)).until(() -> result.get() == 1);
     }
 
@@ -129,8 +124,7 @@ class DashEventBusTest {
                 .filterForType(TestEventA.class)
                 .subscribeAlways((pipe, evt) -> result.getAndIncrement());
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("pipeline is not fired").atMost(ofSeconds(1)).until(() -> result.get() == 1);
     }
 
@@ -148,8 +142,7 @@ class DashEventBusTest {
                 .filterForType(TestEventA.class)
                 .subscribeAlways((pipe, evt) -> result.getAndIncrement());
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("pipeline is fired").atMost(ofSeconds(1)).until(() -> result.get() == 2);
     }
 
@@ -170,8 +163,7 @@ class DashEventBusTest {
                 });
 
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
 
         await("test pipeline exception").atMost(ofSeconds(1)).until(() -> result.get() == 1);
     }
@@ -181,20 +173,18 @@ class DashEventBusTest {
         var mainChannel = channelFactory.forMain();
         var result = new boolean[1];
         mainChannel.subscribeOnce((a, b) -> {
-            a.channel().getBus().postEvent(new TestEventB(0), it -> {
-            });
+            a.channel().getBus().postEvent(new TestEventB(0));
         });
         mainChannel.filterForType(TestEventB.class).subscribeOnce((a, b) -> result[0] = true);
         forceSleep(1);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("publish in handler").atMost(ofSeconds(1)).until(() -> result[0]);
     }
 
     @Test
     public void testPostCallback() {
         var succeed = new boolean[1];
-        bus.postEvent(new TestEventA(0), it -> succeed[0] = true);
+        bus.postEvent(new TestEventA(0)).onComplete(it -> succeed[0] = true);
         await("Test eventbus callback").atMost(ofSeconds(1)).until(() -> succeed[0]);
     }
 
@@ -206,8 +196,7 @@ class DashEventBusTest {
         laterChannel.subscribeAlways(ofAdapter(evt -> time[0] = nanoTime()));
         earlyChannel.subscribeAlways(ofAdapter(evt -> time[1] = nanoTime()));
         forceSleep(2);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         await("Test event channel priority").atMost(ofSeconds(2)).until(() -> time[0] > time[1]);
     }
 
@@ -221,8 +210,7 @@ class DashEventBusTest {
         channelFactory.forAsync("latest", 0)
                 .subscribeAlways(ofAdapter(abstractEvent -> time[2] = nanoTime()));
         forceSleep(2);
-        bus.postEvent(new TestEventA(0), it -> {
-        });
+        bus.postEvent(new TestEventA(0));
         forceSleep(2);
         System.out.println(Arrays.toString(time));
         assertTrue(time[0] < time[1], "MONITOR < MAIN");
@@ -235,22 +223,21 @@ class DashEventBusTest {
         channelFactory.forMonitor().filterForType(CancellableEvent.class).subscribe(false, (a, b) -> b.setCancelled(true));
         channelFactory.forMonitor().subscribe(true, (a, b) -> result[0] = true);
         forceSleep(1);
-        bus.postEvent(new CancellableEvent(), it -> {
-        });
+        bus.postEvent(new CancellableEvent());
         await().atMost(ofSeconds(1)).until(() -> !result[0]);
     }
 
     @Test
-    public void testAsyncUnsubscribe(){
+    public void testAsyncUnsubscribe() {
         var result = new boolean[2];
         channelFactory.forAsync()
-                .subscribeOnce((a,b)->{
+                .subscribeOnce((a, b) -> {
                     result[0] = true;
-                }).subscribeAlways((a,b)->{
+                }).subscribeAlways((a, b) -> {
                     result[1] = true;
                 });
         forceSleep(1);
-        bus.postEvent(new CancellableEvent(),it->{});
-        await().atMost(ofSeconds(1)).until(()-> !result[0] && result[1]);
+        bus.postEvent(new CancellableEvent());
+        await().atMost(ofSeconds(1)).until(() -> !result[0] && result[1]);
     }
 }
