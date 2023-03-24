@@ -22,9 +22,40 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.message.feature.component;
+package io.ib67.dash.message.internal;
 
-/**
- * Here are concrete implementations of {@link io.ib67.dash.message.feature.IMessageComponent}.
- * Types are strictly defined according to <a href="https://github.com/kalculos/dash/blob/main/docs/spec/CatCode.md">CatCode Specification</a> <br /?
- */
+import io.ib67.dash.event.context.ContextKey;
+import io.ib67.dash.event.context.IEventContext;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@ApiStatus.Internal
+public class UnorderedEventContext implements IEventContext {
+    private final Map<ContextKey<?>, Object> context = new HashMap<>();
+
+    @Override
+    public <V> void put(@NotNull ContextKey<V> key, V value) {
+        context.put(key, value);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T get(@NotNull ContextKey<T> key) {
+        return (T) context.get(key);
+    }
+
+    @Override
+    public boolean has(@NotNull ContextKey<?> key) {
+        return context.containsKey(key);
+    }
+
+    @Override
+    public boolean remove(@NotNull ContextKey<?> key) {
+        if(!has(key))return false;
+        context.remove(key);
+        return true;
+    }
+}

@@ -23,6 +23,7 @@ module dash.core.api {
     exports io.ib67.dash.tag;
     exports io.ib67.dash.user;
     exports io.ib67.dash.user.permission;
+    exports io.ib67.dash.event.context;
 
     requires kiwi.core;
     requires lombok;

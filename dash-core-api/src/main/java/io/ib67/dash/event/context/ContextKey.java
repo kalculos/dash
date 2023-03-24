@@ -22,35 +22,47 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.contact.group.channel;
+package io.ib67.dash.event.context;
 
-import io.ib67.dash.contact.group.ChatGroup;
-import io.ib67.dash.message.IMessageSource;
-import io.ib67.dash.tag.Taggable;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.jetbrains.annotations.ApiStatus;
+import lombok.ToString;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * A {@link ChatChannel} is a part of a {@link ChatGroup}, where you can receive/send messages.
+ * ContextKeys are used to index a value in a context from {@link io.ib67.dash.event.ContextualEvent}. They are immutable and shared between instances.<br />
+ * Also see {@link IEventContext}
+ * @param <T> the type of the value index by this key, only for type-safe checks.
  */
-@Getter
-@ApiStatus.AvailableSince("0.1.0")
-@EqualsAndHashCode
-public abstract class ChatChannel implements IMessageSource, Taggable {
-    protected final ChannelInfo info;
+@ToString
+public class ContextKey<T> {
+    private static final Map<String, ContextKey<?>> keys = new ConcurrentHashMap<>();
+    private static final AtomicInteger CURRENT_INDEX = new AtomicInteger();
+    @Getter
+    private final String name;
+    @Getter
+    private final int index;
 
-    protected final ChatGroup group;
+    public ContextKey(String s, int index) {
+        this.index = index;
+        requireNonNull(name = s);
+    }
 
-    public ChatChannel(ChannelInfo info, ChatGroup group) {
-        requireNonNull(this.group = group);
-        requireNonNull(this.info = info);
+    @SuppressWarnings("unchecked")
+    public static <T> ContextKey<T> of(String key) {
+        return (ContextKey<T>) keys.computeIfAbsent(key.toLowerCase(), s -> new ContextKey<>(s, CURRENT_INDEX.getAndIncrement()));
+    }
+
+    public static int getCurrentIndex(){
+        return CURRENT_INDEX.get();
     }
 
     @Override
-    public String toString() {
-        return "ChatChannel(" + info.name() + " on " + group + ")";
+    public int hashCode() {
+        return index;
     }
 }

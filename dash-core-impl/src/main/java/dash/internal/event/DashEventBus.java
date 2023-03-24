@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Kalculos and Contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package dash.internal.event;
 
 import dash.internal.registry.SimpleEventRegistry;
@@ -7,14 +31,15 @@ import io.ib67.dash.event.*;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.kiwi.Kiwi;
+import io.ib67.kiwi.future.Future;
 import io.ib67.kiwi.future.Result;
+import io.ib67.kiwi.future.TaskPromise;
 import lombok.Getter;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Consumer;
 
 import static io.ib67.dash.event.ScheduleType.*;
 import static java.util.Objects.requireNonNull;
@@ -59,35 +84,42 @@ public class DashEventBus implements IEventBus {
     }
 
     @Override
-    public <E extends AbstractEvent> void postEvent(E event, Consumer<Result<E, ?>> whenDone) {
+    public <E extends AbstractEvent> Future<E, ?> postEvent(E event) {
         var result = deliverEvent(MONITOR, event);
         if (result.isFailed()) {
-            whenDone.accept(result);
-            return;
+            return result;
         }
         if (Threads.isPrimaryThread()) {
-            whenDone.accept(deliverEvent(MAIN, event));
+            result = deliverEvent(MAIN, event);
+            if (handlers.containsKey(ASYNC))
+                asyncExecutor.submit(() -> deliverEvent(ASYNC, event));
+            return result;
         } else {
+            Future<E,Object> promise = result;
             if (handlers.containsKey(MAIN)) {
+                var _promise = new TaskPromise<E,Object>();
                 mainExecutor.submit(() -> {
-                    whenDone.accept(deliverEvent(MAIN, event));
+                    _promise.fromResult(deliverEvent(MAIN, event));
                 });
-            } else {
-                whenDone.accept(result);
+                promise = _promise;
             }
+            if (handlers.containsKey(ASYNC))
+                mainExecutor.submit(() -> asyncExecutor.submit(() -> deliverEvent(ASYNC, event)));
+            return promise;
         }
-        if (handlers.containsKey(ASYNC))
-            mainExecutor.submit(() -> asyncExecutor.submit(() -> deliverEvent(ASYNC, event)));
     }
 
     @SuppressWarnings("unchecked")
-    private <E extends AbstractEvent> Result<E, ?> deliverEvent(ScheduleType type, E event) {
+    private <E extends AbstractEvent, T> Result<E, T> deliverEvent(ScheduleType type, E event) {
         if (!handlers.containsKey(type)) {
             return Result.ok(event);
         }
         var node = handlers.get(type);
         var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node);
-        var result = Kiwi.runAny(pipeline::fireNext);
-        return result.isFailed() ? (Result<E, ?>) result : Result.ok(event);
+        var result = Kiwi.fromAny(()->{
+            pipeline.fireNext();
+            return event;
+        });
+        return (Result<E, T>) result;
     }
 }

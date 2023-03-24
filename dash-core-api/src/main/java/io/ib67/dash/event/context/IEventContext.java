@@ -1,15 +1,39 @@
-package io.ib67.dash.message;
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Kalculos and Contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package io.ib67.dash.event.context;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
 /**
- * A MessageContext stores additional metadata involved in a {@link AbstractMessage}, And they are accessible with {@link ContextKey}.<br>
+ * A EventContext stores additional metadata involved in a {@link io.ib67.dash.event.ContextualEvent}, And they are accessible with {@link ContextKey}.<br>
  * Getting or putting data from MessageContext is very fast, however you'll have to waste some memory when you have a large amount of context keys.<br>
  * Usually you don't need to care about that memory issue. An Object[128] is actually small if compared to your business objects.
  */
-public interface IMessageContext {
+public interface IEventContext {
 
     /**
      * Put a value indexed by the key into the context.
