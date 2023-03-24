@@ -62,5 +62,4 @@ public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S
         var newChain = components.replaceAll(regex, toBe);
         return new CompoundMessage<>(source, id, newChain);
     }
-
 }

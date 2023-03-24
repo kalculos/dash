@@ -27,11 +27,11 @@ package dash.internal.event;
 import dash.internal.event.channels.FilteringChannel;
 import dash.internal.event.channels.MappingChannel;
 import io.ib67.dash.event.AbstractEvent;
-import io.ib67.dash.event.ICancellable;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.ScheduleType;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
+import io.ib67.dash.event.handler.IEventPipeline;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
@@ -74,13 +74,7 @@ public abstract class AbstractEventChannel<E extends AbstractEvent> implements I
 
     @Override
     public @NotNull IEventChannel<E> subscribe(boolean ignoreCancelled, @NotNull IEventHandler<E> handler) {
-        bus.register(this, ((pipeline, event) -> {
-            if (ignoreCancelled && event instanceof ICancellable a && a.isCancelled()) {
-                pipeline.fireNext();
-                return;
-            }
-            handler.handleMessage(pipeline, event);
-        }));
+        bus.register(this, new CancellableHandler(ignoreCancelled, handler));
         return this;
     }
 
@@ -93,5 +87,20 @@ public abstract class AbstractEventChannel<E extends AbstractEvent> implements I
             return transform((E) event);
         }
         return transform((E) parent.apply(event));
+    }
+
+    @RequiredArgsConstructor
+    private class CancellableHandler implements IEventHandler<E> {
+        private final boolean ignoreCancelled;
+        private final IEventHandler<E> handler;
+
+        @Override
+        public void handleMessage(@NotNull IEventPipeline<E> pipeline, E event) {
+            if (ignoreCancelled && event.isCancelled()) {
+                pipeline.fireNext();
+                return;
+            }
+            handler.handleMessage(pipeline, event);
+        }
     }
 }

@@ -10,6 +10,7 @@ jmh {
     warmupIterations = 2
     iterations = 2
     fork = 1
+    threads = 1
     if (System.getenv("CI") == null) {
         profilers = ['jfr:dir=profile-results']
     } else {
