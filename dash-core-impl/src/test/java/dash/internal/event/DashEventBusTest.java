@@ -42,6 +42,7 @@ import static dash.test.util.Utility.ofAdapter;
 import static java.lang.System.nanoTime;
 import static java.time.Duration.ofSeconds;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DashEventBusTest {
@@ -239,5 +240,27 @@ class DashEventBusTest {
         forceSleep(1);
         bus.postEvent(new CancellableEvent());
         await().atMost(ofSeconds(1)).until(() -> !result[0] && result[1]);
+    }
+
+    @Test
+    public void testPipelineRegister(){
+        var result = new boolean[1];
+        channelFactory.forMonitor()
+                .subscribeAlways((pipe,evt)->{
+                    result[0] = true;
+                    pipe.registerListener(false,(_pipe,_evt)->{
+                        _pipe.unsubscribe();
+                    });
+                    pipe.fireNext();
+                });
+        forceSleep(1);
+        bus.postEvent(new TestEventA(0));
+        await().atMost(ofSeconds(1)).until(()->result[0]);
+        result[0] = false;
+        bus.postEvent(new TestEventA(0));
+        forceSleep(1);
+        assertFalse(result[0]); // the subhandler doesn't pass the event
+        bus.postEvent(new TestEventA(0));
+        await().atMost(ofSeconds(1)).until(()->result[0]);
     }
 }
