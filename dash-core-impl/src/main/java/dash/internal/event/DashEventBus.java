@@ -115,7 +115,7 @@ public class DashEventBus implements IEventBus {
             return Result.ok(event);
         }
         var node = handlers.get(type);
-        var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node);
+        var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node,channelFactory);
         var result = Kiwi.fromAny(()->{
             pipeline.fireNext();
             return event;

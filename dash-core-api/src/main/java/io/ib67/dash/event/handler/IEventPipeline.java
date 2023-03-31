@@ -29,21 +29,29 @@ import io.ib67.dash.event.IEventChannel;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * An {@link IEventPipeline} represents handlers for an event. {@link IEventHandler}s uses this to decide event delivery.
+ * An {@link IEventPipeline} represents handlers for an event. {@link IEventHandler}s uses this to affect event delivery and register more handlers.
+ *
  * @param <E>
  */
 @ApiStatus.AvailableSince("0.1.0")
 public interface IEventPipeline<E extends AbstractEvent> {
 
     /**
-     * Don't call me anymore.
+     * Deregister this handler .
      */
     void unsubscribe();
 
     /**
-     * Pass this to next handler.
+     * Passes this to next handler.
      */
     void fireNext();
+
+    /**
+     * Registers a new event handler, which is guaranteed to be called earlier than current handler.<br>
+     * @param inherit share the current event channel (including filters) to the new handler.
+     * @param handler new handler
+     */
+    void registerListener(boolean inherit, IEventHandler<E> handler);
 
     IEventChannel<E> channel();
 }

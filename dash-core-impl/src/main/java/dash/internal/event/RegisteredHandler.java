@@ -72,7 +72,7 @@ final class RegisteredHandler<E extends AbstractEvent> implements Comparable<Reg
     }
 
     @SuppressWarnings("unchecked")
-    private void insertBefore(RegisteredHandler handler) {
+    void insertBefore(RegisteredHandler handler) {
         next = handler.next;
         handler.next = this;
         handler.prev = prev;
@@ -80,7 +80,7 @@ final class RegisteredHandler<E extends AbstractEvent> implements Comparable<Reg
     }
 
     @SuppressWarnings("unchecked")
-    private void insertAfter(RegisteredHandler handler) {
+    void insertAfter(RegisteredHandler handler) {
         if (next != null) next.prev = handler;
         handler.next = next;
         handler.prev = this;

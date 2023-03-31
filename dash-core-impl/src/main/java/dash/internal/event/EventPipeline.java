@@ -27,7 +27,9 @@ package dash.internal.event;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
+import io.ib67.dash.event.IEventChannelFactory;
 import io.ib67.dash.event.ScheduleType;
+import io.ib67.dash.event.handler.IEventHandler;
 import io.ib67.dash.event.handler.IEventPipeline;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,11 +43,13 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
     private final E event;
     //private final List<Runnable> pendingRegistrations = new ArrayList<>();
     private RegisteredHandler<E> node;
+    private final IEventChannelFactory channelFactory;
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
-    public EventPipeline(E event, RegisteredHandler<E> node) {
+    public EventPipeline(E event, RegisteredHandler<E> node, IEventChannelFactory channelFactory) {
         requireNonNull(this.event = event);
         requireNonNull(this.node = node);
+        requireNonNull(this.channelFactory = channelFactory);
     }
 
     @Override
@@ -82,6 +86,20 @@ public class EventPipeline<E extends AbstractEvent> implements IEventPipeline<E>
             }
         }
         // the end of handler list
+    }
+
+    @Override
+    public void registerListener(boolean inherit, IEventHandler<E> handler) {
+        var rh = new RegisteredHandler<>(inherit ? channel() : channelFactory.from(
+                channel().getScheduleType(),
+                channel().getName()+"-fork",
+                channel().getPriority()
+        ) ,handler);
+        rh.prev = node.prev;
+        rh.next = node;
+        assert node.prev != null;
+        node.prev.next = rh;
+        node.prev = rh;
     }
 
     @Override
