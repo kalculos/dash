@@ -1,7 +1,6 @@
 package io.ib67.dash.console.bot;
 
 import io.ib67.dash.AbstractBot;
-import io.ib67.dash.console.IBotRegistry;
 
 import java.util.Collection;
 import java.util.HashMap;
