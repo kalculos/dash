@@ -20,8 +20,6 @@ public abstract class AbstractPlugin implements Lifecycle {
     @Getter
     private final PluginInfo info;
     @Getter
-    private ConfigurationNode configRoot; //todo: loadConfig
-    @Getter
     private final Logger logger;
     @Getter
     private final Path dataFolder;
@@ -38,11 +36,10 @@ public abstract class AbstractPlugin implements Lifecycle {
         logger = LoggerFactory.getLogger(info.name());
     }
 
+    /**
+     * Only for a cleaner overload
+     */
     public AbstractPlugin() {
         throw new IllegalStateException("This constructor should never be called.");
-    }
-
-    protected void installBot(Function<BotContext, AbstractBot> botFactory) {
-        Kiwi.todo();
     }
 }

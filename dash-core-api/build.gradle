@@ -8,6 +8,7 @@ version parent.version
 
 dependencies {
     api 'io.ib67.kiwi:core:0.4.1'
+    api 'io.ib67.kiwi:collection:0.4.1'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     api 'org.slf4j:slf4j-api:2.0.6'
     api 'io.github.sproket:persism:2.2.0'

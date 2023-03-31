@@ -26,8 +26,11 @@ package io.ib67.dash.console.plugin;
 
 import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
+
+import io.ib67.dash.console.plugin.exception.IllegalPluginException;
 import io.ib67.dash.console.plugin.exception.InvalidPluginInfoException;
 import io.ib67.dash.console.plugin.exception.PluginException;
+import io.ib67.dash.console.plugin.info.PluginInfo;
 import io.ib67.dash.console.plugin.java.SharedClassContext;
 import io.ib67.dash.console.plugin.loader.DependencyNodeState;
 import io.ib67.dash.console.plugin.loader.DependencyType;
@@ -35,13 +38,18 @@ import io.ib67.dash.console.plugin.loader.OrderedGraphWalker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * An utility class to load multiple plugins at the same time.
@@ -52,12 +60,15 @@ import java.util.regex.Pattern;
 @Slf4j(topic = "Plugin Loader")
 public class BatchPluginLoader {
     private static final Pattern PLUGIN_NAME = Pattern.compile("^[a-zA-Z0-9_+]+");
-    private final MutableNetwork<String, DependencyType> parent;
     private final MutableNetwork<String, DependencyType> current = NetworkBuilder.directed().build();
-    private final SimplePluginManager pluginManager;
+    private final IPluginManager pluginManager;
     private final SharedClassContext context;
-    private Map<String, PluginClassLoader> infoMap;
-    private HashMap<String, DependencyNodeState> loadStates;
+    private final Path pluginDataRoot;
+
+    protected Map<String, PluginClassLoader> infoMap;
+    protected Set<String> loadedNodes;
+    protected HashMap<String, DependencyNodeState> loadStates;
+    private final Map<String,PluginHolder> tempHolderMap = new HashMap<>();
 
     public void load(List<Path> plugins) {
         // try to load them all.
@@ -69,8 +80,9 @@ public class BatchPluginLoader {
         }
 
         // build the graph
-        loadStates = new HashMap<>(infoMap.keySet().size() + parent.nodes().size());
-        parent.nodes().forEach(it -> loadStates.put(it, DependencyNodeState.DISCOVERED)); // already loaded and ready to use.
+        loadedNodes = pluginManager.getPlugins().stream().map(it->it.right.getInfo().name()).collect(Collectors.toUnmodifiableSet());
+        loadStates = new HashMap<>(infoMap.keySet().size() + loadedNodes.size());
+        loadedNodes.forEach(it->loadStates.put(it, DependencyNodeState.DISCOVERED)); // already loaded and ready to use.
 
         for (Map.Entry<String, PluginClassLoader> entry : infoMap.entrySet()) {
             var name = entry.getKey();
@@ -118,13 +130,13 @@ public class BatchPluginLoader {
         walk(current, this::runOnEnable, this::showCommonError);
 
     }
-
+    
     private void runOnEnable(String s) {
-        pluginManager.findPlugin(s).orElseThrow().setState(PluginState.ENABLED);
+        tempHolderMap.get(s).setState(PluginState.ENABLED);
     }
 
     private void runOnLoad(String s) {
-        pluginManager.findPlugin(s).orElseThrow().setState(PluginState.LOADING);
+        tempHolderMap.get(s).setState(PluginState.LOADING);
     }
 
     private void showCommonError(String name, Exception error) {
@@ -138,13 +150,41 @@ public class BatchPluginLoader {
 
     private void instantiate(String s) throws PluginException {
         var pcl = infoMap.get(s);
-        pluginManager.instantiate(pcl);
+        instantiate(pcl);
+    }
+
+    PluginHolder instantiate(PluginClassLoader pcl) throws PluginException {
+        var main = pcl.getPluginInfo().main();
+        var name = pcl.getPluginInfo().name();
+        try {
+            var clazz = Class.forName(main, true, pcl);
+            if (!AbstractPlugin.class.isAssignableFrom(clazz)) {
+                throw new IllegalPluginException("Main class \"" + clazz + "\" from plugin " + name + " is not any subtype of AbstractPlugin.", pcl.getPluginFile());
+            }
+            var defaultConstructor = clazz.getDeclaredConstructor(PluginInfo.class, Path.class, IConsole.class);
+            var dataFolder = pluginDataRoot.resolve(name);
+            if (!Files.isDirectory(dataFolder)) {
+                Files.createDirectory(dataFolder);
+            }
+            var pluginObj = (AbstractPlugin) defaultConstructor.newInstance(pcl.getPluginInfo(), dataFolder, console);
+            var nh = new PluginHolder(pluginObj, null);
+            tempHolderMap.put(name, nh);
+            return nh;
+        } catch (ClassNotFoundException e) {
+            throw new InvalidPluginInfoException("Main class \"" + main + "\" isn't found for plugin " + name, e, pcl.getPluginFile());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalPluginException("Can't find the default constructor for the class.", e, pcl.getPluginFile());
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new IllegalPluginException("Can't instantitate plugin object for " + name, e, pcl.getPluginFile());
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot create datafolder for " + name);
+        }
     }
 
     private void walk(MutableNetwork<String, DependencyType> graph, OrderedGraphWalker.ExceptionalConsumer<String> consumer, BiConsumer<String, ? super Exception> exceptions) {
         var walker = new OrderedGraphWalker<>(
                 graph, s -> {
-            if (parent.nodes().contains(s)) return;
+            if (loadedNodes.contains(s)) return;
             consumer.accept(s);
         }, exceptions, it -> it == DependencyType.DEPEND);
         walker.walk();
@@ -163,11 +203,11 @@ public class BatchPluginLoader {
             var cl = new PluginClassLoader(plugin, pluginManager.getClass().getClassLoader(), context);
             // check for info
             var info = cl.getPluginInfo();
-            if (infoMap.containsKey(info.name())) {
-                throw new InvalidPluginInfoException("Plugin with name \"" + info.name() + "\" is already loaded!", plugin);
-            }
             if (!PLUGIN_NAME.matcher(info.name()).matches()) {
                 throw new InvalidPluginInfoException("Illegal plugin name. Must be " + PLUGIN_NAME.pattern(), plugin);
+            }
+            if (infoMap.containsKey(info.name()) || pluginManager.getPluginById(info.name()).isPresent()) {
+                throw new InvalidPluginInfoException("Plugin with name \"" + info.name() + "\" is already loaded!", plugin);
             }
             var deps = new ArrayList<String>(info.dependencies().size() + info.loadBefore().size());
             deps.addAll(info.dependencies());

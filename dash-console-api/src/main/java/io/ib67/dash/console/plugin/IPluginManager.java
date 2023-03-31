@@ -1,25 +1,26 @@
 package io.ib67.dash.console.plugin;
 
 import io.ib67.dash.console.plugin.exception.PluginException;
+import io.ib67.kiwi.future.Future;
 import io.ib67.kiwi.future.Result;
+import io.ib67.kiwi.tuple.Pair;
 
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
+@AvailableSince("0.1.0")
 public interface IPluginManager {
-    Optional<? extends PluginHolder> findPlugin(String name);
+    Collection<Pair<PluginState, AbstractPlugin>> getPlugins();
 
-    Collection<? extends PluginHolder> getPlugins();
+    <P extends AbstractPlugin> Optional<P> getPluginById(String id);
 
-    boolean isPluginLoaded(String name);
+    PluginHolder registerPlugin(AbstractPlugin plugin);
 
-    Result<AbstractPlugin, ? extends PluginException> loadPlugin(Path pathToPlugin);
+    PluginState getGlobalState();
 
-    /**
-     * Load plugins with dependency resolvent
-     * @param pathToPlugins plugins
-     */
-    void loadPlugins(List<Path> pathToPlugins);
+    void loadPlugins(List<Path> pluginsList);
 }
