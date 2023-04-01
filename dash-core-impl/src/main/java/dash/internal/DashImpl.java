@@ -51,7 +51,7 @@ public class DashImpl implements Dash {
     private final IEventRegistry eventRegistry;
     private final ExecutorService asyncPool;
     private final ScheduledExecutorService mainPool;
-    private final IPermissionRegistry permissionFactory;
+    private final IPermissionRegistry permissionRegistry;
     private final IUserManager userManager;
     private final IEventBus bus;
 
@@ -63,7 +63,7 @@ public class DashImpl implements Dash {
         adapterRegistry = new SimpleAdapterRegistry();
         globalChannel = channelFactory.forMain("GLOBAL");
         eventRegistry = new SimpleEventRegistry(channelFactory);
-        permissionFactory = new SimplePermissionRegistry();
+        permissionRegistry = new SimplePermissionRegistry();
         userManager = null;//new UserManagerImpl(session, permissionFactory, adapterRegistry);
     }
 }
