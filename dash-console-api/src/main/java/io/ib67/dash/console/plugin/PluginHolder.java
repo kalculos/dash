@@ -14,6 +14,7 @@ public class PluginHolder {
     protected PluginState state;
 
     public boolean setState(PluginState newState) {
+        if (newState == state) return true;
         try {
             switch (newState) {
                 case LOADING -> {
@@ -26,9 +27,10 @@ public class PluginHolder {
                     plugin.onTerminate();
                 }
             }
+            state = newState;
             return true;
         } catch (Exception e) {
-            log.warn("Can't load plugin \"{}\" during {} state: {}", plugin.getInfo().name(), newState, e);
+            log.warn("Can't load plugin \"{}\" during {} state", plugin.getInfo().name(), newState, e);
             Objects.requireNonNull(newState.getFallbackState(), "Impossible null");
             state = newState.getFallbackState();
             return false;
