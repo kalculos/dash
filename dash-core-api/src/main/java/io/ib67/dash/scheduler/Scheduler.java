@@ -22,42 +22,28 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash;
+package io.ib67.dash.scheduler;
 
-import io.ib67.dash.adapter.IAdapterRegistry;
-import io.ib67.dash.event.AbstractEvent;
-import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.internal.DashInstFiner;
-import io.ib67.dash.scheduler.Scheduler;
-import io.ib67.dash.user.IPermissionFactory;
-import io.ib67.dash.user.IUserManager;
+import io.ib67.dash.scheduler.future.ScheduledFuture;
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * The core part of dash framework.<br>
- * You can find everything you need in this class. They are shared among multiple {@link AbstractBot}s.
- */
+import java.time.Duration;
+
 @ApiStatus.AvailableSince("0.1.0")
-public interface Dash {
-    static Dash getInstance() {
-        return DashInstFiner.FINDER.get();
+public interface Scheduler extends Executor {
+     ScheduledFuture scheduleLater(Task task, Duration duration);
+
+     ScheduledFuture scheduleTimer(Task task, Duration period, Duration delay);
+
+     ScheduledFuture scheduleAsyncLater(Task task, Duration duration);
+
+     ScheduledFuture scheduleAsyncTimer(Task task, Duration period, Duration delay);
+
+    default  ScheduledFuture scheduleTimer(Task task, Duration period) {
+        return scheduleTimer(task, period, Duration.ZERO);
     }
 
-    IAdapterRegistry getAdapterRegistry();
-
-    /**
-     * Where you can receive all events.
-     *
-     * @return global event channel.
-     */
-    IEventChannel<? extends AbstractEvent> getGlobalChannel();
-
-    IEventBus getBus();
-
-    Scheduler getScheduler();
-
-    IPermissionFactory getPermissionFactory();
-
-    IUserManager getUserManager();
+    default  ScheduledFuture scheduleAsyncTimer(Task task, Duration period) {
+        return scheduleAsyncTimer(task, period, Duration.ZERO);
+    }
 }
