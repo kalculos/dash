@@ -22,21 +22,34 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.scheduler;
+package dash.internal.scheduler;
 
+import io.ib67.dash.scheduler.Executor;
 import io.ib67.dash.scheduler.future.ScheduledFuture;
-import org.jetbrains.annotations.ApiStatus;
 
-import java.time.Duration;
+import java.util.Objects;
 
-@ApiStatus.AvailableSince("0.1.0")
-public interface Scheduler extends Executor {
-     ScheduledFuture scheduleLater(Task task, Duration duration);
+public class DashScheduledPromise extends DashTaskPromise implements ScheduledFuture {
+    private final java.util.concurrent.ScheduledFuture<?> future;
+    private final long time = System.currentTimeMillis();
 
-     ScheduledFuture scheduleTimer(Task task, Duration period);
+    public DashScheduledPromise(Executor.Task task, java.util.concurrent.ScheduledFuture<?> future) {
+        super(task);
+        Objects.requireNonNull(this.future = future);
+    }
 
-     ScheduledFuture scheduleAsyncLater(Task task, Duration duration);
+    @Override
+    public void cancel() {
+        future.cancel(false);
+    }
 
-     ScheduledFuture scheduleAsyncTimer(Task task, Duration period);
+    @Override
+    public boolean isCancelled() {
+        return future.isCancelled();
+    }
 
+    @Override
+    public long getEnqueueTime() {
+        return time;
+    }
 }

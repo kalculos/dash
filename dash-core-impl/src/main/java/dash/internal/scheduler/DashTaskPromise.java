@@ -22,21 +22,16 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.scheduler;
+package dash.internal.scheduler;
 
-import io.ib67.dash.scheduler.future.ScheduledFuture;
-import org.jetbrains.annotations.ApiStatus;
+import io.ib67.dash.scheduler.Executor;
+import io.ib67.dash.scheduler.future.TaskFuture;
+import io.ib67.kiwi.future.TaskPromise;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import java.time.Duration;
-
-@ApiStatus.AvailableSince("0.1.0")
-public interface Scheduler extends Executor {
-     ScheduledFuture scheduleLater(Task task, Duration duration);
-
-     ScheduledFuture scheduleTimer(Task task, Duration period);
-
-     ScheduledFuture scheduleAsyncLater(Task task, Duration duration);
-
-     ScheduledFuture scheduleAsyncTimer(Task task, Duration period);
-
+@RequiredArgsConstructor
+@Getter
+public class DashTaskPromise extends TaskPromise<Void,Exception> implements TaskFuture {
+    private final Executor.Task task;
 }

@@ -24,6 +24,7 @@
 
 package dash.internal.event;
 
+import dash.internal.scheduler.DashScheduler;
 import dash.test.event.CancellableEvent;
 import dash.test.event.TestEventA;
 import dash.test.event.TestEventB;
@@ -51,7 +52,7 @@ class DashEventBusTest {
 
     @BeforeEach
     public void initEventBus() {
-        bus = new DashEventBus(mainLoop, asyncPool);
+        bus = new DashEventBus(new DashScheduler(mainLoop,asyncPool));
         channelFactory = new SimpleEventChannelFactory(bus);
     }
 
