@@ -13,13 +13,13 @@ public record PluginInfo(
         Version version,
         List<String> authors,
         List<String> dependencies,
-        List<String> loadBefore) {
+        List<String> loadAfters) {
     public PluginInfo {
         requireNonNull(name,"plugin name is required");
         requireNonNull(version,"plugin version is required");
         requireNonNull(main,"plugin main is required");
         authors = authors == null ? List.of() : authors;
         dependencies = dependencies == null ? List.of() : dependencies;
-        loadBefore = loadBefore == null ? List.of() : loadBefore;
+        loadAfters = loadAfters == null ? List.of() : loadAfters;
     }
 }

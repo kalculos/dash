@@ -1,10 +1,10 @@
 package io.ib67.dash.console.plugin;
 
-import java.util.Objects;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -13,7 +13,7 @@ public class PluginHolder {
     protected AbstractPlugin plugin;
     protected PluginState state;
 
-    public void setState(PluginState newState) {
+    public boolean setState(PluginState newState) {
         try {
             switch (newState) {
                 case LOADING -> {
@@ -26,10 +26,12 @@ public class PluginHolder {
                     plugin.onTerminate();
                 }
             }
+            return true;
         } catch (Exception e) {
             log.warn("Can't load plugin \"{}\" during {} state: {}", plugin.getInfo().name(), newState, e);
             Objects.requireNonNull(newState.getFallbackState(), "Impossible null");
             state = newState.getFallbackState();
+            return false;
         }
     }
 }

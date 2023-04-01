@@ -58,7 +58,6 @@ public class OrderedGraphWalker<N, E> {
     }
 
     public void cleanState(){
-        stateMap.entrySet().removeIf(it->it.getValue() == WalkState.ERROR);
         var iter = stateMap.entrySet().iterator();
         while (iter.hasNext()){
             var entry = iter.next();
@@ -67,6 +66,7 @@ public class OrderedGraphWalker<N, E> {
             }
             iter.remove();
         }
+        stateMap.entrySet().removeIf(it->it.getValue() == WalkState.ERROR);
     }
 
     private void traverse(N node) {
