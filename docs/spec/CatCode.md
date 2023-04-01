@@ -1,5 +1,9 @@
 # 猫码 / CatCode
 
+> **WARNING**  
+> CatCode 已经被 dash 弃用，未来可能会放出额外的 CatCode 支持库。  
+> 我们不推荐，也不阻止你使用这种囊肿的格式，他只应用于调试输出，而绝不是用于解析，序列化。
+
 和 [CatCode2](https://github.com/ForteScarlet/CatCode2) 类似,
 ~~但其实是我们[先](https://github.com/saltedfishclub/PolarCore/wiki/CatCode)拿的这个名字哦~~
 

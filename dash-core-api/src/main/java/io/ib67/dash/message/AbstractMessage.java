@@ -77,7 +77,7 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
     }
 
     public boolean reply(String mesg) {
-        return reply(MessageChain.fromCatCode(mesg));
+        return reply(MessageChain.fromLiteral(mesg));
     }
 
     @Override

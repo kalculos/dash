@@ -24,7 +24,6 @@
 
 package io.ib67.dash.util;
 
-import io.ib67.dash.serialization.SerializerException;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -44,6 +43,7 @@ import java.util.stream.Collectors;
  * Note: This utility is independent. You can copy it under our License.
  */
 @ApiStatus.AvailableSince("0.1.0")
+@Deprecated
 public class CatCodes {
 
     public static String toString(Collection<? extends CatCode> catCodes) {
@@ -200,7 +200,7 @@ public class CatCodes {
         }
     }
 
-    public static class InvalidCatCodeException extends SerializerException {
+    public static class InvalidCatCodeException extends RuntimeException{
         public InvalidCatCodeException() {
             super();
         }
