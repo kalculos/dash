@@ -77,7 +77,7 @@ class SimpleEventRegistryTest {
                 results[2] = true;
             }
         }
-        eventRegistry.registerListeners(bot, new Listeners());
+        eventBus.registerListeners(bot, new Listeners());
         forceSleep(1);
         eventBus.postEvent(new TestEventA(0));
         forceSleep(1);
