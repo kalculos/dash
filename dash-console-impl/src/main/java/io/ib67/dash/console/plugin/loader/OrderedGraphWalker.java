@@ -28,7 +28,9 @@ import com.google.common.graph.MutableNetwork;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
@@ -49,11 +51,13 @@ public class OrderedGraphWalker<N, E> {
     private final BiConsumer<N, ? super Exception> exceptionHandler;
     private final Predicate<E> shouldPassError;
     private final Map<N, WalkState> stateMap = new HashMap<>(network.nodes().size());
+    private final Set<N> walkedNodes = new HashSet<>();
 
     public void walk() {
         for (N node : network.nodes()) {
             if (stateMap.containsKey(node)) return;
             traverse(node);
+            walkedNodes.clear();;
         }
     }
 
@@ -71,6 +75,13 @@ public class OrderedGraphWalker<N, E> {
 
     private void traverse(N node) {
         var stateMap = this.stateMap;
+        var walked = this.walkedNodes;
+        if(walked.contains(node)){
+            stateMap.put(node,WalkState.ERROR);
+            exceptionHandler.accept(node,new IllegalStateException("Circular dependency"));
+            return;
+        }
+        walked.add(node);
         // find predecessors
         for (N predecessor : network.predecessors(node)) {
             if (!stateMap.containsKey(predecessor)) traverse(predecessor); // process it first.
