@@ -26,6 +26,7 @@ package dash.internal.registry;
 
 import dash.internal.event.DashEventBus;
 import dash.internal.event.SimpleEventChannelFactory;
+import dash.internal.scheduler.DashScheduler;
 import dash.test.MockBot;
 import dash.test.SharedResources;
 import dash.test.event.TestEventA;
@@ -50,7 +51,7 @@ class SimpleEventRegistryTest {
 
     @BeforeEach
     public void setup() {
-        eventBus = new DashEventBus(SharedResources.mainLoop, SharedResources.asyncPool);
+        eventBus = new DashEventBus(new DashScheduler(SharedResources.mainLoop, SharedResources.asyncPool));
         var factory = new SimpleEventChannelFactory(eventBus);
         eventRegistry = new SimpleEventRegistry(factory);
         bot = new MockBot();
@@ -76,7 +77,7 @@ class SimpleEventRegistryTest {
                 results[2] = true;
             }
         }
-        eventRegistry.registerListeners(bot, new Listeners());
+        eventBus.registerListeners(bot, new Listeners());
         forceSleep(1);
         eventBus.postEvent(new TestEventA(0));
         forceSleep(1);

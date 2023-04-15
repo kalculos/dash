@@ -19,6 +19,8 @@ module dash.core.api {
     exports io.ib67.dash.event;
     exports io.ib67.dash.event.bus;
 
+    exports io.ib67.dash.scheduler;
+    exports io.ib67.dash.scheduler.future;
     exports io.ib67.dash.tag;
     exports io.ib67.dash.user;
     exports io.ib67.dash.user.permission;
