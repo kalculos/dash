@@ -26,6 +26,7 @@ package dash.internal.scheduler;
 
 import io.ib67.dash.scheduler.Executor;
 import io.ib67.dash.scheduler.future.ScheduledFuture;
+import lombok.Generated;
 
 import java.util.Objects;
 
@@ -39,16 +40,19 @@ public class DashScheduledPromise extends DashTaskPromise implements ScheduledFu
     }
 
     @Override
+    @Generated
     public void cancel() {
         future.cancel(false);
     }
 
     @Override
+    @Generated // skip coverage
     public boolean isCancelled() {
         return future.isCancelled();
     }
 
     @Override
+    @Generated
     public long getEnqueueTime() {
         return time;
     }
