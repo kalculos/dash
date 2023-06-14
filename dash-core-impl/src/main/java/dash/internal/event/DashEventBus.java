@@ -26,7 +26,6 @@ package dash.internal.event;
 
 import dash.internal.registry.SimpleEventRegistry;
 import dash.internal.util.Threads;
-import io.ib67.dash.AbstractBot;
 import io.ib67.dash.event.*;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
@@ -63,8 +62,8 @@ public class DashEventBus implements IEventBus {
     }
 
     @Override
-    public void registerListeners(AbstractBot bot, EventListener listener) {
-        delegatedRegistry.registerListeners(bot, listener);
+    public void registerListeners(EventListener listener) {
+        delegatedRegistry.registerListeners( listener);
     }
 
     @Override

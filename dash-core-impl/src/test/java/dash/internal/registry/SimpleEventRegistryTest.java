@@ -26,11 +26,9 @@ package dash.internal.registry;
 
 import dash.internal.event.DashEventBus;
 import dash.internal.event.SimpleEventChannelFactory;
-import dash.test.MockBot;
 import dash.test.SharedResources;
 import dash.test.event.TestEventA;
 import dash.test.event.TestEventB;
-import io.ib67.dash.AbstractBot;
 import io.ib67.dash.event.EventHandler;
 import io.ib67.dash.event.EventListener;
 import io.ib67.dash.event.IEventRegistry;
@@ -46,14 +44,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SimpleEventRegistryTest {
     private IEventRegistry eventRegistry;
     private IEventBus eventBus;
-    private AbstractBot bot;
 
     @BeforeEach
     public void setup() {
         eventBus = new DashEventBus(SharedResources.mainLoop, SharedResources.asyncPool);
         var factory = new SimpleEventChannelFactory(eventBus);
         eventRegistry = new SimpleEventRegistry(factory);
-        bot = new MockBot();
     }
 
     @Test
@@ -76,7 +72,7 @@ class SimpleEventRegistryTest {
                 results[2] = true;
             }
         }
-        eventRegistry.registerListeners(bot, new Listeners());
+        eventRegistry.registerListeners(new Listeners());
         forceSleep(1);
         eventBus.postEvent(new TestEventA(0));
         forceSleep(1);

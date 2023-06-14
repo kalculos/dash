@@ -37,9 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * The core part of dash framework.<br>
- * You can find everything you need in this class. They are shared among multiple {@link AbstractBot}s.
- */
+ * The core part of dash framework.<br>*/
 @ApiStatus.AvailableSince("0.1.0")
 public interface Dash {
     static Dash getInstance() {
