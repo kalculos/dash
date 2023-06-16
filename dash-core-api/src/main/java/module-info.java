@@ -26,6 +26,5 @@ module dash.core.api {
     requires kiwi.core;
     requires lombok;
     requires org.jetbrains.annotations;
-    requires sproket.github.io.persism;
     requires com.github.spotbugs.annotations;
 }

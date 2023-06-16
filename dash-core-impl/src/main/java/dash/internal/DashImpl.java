@@ -34,15 +34,11 @@ import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.scheduler.Scheduler;
+import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.sf.persism.Session;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 
 @Getter
 @AllArgsConstructor
@@ -55,7 +51,7 @@ public class DashImpl implements Dash {
     private final IEventBus bus;
     private final Scheduler scheduler;
 
-    public DashImpl(Session session, Scheduler scheduler) {
+    public DashImpl( Scheduler scheduler) {
         this.scheduler = scheduler;
         bus = new DashEventBus(scheduler);
         var channelFactory = bus.getChannelFactory();
