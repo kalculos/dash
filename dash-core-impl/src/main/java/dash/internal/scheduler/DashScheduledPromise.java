@@ -22,42 +22,38 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash;
+package dash.internal.scheduler;
 
-import io.ib67.dash.adapter.IAdapterRegistry;
-import io.ib67.dash.event.AbstractEvent;
-import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.internal.DashInstFiner;
-import io.ib67.dash.user.IPermissionRegistry;
-import io.ib67.dash.scheduler.Scheduler;
-import io.ib67.dash.user.IUserManager;
-import org.jetbrains.annotations.ApiStatus;
+import io.ib67.dash.scheduler.Executor;
+import io.ib67.dash.scheduler.future.ScheduledFuture;
+import lombok.Generated;
 
-/**
- * The core part of dash framework.<br>
- * You can find everything you need in this class. They are shared among multiple {@link AbstractBot}s.
- */
-@ApiStatus.AvailableSince("0.1.0")
-public interface Dash {
-    static Dash getInstance() {
-        return DashInstFiner.FINDER.get();
+import java.util.Objects;
+
+public class DashScheduledPromise extends DashTaskPromise implements ScheduledFuture {
+    private final java.util.concurrent.ScheduledFuture<?> future;
+    private final long time = System.currentTimeMillis();
+
+    public DashScheduledPromise(Executor.Task task, java.util.concurrent.ScheduledFuture<?> future) {
+        super(task);
+        Objects.requireNonNull(this.future = future);
     }
 
-    IAdapterRegistry getAdapterRegistry();
+    @Override
+    @Generated
+    public void cancel() {
+        future.cancel(false);
+    }
 
-    /**
-     * Where you can receive all events.
-     *
-     * @return global event channel.
-     */
-    IEventChannel<? extends AbstractEvent> getGlobalChannel();
+    @Override
+    @Generated // skip coverage
+    public boolean isCancelled() {
+        return future.isCancelled();
+    }
 
-    IEventBus getBus();
-
-    Scheduler getScheduler();
-
-    IPermissionRegistry getPermissionRegistry();
-
-    IUserManager getUserManager();
+    @Override
+    @Generated
+    public long getEnqueueTime() {
+        return time;
+    }
 }

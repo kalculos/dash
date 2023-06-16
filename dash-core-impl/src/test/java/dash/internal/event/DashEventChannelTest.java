@@ -25,6 +25,7 @@
 package dash.internal.event;
 
 import dash.internal.event.channels.AcceptingChannel;
+import dash.internal.scheduler.DashScheduler;
 import dash.test.event.TestEventA;
 import dash.test.event.TestEventB;
 import dash.test.event.WrapEvent;
@@ -54,7 +55,7 @@ class DashEventChannelTest {
 
     @BeforeEach
     public void setup() {
-        bus = new DashEventBus(mainLoop, asyncPool);
+        bus = new DashEventBus(new DashScheduler(mainLoop, asyncPool));
         factory = new SimpleEventChannelFactory(bus);
     }
 
