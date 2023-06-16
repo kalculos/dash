@@ -26,7 +26,6 @@ package io.ib67.dash.contact;
 
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.adapter.PlatformRelated;
-import io.ib67.dash.tag.Taggable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
@@ -38,7 +37,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.AvailableSince("0.1.0")
 @Getter
 @EqualsAndHashCode
-public abstract class Contact implements PlatformRelated, Taggable {
+public abstract class Contact implements PlatformRelated{
     /**
      * The user-id of the contact.
      * This ID is NOT platform ID. This is dash universal user id.

@@ -34,7 +34,7 @@ import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.user.IPermissionFactory;
+import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,7 +51,7 @@ public class DashImpl implements Dash {
     private final IEventRegistry eventRegistry;
     private final ExecutorService asyncPool;
     private final ScheduledExecutorService mainPool;
-    private final IPermissionFactory permissionFactory;
+    private final IPermissionRegistry permissionRegistry;
     private final IUserManager userManager;
     private final IEventBus bus;
 
@@ -63,7 +63,7 @@ public class DashImpl implements Dash {
         adapterRegistry = new SimpleAdapterRegistry();
         globalChannel = channelFactory.forMain("GLOBAL");
         eventRegistry = new SimpleEventRegistry(channelFactory);
-        permissionFactory = new SimplePermissionFactory();
+        permissionRegistry = new SimplePermissionFactory();
         userManager = null;//new UserManagerImpl(session, permissionFactory, adapterRegistry);
     }
 }

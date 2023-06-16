@@ -24,15 +24,19 @@
 
 package io.ib67.dash.user;
 
-import io.ib67.kiwi.future.Result;
-
-import java.util.function.Consumer;
+import io.ib67.dash.contact.Contact;
+import io.ib67.dash.exception.user.UserNotFoundException;
+import io.ib67.kiwi.future.Future;
 
 public interface IUserManager {
+    Future<? extends User, UserNotFoundException> findUser(long uid);
 
-    Result<? extends User,?> findUserById(long id);
+    Future<? extends User,?> register(Contact contact);
 
-    User createUser(Consumer<UserBuilder> configurator);
-
-    void saveUser(User user);
+    /**
+     * Useful when you want to reset some users' data
+     * @param user
+     * @return
+     */
+    Future<?,UserNotFoundException> unregister(User user);
 }

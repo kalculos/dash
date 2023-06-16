@@ -22,8 +22,10 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.tag;
+package io.ib67.dash.exception.user;
 
-record SimpleTag(String identifier) implements Tag {
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.AvailableSince("0.1.0")
+public class UserException extends RuntimeException{
 }

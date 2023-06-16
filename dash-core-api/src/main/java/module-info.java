@@ -11,15 +11,15 @@ module dash.core.api {
     exports io.ib67.dash.message.feature.component;
     exports io.ib67.dash.adapter;
     exports io.ib67.dash.util;
+    exports io.ib67.dash.exception.user;
 
     exports io.ib67.dash.event.handler;
     exports io.ib67.dash.event;
     exports io.ib67.dash.event.bus;
 
-    exports io.ib67.dash.tag;
     exports io.ib67.dash.user;
     exports io.ib67.dash.user.permission;
-    exports io.ib67.dash.event.context;
+    exports io.ib67.dash.context;
 
     requires kiwi.core;
     requires lombok;

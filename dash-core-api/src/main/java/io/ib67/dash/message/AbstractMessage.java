@@ -26,10 +26,10 @@ package io.ib67.dash.message;
 
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.adapter.PlatformRelated;
+import io.ib67.dash.context.ContextKey;
+import io.ib67.dash.context.IContext;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.ContextualEvent;
-import io.ib67.dash.event.context.ContextKey;
-import io.ib67.dash.event.context.IEventContext;
 import io.ib67.dash.message.internal.UnorderedEventContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +58,7 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
      * The context of the message
      */
     @Getter
-    private final IEventContext context = new UnorderedEventContext();
+    private final IContext context = new UnorderedEventContext();
 
     /**
      * An universal message id.
