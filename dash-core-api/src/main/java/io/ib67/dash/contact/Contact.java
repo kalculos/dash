@@ -26,6 +26,7 @@ package io.ib67.dash.contact;
 
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.adapter.PlatformRelated;
+import io.ib67.dash.user.User;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
@@ -39,15 +40,9 @@ import org.jetbrains.annotations.ApiStatus;
 @EqualsAndHashCode
 public abstract class Contact implements PlatformRelated{
     /**
-     * The user-id of the contact.
-     * This ID is NOT platform ID. This is dash universal user id.
-     */
-    protected final long uid;
-
-    /**
      * User ID from IM platform
      */
-    protected final String idOnPlatform;
+    protected final String platformIdentifier;
 
     protected final PlatformAdapter platform;
 
@@ -56,14 +51,15 @@ public abstract class Contact implements PlatformRelated{
      */
     protected String name;
 
-    protected Contact(long uid, String idOnPlatform, PlatformAdapter platform) {
-        this.uid = uid;
-        this.idOnPlatform = idOnPlatform;
+    protected Contact(String platformIdentifier, PlatformAdapter platform) {
+        this.platformIdentifier = platformIdentifier;
         this.platform = platform;
     }
 
+    public abstract User getUser();
+
     @Override
     public String toString() {
-        return "Contact(" + uid + "/" + getIdOnPlatform() + " on " + getPlatform().getName() + ")";
+        return "Contact(" + getUser().getId() + "/" + getPlatformIdentifier() + " on " + getPlatform().getName() + ")";
     }
 }
