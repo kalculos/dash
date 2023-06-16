@@ -15,6 +15,7 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'io.github.sproket:persism:2.2.0'
     testImplementation 'com.h2database:h2:2.1.214'
+    implementation 'io.github.sproket:persism:2.2.0'
 }
 test {
     useJUnitPlatform()
