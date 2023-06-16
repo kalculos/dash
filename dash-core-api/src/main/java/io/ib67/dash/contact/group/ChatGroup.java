@@ -39,8 +39,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public abstract class ChatGroup extends Contact {
 
-    protected ChatGroup(long uid, String platformId, PlatformAdapter platform, List<ChatChannel> channels, ChatChannel defaultChannel, List<Member> members) {
-        super(uid, platformId, platform);
+    protected ChatGroup(String platformId, PlatformAdapter platform, List<ChatChannel> channels, ChatChannel defaultChannel, List<Member> members) {
+        super(platformId, platform);
         this.channels = channels;
         this.defaultChannel = defaultChannel;
         this.members = members;
@@ -57,6 +57,6 @@ public abstract class ChatGroup extends Contact {
 
     @Override
     public String toString() {
-        return "Group(" + uid + "/" + idOnPlatform + " on " + platform.getName() + ")";
+        return "Group(" + getUser().getId() + "/" + platformIdentifier + " on " + platform.getName() + ")";
     }
 }

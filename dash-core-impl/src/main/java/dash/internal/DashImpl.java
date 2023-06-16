@@ -35,11 +35,10 @@ import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.scheduler.Scheduler;
-import io.ib67.dash.user.IPermissionFactory;
+import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.sf.persism.Session;
 
 @Getter
 @AllArgsConstructor
@@ -47,19 +46,19 @@ public class DashImpl implements Dash {
     private final IAdapterRegistry adapterRegistry;
     private final IEventChannel<? extends AbstractEvent> globalChannel;
     private final IEventRegistry eventRegistry;
-    private final IPermissionFactory permissionFactory;
+    private final IPermissionRegistry permissionRegistry;
     private final IUserManager userManager;
     private final IEventBus bus;
     private final Scheduler scheduler;
 
-    public DashImpl(Session session, Scheduler scheduler) {
+    public DashImpl( Scheduler scheduler) {
         this.scheduler = scheduler;
         bus = new DashEventBus(scheduler);
         var channelFactory = bus.getChannelFactory();
         adapterRegistry = new SimpleAdapterRegistry();
         globalChannel = channelFactory.forMain("GLOBAL");
         eventRegistry = new SimpleEventRegistry(channelFactory);
-        permissionFactory = new SimplePermissionFactory();
+        permissionRegistry = new SimplePermissionFactory();
         userManager = null;//new UserManagerImpl(session, permissionFactory, adapterRegistry);
     }
 }

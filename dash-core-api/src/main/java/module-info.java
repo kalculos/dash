@@ -1,7 +1,5 @@
 module dash.core.api {
     uses io.ib67.dash.Dash;
-    uses io.ib67.dash.AbstractBot;
-    uses io.ib67.dash.BotContext;
     exports io.ib67.dash;
     exports io.ib67.dash.contact;
     exports io.ib67.dash.contact.group;
@@ -12,8 +10,8 @@ module dash.core.api {
     exports io.ib67.dash.message.feature;
     exports io.ib67.dash.message.feature.component;
     exports io.ib67.dash.adapter;
-    exports io.ib67.dash.service;
     exports io.ib67.dash.util;
+    exports io.ib67.dash.exception.user;
 
     exports io.ib67.dash.event.handler;
     exports io.ib67.dash.event;
@@ -21,14 +19,12 @@ module dash.core.api {
 
     exports io.ib67.dash.scheduler;
     exports io.ib67.dash.scheduler.future;
-    exports io.ib67.dash.tag;
     exports io.ib67.dash.user;
     exports io.ib67.dash.user.permission;
-    exports io.ib67.dash.event.context;
+    exports io.ib67.dash.context;
 
     requires kiwi.core;
     requires lombok;
     requires org.jetbrains.annotations;
-    requires sproket.github.io.persism;
     requires com.github.spotbugs.annotations;
 }

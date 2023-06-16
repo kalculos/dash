@@ -22,12 +22,10 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash;
+package io.ib67.dash.exception.user;
 
-import net.sf.persism.Session;
+import org.jetbrains.annotations.ApiStatus;
 
-public record BotContext(
-        Dash dash,
-        Session databaseSession
-) {
+@ApiStatus.AvailableSince("0.1.0")
+public class UserException extends RuntimeException{
 }

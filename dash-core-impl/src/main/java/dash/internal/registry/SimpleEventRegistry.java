@@ -25,7 +25,6 @@
 package dash.internal.registry;
 
 import dash.internal.Constant;
-import io.ib67.dash.AbstractBot;
 import io.ib67.dash.event.*;
 import io.ib67.dash.event.handler.EventHandlerAdapter;
 import io.ib67.dash.event.handler.IEventHandler;
@@ -50,7 +49,7 @@ public class SimpleEventRegistry implements IEventRegistry {
     @Generated // I'm exhausted to test these WARNING branches, just skip them, please!
     @Override
     @SuppressWarnings("unchecked")
-    public void registerListeners(AbstractBot bot, @NotNull EventListener listener) {
+    public void registerListeners(@NotNull EventListener listener) {
         var lookup = MethodHandles.privateLookupIn(listener.getClass(), MethodHandles.lookup());
         for (Method declaredMethod : listener.getClass().getDeclaredMethods()) {
             if (declaredMethod.isAnnotationPresent(EventHandler.class)) {

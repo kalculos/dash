@@ -39,18 +39,18 @@ public abstract class Member extends Contact implements IMessageSource {
 
     protected final boolean friend;
 
-    protected Member(long uid, String idOnPlatform, PlatformAdapter adapter, ChatGroup group, boolean friend) {
-        super(uid, idOnPlatform, adapter);
+    protected Member(String idOnPlatform, PlatformAdapter adapter, ChatGroup group, boolean friend) {
+        super(idOnPlatform, adapter);
         this.group = group;
         this.friend = friend;
     }
 
     public Friend asFriend() throws NotFriendException {
-        return getPlatform().getFriend(uid).orElseThrow(() -> new NotFriendException("This " + this + " from " + group + " isn't our friend.", this));
+        return getPlatform().getFriend(getPlatformIdentifier()).orElseThrow(() -> new NotFriendException("This " + this + " from " + group + " isn't our friend.", this));
     }
 
     @Override
     public String toString() {
-        return "Member(" + uid + "/" + idOnPlatform + " on " + platform.getName() + ")";
+        return "Member(" + getUser().getId() + "/" + platformIdentifier + " on " + platform.getName() + ")";
     }
 }

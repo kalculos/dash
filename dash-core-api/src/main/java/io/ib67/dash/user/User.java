@@ -25,24 +25,43 @@
 package io.ib67.dash.user;
 
 import io.ib67.dash.contact.Contact;
-import io.ib67.dash.tag.Taggable;
-import io.ib67.dash.user.permission.Permissible;
-import io.ib67.dash.user.permission.Permission;
+import io.ib67.dash.context.IContext;
+import io.ib67.dash.message.MessageChain;
+import io.ib67.dash.user.permission.Authority;
 import io.ib67.dash.user.permission.PermissionContext;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Collection;
 
-public interface User extends Permissible, Taggable {
+@ApiStatus.AvailableSince("0.1.0")
+public interface User extends Authority {
+    /**
+     * This is not persistent. Data will be lost after reinitialization etc.
+     * @return a memory-only context
+     */
+    @NotNull
+    IContext getContext();
+
+    /**
+     * Fetch known contacts who were bind to this user.
+     * @return list of known contacts.
+     */
+    @NotNull
+    Collection<? extends Contact> getKnownContacts();
+
+    /**
+     * Attempts to send message to every known contact.
+     * @param message message to be sent
+     */
+    void broadcastMessage(@NotNull MessageChain message);
+
+    @NotNull
+    PermissionContext getPermissionContext();
+
     long getId();
 
+    @Nullable
     String getName();
-
-    List<? extends Contact> getKnownContacts();
-
-    PermissionContext getDefaultContext();
-
-    @Override
-    default boolean hasPermission(Permission perm) {
-        return hasPermission(getDefaultContext(), perm);
-    }
 }

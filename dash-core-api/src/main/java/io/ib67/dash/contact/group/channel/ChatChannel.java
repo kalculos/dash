@@ -26,7 +26,6 @@ package io.ib67.dash.contact.group.channel;
 
 import io.ib67.dash.contact.group.ChatGroup;
 import io.ib67.dash.message.IMessageSource;
-import io.ib67.dash.tag.Taggable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
@@ -39,7 +38,7 @@ import static java.util.Objects.requireNonNull;
 @Getter
 @ApiStatus.AvailableSince("0.1.0")
 @EqualsAndHashCode
-public abstract class ChatChannel implements IMessageSource, Taggable {
+public abstract class ChatChannel implements IMessageSource {
     protected final ChannelInfo info;
 
     protected final ChatGroup group;

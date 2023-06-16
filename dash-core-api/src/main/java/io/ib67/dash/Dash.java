@@ -29,8 +29,8 @@ import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.internal.DashInstFiner;
+import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.scheduler.Scheduler;
-import io.ib67.dash.user.IPermissionFactory;
 import io.ib67.dash.user.IUserManager;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -57,7 +57,7 @@ public interface Dash {
 
     Scheduler getScheduler();
 
-    IPermissionFactory getPermissionFactory();
+    IPermissionRegistry getPermissionRegistry();
 
     IUserManager getUserManager();
 }

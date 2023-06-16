@@ -22,18 +22,16 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.event.context;
+package io.ib67.dash.context;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
 /**
- * A EventContext stores additional metadata involved in a {@link io.ib67.dash.event.ContextualEvent}, And they are accessible with {@link ContextKey}.<br>
- * Getting or putting data from MessageContext is very fast, however you'll have to waste some memory when you have a large amount of context keys.<br>
- * Usually you don't need to care about that memory issue. An Object[128] is actually small if compared to your business objects.
+ * A Context stores additional metadata involved in some event, And they are accessible with {@link ContextKey}.<br>
  */
-public interface IEventContext {
+public interface IContext {
 
     /**
      * Put a value indexed by the key into the context.

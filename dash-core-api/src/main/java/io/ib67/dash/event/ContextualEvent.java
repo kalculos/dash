@@ -24,12 +24,12 @@
 
 package io.ib67.dash.event;
 
-import io.ib67.dash.event.context.ContextKey;
-import io.ib67.dash.event.context.IEventContext;
+import io.ib67.dash.context.ContextKey;
+import io.ib67.dash.context.IContext;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
 public interface ContextualEvent {
-    IEventContext getContext();
+    IContext getContext();
     boolean hasContext(ContextKey<?> key);
 }
