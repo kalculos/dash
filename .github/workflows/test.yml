@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'zulu'
+          distribution: 'adopt-openj9'
       #      - name: Initialize CodeQL
       #        uses: github/codeql-action/init@v2
       #        with:
@@ -29,7 +29,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         with:
-          arguments: test
+          arguments: --no-daemon test
       #      - name: Perform CodeQL Analysis
       #        uses: github/codeql-action/analyze@v2
       - name: Upload to Coverity

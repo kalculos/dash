@@ -16,11 +16,11 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'zulu'
+          distribution: 'adopt-openj9'
       - name: Build with Gradle
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         with:
-          arguments: javadoc
+          arguments: --no-daemon javadoc
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.3.0
         with:
