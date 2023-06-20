@@ -146,10 +146,10 @@ class PluginLoader {
             // check for info
             var info = cl.getPluginInfo();
             if (!PLUGIN_NAME.matcher(info.name()).matches()) {
-                throw new InvalidPluginInfoException("Illegal plugin name. Must be " + PLUGIN_NAME.pattern(), path);
+                throw new InvalidPluginInfoException("Illegal plugin vendor. Must be " + PLUGIN_NAME.pattern(), path);
             }
             if (presentPlugins.contains(info.name()) || dependencyNodes.containsKey(info.name())) {
-                throw new InvalidPluginInfoException("Plugin with name \"" + info.name() + "\" is already loaded!", path);
+                throw new InvalidPluginInfoException("Plugin with vendor \"" + info.name() + "\" is already loaded!", path);
             }
 
             var deps = new ArrayList<String>(info.dependencies().size() + info.loadAfters().size());
@@ -157,7 +157,7 @@ class PluginLoader {
             deps.addAll(info.loadAfters());
             for (String dependency : deps) {
                 if (!PLUGIN_NAME.matcher(dependency).matches())
-                    throw new InvalidPluginInfoException("Illegal dependency name \"" + dependency + "\". Must be " + PLUGIN_NAME.pattern(), path);
+                    throw new InvalidPluginInfoException("Illegal dependency vendor \"" + dependency + "\". Must be " + PLUGIN_NAME.pattern(), path);
                 if (dependency.equals(info.name())) {
                     throw new InvalidPluginInfoException("Plugin \"" + dependency + "\" attempts to depend on itself!", path);
                 }

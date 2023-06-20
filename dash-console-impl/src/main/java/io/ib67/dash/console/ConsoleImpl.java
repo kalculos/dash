@@ -39,7 +39,7 @@ public class ConsoleImpl implements IConsole {
             Files.createDirectory(plugins);
         }
         pluginManager = new SimplePluginManager(plugins,this);
-        commandManager = new DashCommandManager(dash.getMainPool(), dash.getPermissionRegistry());
+        commandManager = new DashCommandManager(dash.getScheduler(), dash.getPermissionRegistry());
 
     }
 }

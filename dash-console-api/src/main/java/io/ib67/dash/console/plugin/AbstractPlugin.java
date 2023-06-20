@@ -1,22 +1,16 @@
 package io.ib67.dash.console.plugin;
 
-import io.ib67.dash.AbstractBot;
-import io.ib67.dash.BotContext;
 import io.ib67.dash.console.IConsole;
 import io.ib67.dash.console.plugin.info.PluginInfo;
-import io.ib67.dash.service.Lifecycle;
-import io.ib67.kiwi.Kiwi;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.nio.file.Path;
-import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
-public abstract class AbstractPlugin implements Lifecycle {
+public abstract class AbstractPlugin{
     @Getter
     private final PluginInfo info;
     @Getter
@@ -42,4 +36,10 @@ public abstract class AbstractPlugin implements Lifecycle {
     public AbstractPlugin() {
         throw new IllegalStateException("This constructor should never be called.");
     }
+
+    public void onInitialize(){}
+
+    public void onEnable(){}
+
+    public void onTerminate(){}
 }

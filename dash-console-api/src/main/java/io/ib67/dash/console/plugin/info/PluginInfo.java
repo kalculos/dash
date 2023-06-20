@@ -15,7 +15,7 @@ public record PluginInfo(
         List<String> dependencies,
         List<String> loadAfters) {
     public PluginInfo {
-        requireNonNull(name,"plugin name is required");
+        requireNonNull(name,"plugin vendor is required");
         requireNonNull(version,"plugin version is required");
         requireNonNull(main,"plugin main is required");
         authors = authors == null ? List.of() : authors;
