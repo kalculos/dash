@@ -24,9 +24,10 @@
 
 package io.ib67.dash.user.permission;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
+@ApiStatus.AvailableSince("0.1.0")
 public interface Permission {
     @NotNull
     String getNode();

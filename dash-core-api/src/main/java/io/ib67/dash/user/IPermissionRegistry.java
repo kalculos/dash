@@ -25,7 +25,9 @@
 package io.ib67.dash.user;
 
 import io.ib67.dash.user.permission.Permission;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.AvailableSince("0.1.0")
 public interface IPermissionRegistry {
     Permission getNode(String node);
 

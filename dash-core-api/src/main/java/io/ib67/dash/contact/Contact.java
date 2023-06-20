@@ -31,7 +31,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Contact.<br>
- * A Contact is an object that may send messages to you on IM platform.
+ * A Contact is an interactive object on IM Platform.
  */
 @ApiStatus.AvailableSince("0.1.0")
 public interface Contact extends PlatformRelated{

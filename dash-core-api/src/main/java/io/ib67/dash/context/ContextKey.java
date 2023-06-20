@@ -26,6 +26,7 @@ package io.ib67.dash.context;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,6 +40,7 @@ import static java.util.Objects.requireNonNull;
  * @param <T> the type of the value index by this key, only for type-safe checks.
  */
 @ToString
+@ApiStatus.AvailableSince("0.1.0")
 public class ContextKey<T> {
     private static final Map<String, ContextKey<?>> keys = new ConcurrentHashMap<>();
     private static final AtomicInteger CURRENT_INDEX = new AtomicInteger();

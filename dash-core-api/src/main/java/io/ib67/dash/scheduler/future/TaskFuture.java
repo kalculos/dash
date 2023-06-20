@@ -26,7 +26,9 @@ package io.ib67.dash.scheduler.future;
 
 import io.ib67.dash.scheduler.Executor;
 import io.ib67.kiwi.future.Future;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.AvailableSince("0.1.0")
 public interface TaskFuture extends Future<Void, Exception> {
     Executor.Task getTask();
 }

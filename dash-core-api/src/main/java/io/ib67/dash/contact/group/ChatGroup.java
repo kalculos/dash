@@ -32,8 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * A {@link ChatGroup} is composed of {@link ChatChannel}s.<br>
- * Each ChatGroup has one default channel at least.
+ * A {@link ChatGroup} is a set of channels, including some additional metadata shared between these channels.
  */
 @ApiStatus.AvailableSince("0.1.0")
 public interface ChatGroup extends Contact {

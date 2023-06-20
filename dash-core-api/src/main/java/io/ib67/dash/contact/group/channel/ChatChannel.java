@@ -32,7 +32,7 @@ import org.jetbrains.annotations.ApiStatus;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A {@link ChatChannel} is a part of a {@link ChatGroup}, where you can receive/send messages.
+ * {@link ChatChannel} is where the messages come from. It is related to a specific {@link ChatGroup} while equal and hashCode is implemented.
  */
 @ApiStatus.AvailableSince("0.1.0")
 @EqualsAndHashCode

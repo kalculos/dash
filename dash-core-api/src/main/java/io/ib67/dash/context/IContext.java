@@ -25,13 +25,15 @@
 package io.ib67.dash.context;
 
 import io.ib67.dash.message.internal.UnorderedEventContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
 /**
- * A Context stores additional metadata involved in some event, And they are accessible with {@link ContextKey}.<br>
+ * A Context stores additional metadata involved in some event, And they are accessible by using a {@link ContextKey}.<br>
  */
+@ApiStatus.AvailableSince("0.1.0")
 public interface IContext {
 
     static IContext create() {

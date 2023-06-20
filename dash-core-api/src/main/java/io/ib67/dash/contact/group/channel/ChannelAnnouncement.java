@@ -25,9 +25,16 @@
 package io.ib67.dash.contact.group.channel;
 
 import io.ib67.dash.contact.group.Member;
+import org.jetbrains.annotations.ApiStatus;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A {@link ChannelAnnouncement} is some messages that may be PINNED, Specially PUBLISHED by some moderators in the channel or group.
+ * @param sender
+ * @param message
+ */
+@ApiStatus.AvailableSince("0.1.0")
 public record ChannelAnnouncement(
         Member sender,
         String message

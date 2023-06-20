@@ -26,6 +26,28 @@ package io.ib67.dash.exception.user;
 
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * UserExceptions are involved in some situations that {@link io.ib67.dash.user.User}s cannot be initialized or destroyed correctly.
+ */
 @ApiStatus.AvailableSince("0.1.0")
 public class UserException extends RuntimeException{
+    public UserException() {
+        super();
+    }
+
+    public UserException(String message) {
+        super(message);
+    }
+
+    public UserException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UserException(Throwable cause) {
+        super(cause);
+    }
+
+    protected UserException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

@@ -26,7 +26,9 @@ package io.ib67.dash.user;
 
 import io.ib67.dash.exception.user.UserNotFoundException;
 import io.ib67.kiwi.future.Future;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.AvailableSince("0.1.0")
 public interface IUserManager {
     Future<? extends User, UserNotFoundException> findUser(long uid);
 

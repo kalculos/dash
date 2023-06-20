@@ -29,6 +29,9 @@ import io.ib67.dash.user.User;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * A Skeleton for adapter implementers.
+ */
 @Getter
 @EqualsAndHashCode
 public abstract class AbstractContact implements Contact{

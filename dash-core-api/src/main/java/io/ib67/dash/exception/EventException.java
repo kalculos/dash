@@ -26,8 +26,10 @@ package io.ib67.dash.exception;
 
 import io.ib67.dash.event.AbstractEvent;
 import lombok.Getter;
+import org.jetbrains.annotations.ApiStatus;
 
 @Getter
+@ApiStatus.AvailableSince("0.1.0")
 public class EventException extends RuntimeException {
     private final AbstractEvent involvedEvent;
 

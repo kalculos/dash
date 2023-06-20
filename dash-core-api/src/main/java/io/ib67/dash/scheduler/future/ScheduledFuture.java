@@ -24,6 +24,9 @@
 
 package io.ib67.dash.scheduler.future;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.AvailableSince("0.1.0")
 public interface ScheduledFuture extends TaskFuture {
     void cancel();
 
