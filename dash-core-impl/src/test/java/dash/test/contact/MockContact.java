@@ -22,8 +22,18 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.tag;
+package dash.test.contact;
 
-record SimpleTag(String identifier) implements Tag {
+import io.ib67.dash.adapter.PlatformAdapter;
+import io.ib67.dash.contact.AbstractContact;
+import io.ib67.dash.user.User;
+import lombok.Getter;
 
+@Getter
+public class MockContact extends AbstractContact {
+    private final User user;
+    public MockContact(String platformIdentifier, PlatformAdapter platform, User user) {
+        super(platformIdentifier, platform);
+        this.user = user;
+    }
 }

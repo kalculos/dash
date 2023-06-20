@@ -22,45 +22,49 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash;
+package io.ib67.dash.context;
 
-import io.ib67.dash.event.AbstractEvent;
-import io.ib67.dash.event.IEventChannel;
-import io.ib67.dash.service.Lifecycle;
 import lombok.Getter;
+import lombok.ToString;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.Objects.requireNonNull;
+
 /**
- * The entrypoint of your dash application.
+ * ContextKeys are used to index a value in a context from {@link io.ib67.dash.event.ContextualEvent}. They are immutable and shared between instances.<br />
+ * Also see {@link IContext}
+ * @param <T> the type of the value index by this key, only for type-safe checks.
  */
+@ToString
 @ApiStatus.AvailableSince("0.1.0")
-public abstract class AbstractBot implements Lifecycle {
-    /**
-     * The Bots name
-     */
+public class ContextKey<T> {
+    private static final Map<String, ContextKey<?>> keys = new ConcurrentHashMap<>();
+    private static final AtomicInteger CURRENT_INDEX = new AtomicInteger();
     @Getter
-    protected final String name;
-
+    private final String name;
     @Getter
-    protected final BotContext context;
+    private final int index;
 
-    /**
-     * If you want to use minimal-console for initialization, make sure that you have a constructor with only {@link BotContext} as your argument.
-     * @param name
-     * @param context
-     */
-    protected AbstractBot(String name, BotContext context) {
-        this.name = name;
-        this.context = context;
+    public ContextKey(String s, int index) {
+        this.index = index;
+        requireNonNull(name = s);
     }
 
-    /**
-     * You should override this to initialize your logics.
-     */
-    @Override
-    public abstract void onEnable();
+    @SuppressWarnings("unchecked")
+    public static <T> ContextKey<T> of(String key) {
+        return (ContextKey<T>) keys.computeIfAbsent(key.toLowerCase(), s -> new ContextKey<>(s, CURRENT_INDEX.getAndIncrement()));
+    }
 
-    public IEventChannel<? extends AbstractEvent> getChannel() {
-        return Dash.getInstance().getGlobalChannel();
+    public static int getCurrentIndex(){
+        return CURRENT_INDEX.get();
+    }
+
+    @Override
+    public int hashCode() {
+        return index;
     }
 }

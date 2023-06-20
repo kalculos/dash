@@ -46,18 +46,8 @@ public abstract class PlatformAdapter {
 
     public abstract Optional<? extends Contact> getContact(String platformId);
 
-    public abstract Optional<? extends Contact> getContact(long id); // todo: integrate dash data-store to map UniversalUID -> PlatformUID
-
-    public Optional<? extends Friend> getFriend(long id) {
-        return getContact(id).filter(it -> it instanceof Friend).map(it -> (Friend) it);
-    }
-
     public Optional<? extends Friend> getFriend(String platformId) {
         return getContact(platformId).filter(it -> it instanceof Friend).map(it -> (Friend) it);
-    }
-
-    public Optional<? extends ChatGroup> getGroup(long id) {
-        return getContact(id).filter(it -> it instanceof ChatGroup).map(it -> (ChatGroup) it);
     }
 
     public Optional<? extends ChatGroup> getGroup(String platformId) {

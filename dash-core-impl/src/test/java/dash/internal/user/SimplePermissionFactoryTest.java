@@ -48,18 +48,18 @@ class SimplePermissionFactoryTest {
         testParseEqual("-a.b.c");
         testParseEqual("-a.b.*");
         testParseEqual("a.b.*");
-        assertEquals("a.*",permissionFactory.parseNode("a").getNode());
+        assertEquals("a.*",permissionFactory.getNode("a").getNode());
     }
 
     private void testParseEqual(String s) {
-        assertEquals(s,permissionFactory.parseNode(s).getNode());
+        assertEquals(s,permissionFactory.getNode(s).getNode());
     }
 
     @Test
     public void testParseSpecial(){
-        assertThrows(IllegalArgumentException.class,() ->permissionFactory.parseNode("."));
-        assertThrows(IllegalArgumentException.class,() ->permissionFactory.parseNode(""));
-        assertTrue(permissionFactory.parseNode("*").matches(permissionFactory.parseNode("any")));
-        assertFalse(permissionFactory.parseNode("-*").matches(permissionFactory.parseNode("any")));
+        assertThrows(IllegalArgumentException.class,() ->permissionFactory.getNode("."));
+        assertThrows(IllegalArgumentException.class,() ->permissionFactory.getNode(""));
+        assertTrue(permissionFactory.getNode("*").matches(permissionFactory.getNode("any")));
+        assertFalse(permissionFactory.getNode("-*").matches(permissionFactory.getNode("any")));
     }
 }

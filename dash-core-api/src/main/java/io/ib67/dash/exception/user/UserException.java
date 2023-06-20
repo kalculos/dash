@@ -22,23 +22,32 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.contact.group;
+package io.ib67.dash.exception.user;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.contact.Friend;
-import io.ib67.dash.message.IMessageSource;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Optional;
-
 /**
- * {@link Member}s are some {@link Contact} in the {@link ChatGroup}, while they are able to be {@link IMessageSource}s.
+ * UserExceptions are involved in some situations that {@link io.ib67.dash.user.User}s cannot be initialized or destroyed correctly.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface Member extends Contact, IMessageSource {
-    default Optional<? extends Friend> asFriend() {
-        return getAdapter().getFriend(getPlatformIdentifier());
+public class UserException extends RuntimeException{
+    public UserException() {
+        super();
     }
 
-    ChatGroup getGroup();
+    public UserException(String message) {
+        super(message);
+    }
+
+    public UserException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UserException(Throwable cause) {
+        super(cause);
+    }
+
+    protected UserException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

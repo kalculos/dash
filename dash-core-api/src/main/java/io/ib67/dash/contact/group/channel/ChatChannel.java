@@ -26,20 +26,17 @@ package io.ib67.dash.contact.group.channel;
 
 import io.ib67.dash.contact.group.ChatGroup;
 import io.ib67.dash.message.IMessageSource;
-import io.ib67.dash.tag.Taggable;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * A {@link ChatChannel} is a part of a {@link ChatGroup}, where you can receive/send messages.
+ * {@link ChatChannel} is where the messages come from. It is related to a specific {@link ChatGroup} while equal and hashCode is implemented.
  */
-@Getter
 @ApiStatus.AvailableSince("0.1.0")
 @EqualsAndHashCode
-public abstract class ChatChannel implements IMessageSource, Taggable {
+public abstract class ChatChannel implements IMessageSource {
     protected final ChannelInfo info;
 
     protected final ChatGroup group;

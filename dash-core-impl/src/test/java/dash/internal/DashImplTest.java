@@ -24,19 +24,19 @@
 
 package dash.internal;
 
-import dash.test.SharedResources;
-import dash.test.util.Utility;
+import dash.internal.scheduler.DashScheduler;
 import io.ib67.dash.Dash;
-import net.sf.persism.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static dash.test.SharedResources.asyncPool;
+import static dash.test.SharedResources.mainLoop;
+
 class DashImplTest {
     private Dash dash;
-    private static final Session session = Utility.createSession();
     @BeforeEach
     public void setup(){
-        dash = new DashImpl(null, SharedResources.mainLoop,SharedResources.asyncPool);
+        dash = new DashImpl(new DashScheduler(mainLoop,asyncPool));
     }
 
     @Test

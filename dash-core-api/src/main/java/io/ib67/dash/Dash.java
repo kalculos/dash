@@ -28,23 +28,16 @@ import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.internal.DashInstFiner;
+import io.ib67.dash.scheduler.Scheduler;
 import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-
 /**
- * The core part of dash framework.<br>
- * You can find everything you need in this class. They are shared among multiple {@link AbstractBot}s.
+ * Components in dash.
  */
 @ApiStatus.AvailableSince("0.1.0")
 public interface Dash {
-    static Dash getInstance() {
-        return DashInstFiner.FINDER.get();
-    }
 
     IAdapterRegistry getAdapterRegistry();
 
@@ -57,9 +50,7 @@ public interface Dash {
 
     IEventBus getBus();
 
-    ExecutorService getAsyncPool();
-
-    ScheduledExecutorService getMainPool();
+    Scheduler getScheduler();
 
     IPermissionRegistry getPermissionRegistry();
 

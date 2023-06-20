@@ -22,14 +22,29 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.tag;
+package io.ib67.dash.exception.user;
 
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
-public sealed interface Tag permits SimpleTag {
-    static Tag of(String identifier){
-        return new SimpleTag(identifier);
+public class UserNotFoundException extends UserException {
+    public UserNotFoundException() {
+        super();
     }
-    String identifier();
+
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+
+    public UserNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public UserNotFoundException(Throwable cause) {
+        super(cause);
+    }
+
+    protected UserNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

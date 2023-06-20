@@ -60,11 +60,6 @@ class SimpleAdapterRegistryTest {
         }
 
         @Override
-        public Optional<? extends Contact> getContact(long id) {
-            return Optional.empty();
-        }
-
-        @Override
         public List<? extends Contact> getAllContacts() {
             return null;
         }

@@ -26,10 +26,10 @@ package dash.internal.event;
 
 import dash.internal.registry.SimpleEventRegistry;
 import dash.internal.util.Threads;
-import io.ib67.dash.AbstractBot;
 import io.ib67.dash.event.*;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
+import io.ib67.dash.scheduler.Scheduler;
 import io.ib67.kiwi.Kiwi;
 import io.ib67.kiwi.future.Future;
 import io.ib67.kiwi.future.Result;
@@ -38,39 +38,34 @@ import lombok.Getter;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.Objects;
 
 import static io.ib67.dash.event.ScheduleType.*;
-import static java.util.Objects.requireNonNull;
 
 public class DashEventBus implements IEventBus {
     private final Map<ScheduleType, RegisteredHandler<?>> handlers = new EnumMap<>(ScheduleType.class);
 
-    private final ExecutorService asyncExecutor;
-
-    private final ScheduledExecutorService mainExecutor;
+    private final Scheduler scheduler;
 
     @Getter
     private final IEventChannelFactory channelFactory;
     private final IEventRegistry delegatedRegistry;
 
-    public DashEventBus(ScheduledExecutorService mainLoop, ExecutorService asyncLoop) {
-        requireNonNull(this.mainExecutor = mainLoop);
-        requireNonNull(this.asyncExecutor = asyncLoop);
+    public DashEventBus(Scheduler scheduler) {
+        Objects.requireNonNull(this.scheduler = scheduler);
         channelFactory = new SimpleEventChannelFactory(this);
         delegatedRegistry = new SimpleEventRegistry(channelFactory);
     }
 
     @Override
-    public void registerListeners(AbstractBot bot, EventListener listener) {
-        delegatedRegistry.registerListeners(bot, listener);
+    public void registerListeners(EventListener listener) {
+        delegatedRegistry.registerListeners( listener);
     }
 
     @Override
     public <E extends AbstractEvent> void register(IEventChannel<E> channel, IEventHandler<E> handler) {
         if (!Threads.isPrimaryThread()) {
-            mainExecutor.submit(() -> register(channel, handler));
+            scheduler.submit(() -> register(channel, handler));
             return;
         }
         if (!handlers.containsKey(channel.getScheduleType())) {
@@ -92,19 +87,19 @@ public class DashEventBus implements IEventBus {
         if (Threads.isPrimaryThread()) {
             result = deliverEvent(MAIN, event);
             if (handlers.containsKey(ASYNC))
-                asyncExecutor.submit(() -> deliverEvent(ASYNC, event));
+                scheduler.submitAsync(() -> deliverEvent(ASYNC, event));
             return result;
         } else {
-            Future<E,Object> promise = result;
+            Future<E, Object> promise = result;
             if (handlers.containsKey(MAIN)) {
-                var _promise = new TaskPromise<E,Object>();
-                mainExecutor.submit(() -> {
+                var _promise = new TaskPromise<E, Object>();
+                scheduler.submit(() -> {
                     _promise.fromResult(deliverEvent(MAIN, event));
                 });
                 promise = _promise;
             }
             if (handlers.containsKey(ASYNC))
-                mainExecutor.submit(() -> asyncExecutor.submit(() -> deliverEvent(ASYNC, event)));
+                scheduler.submit(() -> scheduler.submitAsync(() -> deliverEvent(ASYNC, event)));
             return promise;
         }
     }
@@ -115,8 +110,8 @@ public class DashEventBus implements IEventBus {
             return Result.ok(event);
         }
         var node = handlers.get(type);
-        var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node,channelFactory);
-        var result = Kiwi.fromAny(()->{
+        var pipeline = new EventPipeline<>(event, (RegisteredHandler<E>) node, channelFactory);
+        var result = Kiwi.fromAny(() -> {
             pipeline.fireNext();
             return event;
         });

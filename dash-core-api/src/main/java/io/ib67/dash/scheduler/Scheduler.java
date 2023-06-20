@@ -22,16 +22,21 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.internal;
+package io.ib67.dash.scheduler;
 
-import io.ib67.dash.Dash;
-import io.ib67.kiwi.Kiwi;
+import io.ib67.dash.scheduler.future.ScheduledFuture;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ServiceLoader;
-import java.util.function.Supplier;
+import java.time.Duration;
 
-public class DashInstFiner {
-    public static final Supplier<Dash> FINDER
-            = Kiwi.byLazy(() -> ServiceLoader.load(Dash.class).findFirst()
-            .orElseThrow(() -> new IllegalStateException("Cannot find any dash instance")));
+@ApiStatus.AvailableSince("0.1.0")
+public interface Scheduler extends Executor {
+     ScheduledFuture scheduleLater(Task task, Duration duration);
+
+     ScheduledFuture scheduleTimer(Task task, Duration period);
+
+     ScheduledFuture scheduleAsyncLater(Task task, Duration duration);
+
+     ScheduledFuture scheduleAsyncTimer(Task task, Duration period);
+
 }

@@ -46,12 +46,12 @@ public record At(
     /**
      * Create a new {@link At} directly
      *
-     * @param platformId
+     * @param platformName
      * @param platformUid
      * @return
      */
-    public static At unsafeAt(String platformId, String platformUid) {
-        return new At(null, platformId, platformUid, null);
+    public static At unsafeAt(String platformName, String platformUid) {
+        return new At(null, platformName, platformUid, null);
     }
 
     @Builder
@@ -61,7 +61,7 @@ public record At(
     @Override
     public String toCatCode() {
         if (contact != null) {
-            return CatCodes.ofProps("target", String.valueOf(contact.getUid())).type("AT").toString();
+            return CatCodes.ofProps("target", String.valueOf(contact.getUser().getId())).type("AT").toString();
         }
         return CatCodes.ofProps(
                 "platform", platformId,

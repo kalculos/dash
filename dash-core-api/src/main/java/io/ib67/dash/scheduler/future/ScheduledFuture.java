@@ -22,23 +22,15 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.user;
+package io.ib67.dash.scheduler.future;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.tag.Tag;
-import io.ib67.dash.user.permission.Permission;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.List;
+@ApiStatus.AvailableSince("0.1.0")
+public interface ScheduledFuture extends TaskFuture {
+    void cancel();
 
-@Accessors(fluent = true)
-@Getter
-@Setter
-public class UserBuilder {
-    private String username;
-    private List<Permission> initialPermissions = List.of();
-    private List<Tag> tags = List.of();
-    private Contact initialContact;
+    boolean isCancelled();
+
+    long getEnqueueTime();
 }

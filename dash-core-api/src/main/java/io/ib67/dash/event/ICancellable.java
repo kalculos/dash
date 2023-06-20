@@ -31,7 +31,7 @@ public interface ICancellable {
     boolean isCancelled();
 
     /**
-     * It depends on the context, some {@link AbstractEvent} may do nothing.
+     * It depends on the context, sometimes it does nothing.
      * However, a cancelled event will skip handlers with `ignoreCancelled=true` by default.
      * @param flag
      */

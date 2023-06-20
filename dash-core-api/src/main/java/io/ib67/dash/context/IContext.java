@@ -22,24 +22,30 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.event.context;
+package io.ib67.dash.context;
 
+import io.ib67.dash.message.internal.UnorderedEventContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
 /**
- * A EventContext stores additional metadata involved in a {@link io.ib67.dash.event.ContextualEvent}, And they are accessible with {@link ContextKey}.<br>
- * Getting or putting data from MessageContext is very fast, however you'll have to waste some memory when you have a large amount of context keys.<br>
- * Usually you don't need to care about that memory issue. An Object[128] is actually small if compared to your business objects.
+ * A Context stores additional metadata involved in some event, And they are accessible by using a {@link ContextKey}.<br>
  */
-public interface IEventContext {
+@ApiStatus.AvailableSince("0.1.0")
+public interface IContext {
+
+    static IContext create() {
+        return new UnorderedEventContext();
+    }
 
     /**
      * Put a value indexed by the key into the context.
-     *
+     * <p>
      * If a null is provided as the value, {@link #has(ContextKey)} will always return false for your key.
-     * @param key index
+     *
+     * @param key   index
      * @param value to be stored
      */
     <V> void put(@NotNull ContextKey<V> key, V value);
@@ -47,14 +53,16 @@ public interface IEventContext {
     /**
      * Get an object from the context. Improper use may lead to {@link ClassCastException}.<br />
      * Example: <code>context.get(KEY);</code>
+     *
      * @param key the key
-     * @return user object or null
      * @param <T> type of value
+     * @return user object or null
      */
     <T> T get(@NotNull ContextKey<T> key);
 
     /**
      * Check if the context contains something related to the key.
+     *
      * @param key key
      * @return if found. Also return false if you set the value to null.
      */
@@ -62,24 +70,26 @@ public interface IEventContext {
 
     /**
      * Remove something from the context.
+     *
      * @param key the key
      * @return if there was a key-value pair present.
      */
-    default boolean remove(@NotNull ContextKey<?> key){
+    default boolean remove(@NotNull ContextKey<?> key) {
         boolean hasPreviously = has(key);
-        put(key,null);
+        put(key, null);
         return hasPreviously;
     }
 
     /**
      * Returns the default value if not found in the context.
-     * @param key key
+     *
+     * @param key          key
      * @param defaultValue fallback
+     * @param <T>          type of value
      * @return fallback or value
-     * @param <T> type of value
      */
-    default <T> T getOrDefault(@NotNull ContextKey<T> key, T defaultValue){
-        if(!has(key)){
+    default <T> T getOrDefault(@NotNull ContextKey<T> key, T defaultValue) {
+        if (!has(key)) {
             return defaultValue;
         }
         return get(key);
@@ -87,15 +97,16 @@ public interface IEventContext {
 
     /**
      * Generates and puts the value if not found
-     * @param key key
+     *
+     * @param key    key
      * @param mapper function
+     * @param <T>    type of value
      * @return value
-     * @param <T> type of value
      */
-    default <T> T computeIfAbsent(@NotNull ContextKey<T> key, @NotNull Function<ContextKey<T>,T> mapper){
-        if(!has(key)){
+    default <T> T computeIfAbsent(@NotNull ContextKey<T> key, @NotNull Function<ContextKey<T>, T> mapper) {
+        if (!has(key)) {
             var r = mapper.apply(key);
-            put(key,r);
+            put(key, r);
             return r;
         }
         return get(key);

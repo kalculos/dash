@@ -25,7 +25,9 @@
 package io.ib67.dash.exception;
 
 import io.ib67.dash.contact.group.Member;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.AvailableSince("0.1.0")
 public class NotFriendException extends RuntimeException {
     private final Member member;
 

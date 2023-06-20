@@ -24,8 +24,10 @@
 
 package io.ib67.dash.user.permission;
 
-import java.util.Collection;
+import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Collection;
+@ApiStatus.AvailableSince("0.1.0")
 public interface Authority extends Permissible{
     void grant(Permission permission);
 

@@ -22,23 +22,16 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.contact.group;
+package dash.internal.scheduler;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.contact.Friend;
-import io.ib67.dash.message.IMessageSource;
-import org.jetbrains.annotations.ApiStatus;
+import io.ib67.dash.scheduler.Executor;
+import io.ib67.dash.scheduler.future.TaskFuture;
+import io.ib67.kiwi.future.TaskPromise;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import java.util.Optional;
-
-/**
- * {@link Member}s are some {@link Contact} in the {@link ChatGroup}, while they are able to be {@link IMessageSource}s.
- */
-@ApiStatus.AvailableSince("0.1.0")
-public interface Member extends Contact, IMessageSource {
-    default Optional<? extends Friend> asFriend() {
-        return getAdapter().getFriend(getPlatformIdentifier());
-    }
-
-    ChatGroup getGroup();
+@RequiredArgsConstructor
+@Getter
+public class DashTaskPromise extends TaskPromise<Void,Exception> implements TaskFuture {
+    private final Executor.Task task;
 }

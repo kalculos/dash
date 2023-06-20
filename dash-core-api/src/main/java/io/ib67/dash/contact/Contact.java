@@ -26,56 +26,26 @@ package io.ib67.dash.contact;
 
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.adapter.PlatformRelated;
-import io.ib67.dash.tag.Taggable;
 import io.ib67.dash.user.User;
-import io.ib67.dash.user.permission.Permissible;
-import io.ib67.dash.user.permission.Permission;
-import io.ib67.dash.user.permission.PermissionContext;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Contact.<br>
- * A Contact is an object that may send messages to you on IM platform.
+ * A Contact is an interactive object on IM Platform.
  */
 @ApiStatus.AvailableSince("0.1.0")
-@Getter
-@EqualsAndHashCode
-public abstract class Contact implements PlatformRelated, Taggable, Permissible {
-    /**
-     * The user-id of the contact.
-     * This ID is NOT platform ID. This is dash universal user id.
-     */
-    protected final long uid;
-
+public interface Contact extends PlatformRelated{
     /**
      * User ID from IM platform
      */
-    protected final String platformUserId;
+    String getPlatformIdentifier();
 
-    protected final PlatformAdapter platform;
+    PlatformAdapter getAdapter();
 
     /**
      * The name of the contact.
      */
-    protected String name;
+    String getName();
 
-    protected Contact(long uid, String platformUserId, PlatformAdapter platform) {
-        this.uid = uid;
-        this.platformUserId = platformUserId;
-        this.platform = platform;
-    }
-
-    @Override
-    public String toString() {
-        return "Contact(" + uid + "/" + getPlatformUserId() + " on " + getPlatform().getName() + ")";
-    }
-
-    public abstract User getUser();
-
-    @Override
-    public boolean hasPermission(PermissionContext context, Permission permission) {
-        return getUser().hasPermission(context,permission);
-    }
+    User getUser();
 }

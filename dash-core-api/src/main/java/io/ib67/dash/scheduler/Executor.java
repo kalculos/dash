@@ -22,11 +22,20 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.tag;
+package io.ib67.dash.scheduler;
 
+import io.ib67.dash.scheduler.future.TaskFuture;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
-public interface Taggable {
-    TagContainer getTagContainer();
+public interface Executor {
+
+    @FunctionalInterface
+    interface Task {
+        void execute();
+    }
+
+    TaskFuture submit(Task task);
+
+     TaskFuture submitAsync(Task task);
 }

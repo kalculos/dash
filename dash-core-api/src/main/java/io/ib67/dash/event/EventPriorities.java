@@ -27,7 +27,7 @@ package io.ib67.dash.event;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * Here are some constants about preferred priorities for you.
+ * Some recommended priority constants.
  */
 @ApiStatus.AvailableSince("0.1.0")
 public final class EventPriorities {

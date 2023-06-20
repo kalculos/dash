@@ -22,33 +22,40 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.service;
+package io.ib67.dash.contact;
 
-import org.jetbrains.annotations.ApiStatus;
+import io.ib67.dash.adapter.PlatformAdapter;
+import io.ib67.dash.user.User;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 /**
- * A {@link Lifecycle} is an object that subscribe to server status changes, and react them.
+ * A Skeleton for adapter implementers.
  */
-@SuppressWarnings("EmptyMethod")
-@ApiStatus.AvailableSince("0.1.0")
-public interface Lifecycle {
+@Getter
+@EqualsAndHashCode
+public abstract class AbstractContact implements Contact{
     /**
-     * Where you can initialize some necessary components.
-     * Something may not work during this time.
+     * User ID from IM platform
      */
-    default void onInitialize() {
-    }
+    protected final String platformIdentifier;
+
+    protected final PlatformAdapter adapter;
 
     /**
-     * Where you should enable your components.
-     * Dash is prepared.
+     * The name of the contact.
      */
-    default void onEnable() {
+    protected String name;
+
+    protected AbstractContact(String platformIdentifier, PlatformAdapter platform) {
+        this.platformIdentifier = platformIdentifier;
+        this.adapter = platform;
     }
 
-    /**
-     * Clean up unclosed resources...
-     */
-    default void onTerminate() {
+    public abstract User getUser();
+
+    @Override
+    public String toString() {
+        return "Contact(" + getUser().getId() + "/" + getPlatformIdentifier() + " on " + getAdapter().getName() + ")";
     }
 }

@@ -33,61 +33,62 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class SimplePermissionRegistry implements IPermissionRegistry {
+public class SimplePermissionFactory implements IPermissionRegistry {
     private final Map<String, Permission> cache = new ConcurrentHashMap<>();
 
-    public SimplePermissionRegistry(){
-        cache.put("*",new PermImpl("",false,null,"Any"));
-        cache.put("-*",new PermImpl("",true,null,"Never"));
+    public SimplePermissionFactory() {
+        cache.put("*", new PermImpl("", false, null, "Any"));
+        cache.put("-*", new PermImpl("", true, null, "Never"));
     }
 
-    @Override
     public Permission parseNode(String node) {
         node = node.trim();
-        if(node.equals("*") || node.equals("-*")) return getNode(node);
-        return parseNode0(node,null);
+        if (node.equals("*") || node.equals("-*")) return getNode(node);
+        return parseNode0(node, null);
     }
 
     @Override
     public Permission getNode(String node) {
-        return cache.computeIfAbsent(node,this::parseNode);
+        return cache.computeIfAbsent(node, this::parseNode);
     }
 
     @Override
     public Permission registerPermission(String node, String description) {
         node = node.trim().toLowerCase();
-        if(cache.containsKey(node)){
-            log.warn(node+" is already registered.");
+        if (cache.containsKey(node)) {
+            if (cache.get(node).getDescription() != null) {
+                log.warn(node + " is already registered.");
+            }
         }
-        var perm = parseNode0(node,description);
-        cache.put(node,perm);
+        var perm = parseNode0(node, description);
+        cache.put(node, perm);
         return perm;
     }
 
-    private Permission parseNode0(String node, String description){
-        if(node.isEmpty()){
+    private Permission parseNode0(String node, String description) {
+        if (node.isEmpty()) {
             throw new IllegalArgumentException("node is an empty string");
         }
         boolean reversed = false;
         String parent;
         String current = null;
-        if(node.startsWith("-")){
+        if (node.startsWith("-")) {
             reversed = true;
             node = node.substring(1);
         }
         var delimiter = node.lastIndexOf('.');
-        if(delimiter == -1){
+        if (delimiter == -1) {
             parent = node;
-        }else{
-            parent = node.substring(0,delimiter);
-            if(parent.isEmpty()){
+        } else {
+            parent = node.substring(0, delimiter);
+            if (parent.isEmpty()) {
                 throw new IllegalArgumentException("parent cannot be empty");
             }
-            current = node.substring(delimiter+1);
-            if("*".equals(current) || current.isEmpty()){
+            current = node.substring(delimiter + 1);
+            if ("*".equals(current) || current.isEmpty()) {
                 current = null;
             }
         }
-        return new PermImpl(parent,reversed,current,description);
+        return new PermImpl(parent, reversed, current, description);
     }
 }

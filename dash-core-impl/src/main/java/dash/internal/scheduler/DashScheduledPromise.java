@@ -22,12 +22,38 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash;
+package dash.internal.scheduler;
 
-import net.sf.persism.Session;
+import io.ib67.dash.scheduler.Executor;
+import io.ib67.dash.scheduler.future.ScheduledFuture;
+import lombok.Generated;
 
-public record BotContext(
-        Dash dash,
-        Session databaseSession
-) {
+import java.util.Objects;
+
+public class DashScheduledPromise extends DashTaskPromise implements ScheduledFuture {
+    private final java.util.concurrent.ScheduledFuture<?> future;
+    private final long time = System.currentTimeMillis();
+
+    public DashScheduledPromise(Executor.Task task, java.util.concurrent.ScheduledFuture<?> future) {
+        super(task);
+        Objects.requireNonNull(this.future = future);
+    }
+
+    @Override
+    @Generated
+    public void cancel() {
+        future.cancel(false);
+    }
+
+    @Override
+    @Generated // skip coverage
+    public boolean isCancelled() {
+        return future.isCancelled();
+    }
+
+    @Override
+    @Generated
+    public long getEnqueueTime() {
+        return time;
+    }
 }

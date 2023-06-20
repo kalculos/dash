@@ -24,7 +24,7 @@
 
 package dash.test.message;
 
-import io.ib67.dash.event.context.ContextKey;
+import io.ib67.dash.context.ContextKey;
 import io.ib67.dash.message.internal.UnorderedEventContext;
 import org.junit.jupiter.api.Test;
 
