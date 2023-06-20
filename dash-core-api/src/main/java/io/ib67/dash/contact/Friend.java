@@ -24,20 +24,8 @@
 
 package io.ib67.dash.contact;
 
-import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.message.IMessageSource;
-import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
-@EqualsAndHashCode(callSuper = false)
-public abstract class Friend extends Contact implements IMessageSource {
-    protected Friend(String platformId, PlatformAdapter adapter) {
-        super(platformId, adapter);
-    }
-
-    @Override
-    public String toString() {
-        return "Friend(" + getUser().getId() + "/" + platformIdentifier + " on " + platform.getName() + ")";
-    }
-}
+public interface Friend extends Contact, IMessageSource { }

@@ -32,7 +32,6 @@ import io.ib67.dash.user.User;
 import io.ib67.dash.user.permission.Permission;
 import io.ib67.dash.user.permission.PermissionContext;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +42,6 @@ import java.util.List;
 /**
  * A basic implementation of {@link User}.
  */
-@RequiredArgsConstructor
 public class UserImpl implements User {
     protected final List<Permission> permissions;
     @Getter
@@ -57,6 +55,13 @@ public class UserImpl implements User {
     @Getter
     @Setter
     protected String name;
+
+    public UserImpl(List<Permission> permissions, Collection<Contact> knownContacts, PermissionContext permissionContext, long id) {
+        this.permissions = new ArrayList<>(permissions);
+        this.knownContacts = knownContacts;
+        this.permissionContext = permissionContext;
+        this.id = id;
+    }
 
     @Override
     public void broadcastMessage(@NotNull MessageChain message) {
