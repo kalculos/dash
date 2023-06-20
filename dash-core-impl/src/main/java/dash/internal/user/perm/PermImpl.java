@@ -62,6 +62,7 @@ public class PermImpl implements Permission {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) return true;
         if (!(obj instanceof Permission perm)) {
             return false;
         }

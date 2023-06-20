@@ -81,8 +81,8 @@ public abstract class AbstractMessage<S extends IMessageSource> extends Abstract
     }
 
     @Override
-    public PlatformAdapter getPlatform() {
-        return source.getPlatform();
+    public PlatformAdapter getAdapter() {
+        return source.getAdapter();
     }
 
     @Override

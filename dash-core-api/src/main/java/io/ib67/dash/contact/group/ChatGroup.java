@@ -24,11 +24,10 @@
 
 package io.ib67.dash.contact.group;
 
-import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.contact.Contact;
 import io.ib67.dash.contact.group.channel.ChatChannel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -36,27 +35,14 @@ import java.util.List;
  * A {@link ChatGroup} is composed of {@link ChatChannel}s.<br>
  * Each ChatGroup has one default channel at least.
  */
-@EqualsAndHashCode(callSuper = false)
-public abstract class ChatGroup extends Contact {
+@ApiStatus.AvailableSince("0.1.0")
+public interface ChatGroup extends Contact {
+    @NotNull
+    List<ChatChannel> getChannels();
 
-    protected ChatGroup(String platformId, PlatformAdapter platform, List<ChatChannel> channels, ChatChannel defaultChannel, List<Member> members) {
-        super(platformId, platform);
-        this.channels = channels;
-        this.defaultChannel = defaultChannel;
-        this.members = members;
-    }
+    @NotNull
+    ChatChannel getDefaultChannel();
 
-    @Getter
-    protected final List<ChatChannel> channels;
-
-    @Getter
-    protected final ChatChannel defaultChannel;
-
-    @Getter
-    protected final List<Member> members;
-
-    @Override
-    public String toString() {
-        return "Group(" + getUser().getId() + "/" + platformIdentifier + " on " + platform.getName() + ")";
-    }
+    @NotNull
+    List<Member> getMembers();
 }

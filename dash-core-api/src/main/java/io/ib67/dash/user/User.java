@@ -28,6 +28,7 @@ import io.ib67.dash.contact.Contact;
 import io.ib67.dash.context.IContext;
 import io.ib67.dash.message.MessageChain;
 import io.ib67.dash.user.permission.Authority;
+import io.ib67.dash.user.permission.Permission;
 import io.ib67.dash.user.permission.PermissionContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,7 @@ import java.util.Collection;
 public interface User extends Authority {
     /**
      * This is not persistent. Data will be lost after reinitialization etc.
+     *
      * @return a memory-only context
      */
     @NotNull
@@ -46,6 +48,7 @@ public interface User extends Authority {
 
     /**
      * Fetch known contacts who were bind to this user.
+     *
      * @return list of known contacts.
      */
     @NotNull
@@ -53,6 +56,7 @@ public interface User extends Authority {
 
     /**
      * Attempts to send message to every known contact.
+     *
      * @param message message to be sent
      */
     void broadcastMessage(@NotNull MessageChain message);
@@ -64,4 +68,11 @@ public interface User extends Authority {
 
     @Nullable
     String getName();
+
+    void setName(String name);
+
+    @Override
+    default boolean hasPermission(Permission perm) {
+        return hasPermission(getPermissionContext(), perm);
+    }
 }

@@ -35,6 +35,7 @@ class PermImplTest {
     public void testEqual(){
         var permA = new PermImpl("a.b",false,"c",null);
         var permB = new PermImpl("a.b",false,"c","some description");
+        assertEquals(permA,permA,"Perm is equal to itself.");
         assertEquals(permA, permB, "description can be different.");
         permA = new PermImpl("a.b",false,null,null);
         assertNotEquals(permA,permB,"equal is not matches");

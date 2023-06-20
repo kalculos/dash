@@ -51,7 +51,7 @@ public class DashImpl implements Dash {
     private final IEventBus bus;
     private final Scheduler scheduler;
 
-    public DashImpl( Scheduler scheduler) {
+    public DashImpl(Scheduler scheduler) {
         this.scheduler = scheduler;
         bus = new DashEventBus(scheduler);
         var channelFactory = bus.getChannelFactory();

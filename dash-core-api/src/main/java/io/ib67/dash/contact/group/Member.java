@@ -24,33 +24,16 @@
 
 package io.ib67.dash.contact.group;
 
-import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.contact.Contact;
 import io.ib67.dash.contact.Friend;
-import io.ib67.dash.exception.NotFriendException;
 import io.ib67.dash.message.IMessageSource;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
-@Getter
-@EqualsAndHashCode(callSuper = false)
-public abstract class Member extends Contact implements IMessageSource {
-    protected final ChatGroup group;
+import java.util.Optional;
 
-    protected final boolean friend;
-
-    protected Member(String idOnPlatform, PlatformAdapter adapter, ChatGroup group, boolean friend) {
-        super(idOnPlatform, adapter);
-        this.group = group;
-        this.friend = friend;
+public interface Member extends Contact, IMessageSource {
+    default Optional<? extends Friend> asFriend() {
+        return getAdapter().getFriend(getPlatformIdentifier());
     }
 
-    public Friend asFriend() throws NotFriendException {
-        return getPlatform().getFriend(getPlatformIdentifier()).orElseThrow(() -> new NotFriendException("This " + this + " from " + group + " isn't our friend.", this));
-    }
-
-    @Override
-    public String toString() {
-        return "Member(" + getUser().getId() + "/" + platformIdentifier + " on " + platform.getName() + ")";
-    }
+    ChatGroup getGroup();
 }

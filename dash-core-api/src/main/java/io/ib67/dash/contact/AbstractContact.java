@@ -25,27 +25,34 @@
 package io.ib67.dash.contact;
 
 import io.ib67.dash.adapter.PlatformAdapter;
-import io.ib67.dash.adapter.PlatformRelated;
 import io.ib67.dash.user.User;
-import org.jetbrains.annotations.ApiStatus;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-/**
- * Contact.<br>
- * A Contact is an object that may send messages to you on IM platform.
- */
-@ApiStatus.AvailableSince("0.1.0")
-public interface Contact extends PlatformRelated{
+@Getter
+@EqualsAndHashCode
+public abstract class AbstractContact implements Contact{
     /**
      * User ID from IM platform
      */
-    String getPlatformIdentifier();
+    protected final String platformIdentifier;
 
-    PlatformAdapter getAdapter();
+    protected final PlatformAdapter adapter;
 
     /**
      * The name of the contact.
      */
-    String getName();
+    protected String name;
 
-    User getUser();
+    protected AbstractContact(String platformIdentifier, PlatformAdapter platform) {
+        this.platformIdentifier = platformIdentifier;
+        this.adapter = platform;
+    }
+
+    public abstract User getUser();
+
+    @Override
+    public String toString() {
+        return "Contact(" + getUser().getId() + "/" + getPlatformIdentifier() + " on " + getAdapter().getName() + ")";
+    }
 }
