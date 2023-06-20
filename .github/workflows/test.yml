@@ -26,10 +26,13 @@ jobs:
 #        with:
 #          build-command: "./gradlew build"
 #          use-annotations: "true"
+      - name: Disable Gradle Daemon
+        run: |
+          echo "org.gradle.daemon=false" > gradle.properties
       - name: Build with Gradle
         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
         with:
-          arguments: -Dorg.gradle.daemon=false test
+          arguments: test
       #      - name: Perform CodeQL Analysis
       #        uses: github/codeql-action/analyze@v2
       - name: Upload to Coverity
