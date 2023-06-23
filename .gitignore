@@ -35,3 +35,5 @@ bin/
 **/profile-results/**
 *.jfr
 **/local/**
+
+.devcontainer/

@@ -3,8 +3,8 @@ plugins {
     id 'java-library'
 }
 
-group 'io.ib67.dash'
-version '0.1.0'
+group parent.group
+version parent.version
 
 repositories {
     mavenCentral()

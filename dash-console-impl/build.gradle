@@ -3,20 +3,20 @@ plugins {
     id 'java-library'
 }
 
-group 'io.ib67.dash'
-version '0.1.0'
+group parent.group
+version parent.version
 
 repositories {
     mavenCentral()
 }
 
-def jacksonVersion = property("jacksonVersion")
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     api project(":dash-core-impl")
     api project(":dash-console-api")
     implementation 'com.google.guava:guava:31.1-jre'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
 test {

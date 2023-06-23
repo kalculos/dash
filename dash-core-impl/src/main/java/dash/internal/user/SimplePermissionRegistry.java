@@ -33,10 +33,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class SimplePermissionFactory implements IPermissionRegistry {
+public class SimplePermissionRegistry implements IPermissionRegistry {
     private final Map<String, Permission> cache = new ConcurrentHashMap<>();
 
-    public SimplePermissionFactory() {
+    public SimplePermissionRegistry() {
         cache.put("*", new PermImpl("", false, null, "Any"));
         cache.put("-*", new PermImpl("", true, null, "Never"));
     }

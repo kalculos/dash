@@ -34,6 +34,7 @@ import io.ib67.dash.console.plugin.java.SharedClassContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -163,7 +164,7 @@ class PluginLoader {
                 }
             }
             dependencyNodes.put(info.name(), new TempPluginHolder(DependencyNodeState.DISCOVERED, cl));
-        } catch (InvalidPluginInfoException e) {
+        } catch (InvalidPluginInfoException | MalformedURLException e) {
             log.warn("Cannot load java plugin {}: {}", path.getFileName(), e);
         }
     }

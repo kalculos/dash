@@ -27,7 +27,7 @@ package dash.internal;
 import dash.internal.event.DashEventBus;
 import dash.internal.registry.SimpleAdapterRegistry;
 import dash.internal.registry.SimpleEventRegistry;
-import dash.internal.user.SimplePermissionFactory;
+import dash.internal.user.SimplePermissionRegistry;
 import io.ib67.dash.Dash;
 import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
@@ -58,7 +58,7 @@ public class DashImpl implements Dash {
         adapterRegistry = new SimpleAdapterRegistry();
         globalChannel = channelFactory.forMain("GLOBAL");
         eventRegistry = new SimpleEventRegistry(channelFactory);
-        permissionRegistry = new SimplePermissionFactory();
+        permissionRegistry = new SimplePermissionRegistry();
         userManager = null;//new UserManagerImpl(session, permissionFactory, adapterRegistry);
     }
 }

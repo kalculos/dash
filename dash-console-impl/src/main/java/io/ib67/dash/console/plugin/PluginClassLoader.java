@@ -6,10 +6,10 @@ import io.ib67.dash.console.plugin.exception.InvalidPluginInfoException;
 import io.ib67.dash.console.plugin.info.PluginInfo;
 import io.ib67.dash.console.plugin.java.SharedClassContext;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -24,8 +24,7 @@ public final class PluginClassLoader extends URLClassLoader {
     @Getter
     private final PluginInfo pluginInfo;
 
-    @SneakyThrows
-    public PluginClassLoader(Path url, ClassLoader parent, SharedClassContext sharedClassContext) throws InvalidPluginInfoException {
+    public PluginClassLoader(Path url, ClassLoader parent, SharedClassContext sharedClassContext) throws InvalidPluginInfoException, MalformedURLException {
         super(new URL[]{url.toUri().toURL()}, parent);
         requireNonNull(pluginFile = url);
         this.sharedContext = sharedClassContext;
