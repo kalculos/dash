@@ -1,8 +1,5 @@
 package io.ib67.dash.console.plugin;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.github.zafarkhaja.semver.Version;
 import io.ib67.dash.console.internal.SemVerSerializer;
 import io.ib67.dash.console.plugin.exception.InvalidPluginInfoException;
@@ -10,6 +7,7 @@ import io.ib67.dash.console.plugin.info.PluginInfo;
 import io.ib67.dash.console.plugin.java.SharedClassContext;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,7 +17,6 @@ import java.nio.file.Path;
 import static java.util.Objects.requireNonNull;
 
 public final class PluginClassLoader extends URLClassLoader {
-    private static final TomlMapper INFO_MAPPER = initMapper();
     @Getter
     private final Path pluginFile;
     @Getter
@@ -28,7 +25,7 @@ public final class PluginClassLoader extends URLClassLoader {
     private final PluginInfo pluginInfo;
 
     @SneakyThrows
-    public PluginClassLoader(Path url, ClassLoader parent, SharedClassContext sharedClassContext) throws InvalidPluginInfoException{
+    public PluginClassLoader(Path url, ClassLoader parent, SharedClassContext sharedClassContext) throws InvalidPluginInfoException {
         super(new URL[]{url.toUri().toURL()}, parent);
         requireNonNull(pluginFile = url);
         this.sharedContext = sharedClassContext;
@@ -36,19 +33,13 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     private PluginInfo loadPluginInfo() throws InvalidPluginInfoException {
-        try (var is = getResourceAsStream("plugin.toml")) {
-            return INFO_MAPPER.readValue(is, PluginInfo.class);
+        try (var is = getResourceAsStream("plugin.yml")) {
+            if(is == null) throw new IOException("Cannot found plugin.yml");
+            return YamlConfigurationLoader.builder()
+                    .defaultOptions(op -> op.serializers(it -> it.register(Version.class, new SemVerSerializer())))
+                    .buildAndLoadString(new String(is.readAllBytes())).get(PluginInfo.class);
         } catch (IOException e) {
-            throw new InvalidPluginInfoException("Invalid plugin.toml", e, pluginFile);
+            throw new InvalidPluginInfoException("Invalid plugin.yml", e, pluginFile);
         }
-    }
-
-    private static TomlMapper initMapper() {
-        var mapper = new TomlMapper();
-        var module = new SimpleModule();
-        module.addDeserializer(Version.class, new SemVerSerializer());
-        mapper.registerModule(module);
-        mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
-        return mapper;
     }
 }
