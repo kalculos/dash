@@ -24,14 +24,14 @@
 
 package dash.internal.scheduler;
 
-import io.ib67.dash.scheduler.Executor;
-import io.ib67.dash.scheduler.future.TaskFuture;
+import io.ib67.dash.scheduler.IExecutor;
+import io.ib67.dash.scheduler.future.ITaskFuture;
 import io.ib67.kiwi.future.TaskPromise;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class DashTaskPromise extends TaskPromise<Void,Exception> implements TaskFuture {
-    private final Executor.Task task;
+public class DashTaskPromise extends TaskPromise<Void,Exception> implements ITaskFuture {
+    private final IExecutor.Task task;
 }

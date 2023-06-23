@@ -28,7 +28,7 @@ import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.scheduler.Scheduler;
+import io.ib67.dash.scheduler.IScheduler;
 import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
 import org.jetbrains.annotations.ApiStatus;
@@ -50,7 +50,7 @@ public interface Dash {
 
     IEventBus getBus();
 
-    Scheduler getScheduler();
+    IScheduler getScheduler();
 
     IPermissionRegistry getPermissionRegistry();
 

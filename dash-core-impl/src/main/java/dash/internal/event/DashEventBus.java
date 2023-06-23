@@ -29,7 +29,7 @@ import dash.internal.util.Threads;
 import io.ib67.dash.event.*;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventHandler;
-import io.ib67.dash.scheduler.Scheduler;
+import io.ib67.dash.scheduler.IScheduler;
 import io.ib67.kiwi.Kiwi;
 import io.ib67.kiwi.future.Future;
 import io.ib67.kiwi.future.Result;
@@ -45,20 +45,20 @@ import static io.ib67.dash.event.ScheduleType.*;
 public class DashEventBus implements IEventBus {
     private final Map<ScheduleType, RegisteredHandler<?>> handlers = new EnumMap<>(ScheduleType.class);
 
-    private final Scheduler scheduler;
+    private final IScheduler scheduler;
 
     @Getter
     private final IEventChannelFactory channelFactory;
     private final IEventRegistry delegatedRegistry;
 
-    public DashEventBus(Scheduler scheduler) {
+    public DashEventBus(IScheduler scheduler) {
         Objects.requireNonNull(this.scheduler = scheduler);
         channelFactory = new SimpleEventChannelFactory(this);
         delegatedRegistry = new SimpleEventRegistry(channelFactory);
     }
 
     @Override
-    public void registerListeners(EventListener listener) {
+    public void registerListeners(IEventListener listener) {
         delegatedRegistry.registerListeners( listener);
     }
 

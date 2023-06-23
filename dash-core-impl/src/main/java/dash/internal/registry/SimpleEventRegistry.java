@@ -49,7 +49,7 @@ public class SimpleEventRegistry implements IEventRegistry {
     @Generated // I'm exhausted to test these WARNING branches, just skip them, please!
     @Override
     @SuppressWarnings("unchecked")
-    public void registerListeners(@NotNull EventListener listener) {
+    public void registerListeners(@NotNull IEventListener listener) {
         var lookup = MethodHandles.privateLookupIn(listener.getClass(), MethodHandles.lookup());
         for (Method declaredMethod : listener.getClass().getDeclaredMethods()) {
             if (declaredMethod.isAnnotationPresent(EventHandler.class)) {
@@ -106,7 +106,7 @@ public class SimpleEventRegistry implements IEventRegistry {
     @RequiredArgsConstructor
     private static final class DelegatedSimpleHandler<T extends AbstractEvent> extends EventHandlerAdapter<T> {
         private final @NotNull MethodHandle mh;
-        private final @NotNull EventListener listener;
+        private final @NotNull IEventListener listener;
 
         @Override
         @SneakyThrows
@@ -116,7 +116,7 @@ public class SimpleEventRegistry implements IEventRegistry {
     }
 
     private record DelegatedEventHandler<T extends AbstractEvent>(MethodHandle mh,
-                                                                  EventListener listener) implements IEventHandler<T> {
+                                                                  IEventListener listener) implements IEventHandler<T> {
         @SneakyThrows
         @Override
         public void handleMessage(@NotNull IEventPipeline<T> pipeline, T event) {

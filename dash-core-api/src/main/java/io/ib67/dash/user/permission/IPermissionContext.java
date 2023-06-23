@@ -22,21 +22,20 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.scheduler;
+package io.ib67.dash.user.permission;
 
-import io.ib67.dash.scheduler.future.ScheduledFuture;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.time.Duration;
-
+/**
+ * Suggested references for Permissible
+ */
 @ApiStatus.AvailableSince("0.1.0")
-public interface Scheduler extends Executor {
-     ScheduledFuture scheduleLater(Task task, Duration duration);
+public interface IPermissionContext {
+    IPermissionContext DEFAULT = (a, b) -> Result.DEFAULT;
 
-     ScheduledFuture scheduleTimer(Task task, Duration period);
+    Result lookup(IPermissible permissible, IPermission perm);
 
-     ScheduledFuture scheduleAsyncLater(Task task, Duration duration);
-
-     ScheduledFuture scheduleAsyncTimer(Task task, Duration period);
-
+    enum Result {
+        DEFAULT, BYPASS, BLOCK
+    }
 }

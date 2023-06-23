@@ -22,23 +22,14 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.contact.group;
+package io.ib67.dash.event;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.contact.Friend;
-import io.ib67.dash.message.IMessageSource;
+import io.ib67.dash.context.ContextKey;
+import io.ib67.dash.context.IContext;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Optional;
-
-/**
- * {@link Member}s are some {@link Contact} in the {@link ChatGroup}, while they are able to be {@link IMessageSource}s.
- */
 @ApiStatus.AvailableSince("0.1.0")
-public interface Member extends Contact, IMessageSource {
-    default Optional<? extends Friend> asFriend() {
-        return getAdapter().getFriend(getPlatformIdentifier());
-    }
-
-    ChatGroup getGroup();
+public interface IContextualEvent {
+    IContext getContext();
+    boolean hasContext(ContextKey<?> key);
 }

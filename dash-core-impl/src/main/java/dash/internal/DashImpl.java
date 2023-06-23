@@ -34,7 +34,7 @@ import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.scheduler.Scheduler;
+import io.ib67.dash.scheduler.IScheduler;
 import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
 import lombok.AllArgsConstructor;
@@ -49,9 +49,9 @@ public class DashImpl implements Dash {
     private final IPermissionRegistry permissionRegistry;
     private final IUserManager userManager;
     private final IEventBus bus;
-    private final Scheduler scheduler;
+    private final IScheduler scheduler;
 
-    public DashImpl(Scheduler scheduler) {
+    public DashImpl(IScheduler scheduler) {
         this.scheduler = scheduler;
         bus = new DashEventBus(scheduler);
         var channelFactory = bus.getChannelFactory();

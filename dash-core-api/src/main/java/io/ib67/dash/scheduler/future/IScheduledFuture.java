@@ -22,30 +22,15 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.contact;
+package io.ib67.dash.scheduler.future;
 
-import io.ib67.dash.adapter.PlatformAdapter;
-import io.ib67.dash.adapter.PlatformRelated;
-import io.ib67.dash.user.User;
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * Contact.<br>
- * A Contact is an interactive object on IM Platform.
- */
 @ApiStatus.AvailableSince("0.1.0")
-public interface Contact extends PlatformRelated{
-    /**
-     * User ID from IM platform
-     */
-    String getPlatformIdentifier();
+public interface IScheduledFuture extends ITaskFuture {
+    void cancel();
 
-    PlatformAdapter getAdapter();
+    boolean isCancelled();
 
-    /**
-     * The name of the contact.
-     */
-    String getName();
-
-    User getUser();
+    long getEnqueueTime();
 }

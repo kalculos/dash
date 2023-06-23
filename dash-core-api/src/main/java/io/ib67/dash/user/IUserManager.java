@@ -30,14 +30,14 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
 public interface IUserManager {
-    Future<? extends User, UserNotFoundException> findUser(long uid);
+    Future<? extends IUser, UserNotFoundException> findUser(long uid);
 
-    User register();
+    IUser register();
 
     /**
      * Useful when you want to reset some users' data
      * @param user
      * @return
      */
-    Future<?,UserNotFoundException> unregister(User user);
+    Future<?,UserNotFoundException> unregister(IUser user);
 }

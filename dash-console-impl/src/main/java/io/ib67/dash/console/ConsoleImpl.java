@@ -6,7 +6,7 @@ import io.ib67.dash.console.command.DashCommandManager;
 import io.ib67.dash.console.data.ConsoleInfo;
 import io.ib67.dash.console.plugin.IPluginManager;
 import io.ib67.dash.console.plugin.SimplePluginManager;
-import io.ib67.dash.contact.Contact;
+import io.ib67.dash.contact.IContact;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class ConsoleImpl implements IConsole {
     @Getter
     private final IPluginManager pluginManager;
     @Getter
-    private final CommandManager<Contact> commandManager;
+    private final CommandManager<IContact> commandManager;
     @Getter
     private final Dash dash;
 

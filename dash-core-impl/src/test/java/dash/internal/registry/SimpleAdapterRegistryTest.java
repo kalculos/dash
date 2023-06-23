@@ -26,7 +26,7 @@ package dash.internal.registry;
 
 import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.adapter.PlatformAdapter;
-import io.ib67.dash.contact.Contact;
+import io.ib67.dash.contact.IContact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,17 +55,17 @@ class SimpleAdapterRegistryTest {
         }
 
         @Override
-        public Optional<? extends Contact> getContact(String platformId) {
+        public Optional<? extends IContact> getContact(String platformId) {
             return Optional.empty();
         }
 
         @Override
-        public List<? extends Contact> getAllContacts() {
+        public List<? extends IContact> getAllContacts() {
             return null;
         }
 
         @Override
-        public Contact getPlatformBot() {
+        public IContact getPlatformBot() {
             return null;
         }
     }

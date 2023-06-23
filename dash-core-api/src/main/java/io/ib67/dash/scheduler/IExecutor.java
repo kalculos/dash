@@ -22,20 +22,20 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.user.permission;
+package io.ib67.dash.scheduler;
 
+import io.ib67.dash.scheduler.future.ITaskFuture;
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * Suggested references for Permissible
- */
 @ApiStatus.AvailableSince("0.1.0")
-public interface PermissionContext {
-    PermissionContext DEFAULT = (a, b) -> Result.DEFAULT;
+public interface IExecutor {
 
-    Result lookup(Permissible permissible, Permission perm);
-
-    enum Result {
-        DEFAULT, BYPASS, BLOCK
+    @FunctionalInterface
+    interface Task {
+        void execute();
     }
+
+    ITaskFuture submit(Task task);
+
+     ITaskFuture submitAsync(Task task);
 }

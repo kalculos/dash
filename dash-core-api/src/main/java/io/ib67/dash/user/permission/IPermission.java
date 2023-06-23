@@ -22,14 +22,18 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.adapter;
+package io.ib67.dash.user.permission;
 
 import org.jetbrains.annotations.ApiStatus;
-
-/**
- * Objects which are related to a specified {@link PlatformAdapter}
- */
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 @ApiStatus.AvailableSince("0.1.0")
-public interface PlatformRelated {
-    PlatformAdapter getAdapter();
+public interface IPermission {
+    @NotNull
+    String getNode();
+
+    @Nullable
+    String getDescription();
+
+    boolean matches(IPermission permission);
 }

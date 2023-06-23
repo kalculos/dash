@@ -24,7 +24,7 @@
 
 package dash.internal.user.perm;
 
-import io.ib67.dash.user.permission.Permission;
+import io.ib67.dash.user.permission.IPermission;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ class PermImplTest {
         assertNotEquals(permA, new Object(), "perm is not equal to other type");
 
         @Getter
-        class SimplePerm implements Permission {
+        class SimplePerm implements IPermission {
             private final String node;
             private final String description = null;
 
@@ -51,7 +51,7 @@ class PermImplTest {
             }
 
             @Override
-            public boolean matches(Permission permission) {
+            public boolean matches(IPermission permission) {
                 return false;
             }
         }

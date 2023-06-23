@@ -27,8 +27,8 @@ package io.ib67.dash.event;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * Methods declared in the implementations will be registered once {@link IEventRegistry#registerListeners(EventListener)} is called.
+ * Methods declared in the implementations will be registered once {@link IEventRegistry#registerListeners(IEventListener)} is called.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface EventListener {
+public interface IEventListener {
 }

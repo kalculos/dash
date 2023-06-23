@@ -25,9 +25,9 @@
 package dash.internal.scheduler;
 
 import dash.internal.util.Threads;
-import io.ib67.dash.scheduler.Scheduler;
-import io.ib67.dash.scheduler.future.ScheduledFuture;
-import io.ib67.dash.scheduler.future.TaskFuture;
+import io.ib67.dash.scheduler.IScheduler;
+import io.ib67.dash.scheduler.future.IScheduledFuture;
+import io.ib67.dash.scheduler.future.ITaskFuture;
 import io.ib67.kiwi.future.Result;
 
 import java.time.Duration;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.ib67.kiwi.Kiwi.runAny;
 
-public class DashScheduler implements Scheduler {
+public class DashScheduler implements IScheduler {
     private final ScheduledExecutorService main;
     private final ScheduledExecutorService async;
 
@@ -47,7 +47,7 @@ public class DashScheduler implements Scheduler {
 
     @Override
     @SuppressWarnings("unchecked")
-    public TaskFuture submit(Task task) {
+    public ITaskFuture submit(Task task) {
         var future = new DashTaskPromise(task);
         if (Threads.isPrimaryThread()) {
             future.fromResult((Result<Void, Exception>) runAny(task::execute));
@@ -59,29 +59,29 @@ public class DashScheduler implements Scheduler {
 
     @Override
     @SuppressWarnings("unchecked")
-    public TaskFuture submitAsync(Task task) {
+    public ITaskFuture submitAsync(Task task) {
         var future = new DashTaskPromise(task);
         async.submit(() -> future.fromResult((Result<Void, Exception>) runAny(task::execute)));
         return future;
     }
 
     @Override
-    public ScheduledFuture scheduleLater(Task task, Duration duration) {
+    public IScheduledFuture scheduleLater(Task task, Duration duration) {
         return new DashScheduledPromise(task, main.schedule(task::execute, duration.toMillis(), TimeUnit.MILLISECONDS));
     }
 
     @Override
-    public ScheduledFuture scheduleTimer(Task task, Duration period) {
+    public IScheduledFuture scheduleTimer(Task task, Duration period) {
         return new DashScheduledPromise(task, main.scheduleAtFixedRate(task::execute, 0L, period.toMillis(), TimeUnit.MILLISECONDS));
     }
 
     @Override
-    public ScheduledFuture scheduleAsyncLater(Task task, Duration duration) {
+    public IScheduledFuture scheduleAsyncLater(Task task, Duration duration) {
         return new DashScheduledPromise(task, async.schedule(task::execute, duration.toMillis(), TimeUnit.MILLISECONDS));
     }
 
     @Override
-    public ScheduledFuture scheduleAsyncTimer(Task task, Duration period) {
+    public IScheduledFuture scheduleAsyncTimer(Task task, Duration period) {
         return new DashScheduledPromise(task, async.scheduleAtFixedRate(task::execute, 0L, period.toMillis(), TimeUnit.MILLISECONDS));
     }
 }

@@ -26,7 +26,7 @@ package dash.internal.user;
 
 import dash.internal.user.perm.PermImpl;
 import io.ib67.dash.user.IPermissionRegistry;
-import io.ib67.dash.user.permission.Permission;
+import io.ib67.dash.user.permission.IPermission;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -34,26 +34,26 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class SimplePermissionRegistry implements IPermissionRegistry {
-    private final Map<String, Permission> cache = new ConcurrentHashMap<>();
+    private final Map<String, IPermission> cache = new ConcurrentHashMap<>();
 
     public SimplePermissionRegistry() {
         cache.put("*", new PermImpl("", false, null, "Any"));
         cache.put("-*", new PermImpl("", true, null, "Never"));
     }
 
-    public Permission parseNode(String node) {
+    public IPermission parseNode(String node) {
         node = node.trim();
         if (node.equals("*") || node.equals("-*")) return getNode(node);
         return parseNode0(node, null);
     }
 
     @Override
-    public Permission getNode(String node) {
+    public IPermission getNode(String node) {
         return cache.computeIfAbsent(node, this::parseNode);
     }
 
     @Override
-    public Permission registerPermission(String node, String description) {
+    public IPermission registerPermission(String node, String description) {
         node = node.trim().toLowerCase();
         if (cache.containsKey(node)) {
             if (cache.get(node).getDescription() != null) {
@@ -65,7 +65,7 @@ public class SimplePermissionRegistry implements IPermissionRegistry {
         return perm;
     }
 
-    private Permission parseNode0(String node, String description) {
+    private IPermission parseNode0(String node, String description) {
         if (node.isEmpty()) {
             throw new IllegalArgumentException("node is an empty string");
         }

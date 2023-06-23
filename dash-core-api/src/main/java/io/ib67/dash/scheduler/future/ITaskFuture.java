@@ -22,14 +22,13 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.event;
+package io.ib67.dash.scheduler.future;
 
-import io.ib67.dash.context.ContextKey;
-import io.ib67.dash.context.IContext;
+import io.ib67.dash.scheduler.IExecutor;
+import io.ib67.kiwi.future.Future;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
-public interface ContextualEvent {
-    IContext getContext();
-    boolean hasContext(ContextKey<?> key);
+public interface ITaskFuture extends Future<Void, Exception> {
+    IExecutor.Task getTask();
 }
