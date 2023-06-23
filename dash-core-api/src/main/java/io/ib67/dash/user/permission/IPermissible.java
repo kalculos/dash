@@ -22,26 +22,20 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.contact.group;
+package io.ib67.dash.user.permission;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.contact.group.channel.ChatChannel;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
- * A {@link ChatGroup} is a set of channels, including some additional metadata shared between these channels.
+ * A {@link IPermissible} is an object whose ability is up to a {@link IPermission}.<br>
+ * Additionally, result from {@link IPermissionContext} is prior to Permissible.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface ChatGroup extends Contact {
-    @NotNull
-    List<ChatChannel> getChannels();
+public interface IPermissible {
+    boolean hasPermission(IPermissionContext context, IPermission permission);
 
-    @NotNull
-    ChatChannel getDefaultChannel();
+    default boolean hasPermission(IPermission perm) {
+        return hasPermission(IPermissionContext.DEFAULT, perm);
+    }
 
-    @NotNull
-    List<Member> getMembers();
 }

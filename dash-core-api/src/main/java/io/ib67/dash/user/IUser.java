@@ -22,16 +22,57 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.user.permission;
+package io.ib67.dash.user;
 
+import io.ib67.dash.contact.IContact;
+import io.ib67.dash.context.IContext;
+import io.ib67.dash.message.MessageChain;
+import io.ib67.dash.user.permission.IAuthority;
+import io.ib67.dash.user.permission.IPermission;
+import io.ib67.dash.user.permission.IPermissionContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+
 @ApiStatus.AvailableSince("0.1.0")
-public interface Authority extends Permissible{
-    void grant(Permission permission);
+public interface IUser extends IAuthority {
+    /**
+     * This is not persistent. Data will be lost after reinitialization etc.
+     *
+     * @return a memory-only context
+     */
+    @NotNull
+    IContext getContext();
 
-    void revoke(Permission permission);
+    /**
+     * Fetch known contacts who were bind to this user.
+     *
+     * @return list of known contacts.
+     */
+    @NotNull
+    Collection<? extends IContact> getKnownContacts();
 
-    Collection<? extends Permission> getPermissions();
+    /**
+     * Attempts to send message to every known contact.
+     *
+     * @param message message to be sent
+     */
+    void broadcastMessage(@NotNull MessageChain message);
+
+    @NotNull
+    IPermissionContext getPermissionContext();
+
+    long getId();
+
+    @Nullable
+    String getName();
+
+    void setName(String name);
+
+    @Override
+    default boolean hasPermission(IPermission perm) {
+        return hasPermission(getPermissionContext(), perm);
+    }
 }

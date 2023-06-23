@@ -24,10 +24,11 @@
 
 package io.ib67.dash.exception.user;
 
+import io.ib67.dash.user.IUser;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * UserExceptions are involved in some situations that {@link io.ib67.dash.user.User}s cannot be initialized or destroyed correctly.
+ * UserExceptions are involved in some situations that {@link IUser}s cannot be initialized or destroyed correctly.
  */
 @ApiStatus.AvailableSince("0.1.0")
 public class UserException extends RuntimeException{

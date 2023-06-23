@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.contact;
+package io.ib67.dash.adapter;
 
-import io.ib67.dash.message.IMessageSource;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * A {@link Friend} has a stably established connection between bots' Contact and it.
- * In difference to {@link io.ib67.dash.contact.group.Member}, the connection indicates that you (or they) are able to send messages bi-directionally without any restrictions.
+ * Objects which are related to a specified {@link PlatformAdapter}
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface Friend extends Contact, IMessageSource { }
+public interface IPlatformRelated {
+    PlatformAdapter getAdapter();
+}

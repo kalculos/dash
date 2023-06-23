@@ -26,11 +26,11 @@ package dash.internal.user;
 
 import dash.test.contact.MockContact;
 import io.ib67.dash.adapter.PlatformAdapter;
-import io.ib67.dash.contact.Friend;
+import io.ib67.dash.contact.IFriend;
 import io.ib67.dash.message.IMessageReceipt;
 import io.ib67.dash.message.MessageChain;
-import io.ib67.dash.user.User;
-import io.ib67.dash.user.permission.PermissionContext;
+import io.ib67.dash.user.IUser;
+import io.ib67.dash.user.permission.IPermissionContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,14 +41,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserImplTest {
-    private User testSubject;
+    private IUser testSubject;
 
     @BeforeEach
     public void setup() {
         testSubject = new UserImpl(
                 new ArrayList<>(),
                 List.of(),
-                PermissionContext.DEFAULT,
+                IPermissionContext.DEFAULT,
                 0
         );
     }
@@ -72,7 +72,7 @@ class UserImplTest {
         testSubject = new UserImpl(
                 new ArrayList<>(List.of(perm)),
                 List.of(),
-                PermissionContext.DEFAULT,
+                IPermissionContext.DEFAULT,
                 0
         );
         assertTrue(testSubject.hasPermission(perm));
@@ -84,8 +84,8 @@ class UserImplTest {
     @Test
     public void testBroadcastMessage() {
         var counter = new AtomicInteger();
-        class MockFriend extends MockContact implements Friend {
-            public MockFriend(String platformIdentifier, PlatformAdapter platform, User user) {
+        class MockFriend extends MockContact implements IFriend {
+            public MockFriend(String platformIdentifier, PlatformAdapter platform, IUser user) {
                 super(platformIdentifier, platform, user);
             }
 
@@ -108,7 +108,7 @@ class UserImplTest {
         testSubject = new UserImpl(
                 List.of(),
                 List.of(new MockFriend(null, null, null)),
-                PermissionContext.DEFAULT,
+                IPermissionContext.DEFAULT,
                 0
         );
         testSubject.broadcastMessage(null);
@@ -119,21 +119,21 @@ class UserImplTest {
     public void testHasPermission(){
         var pf = new SimplePermissionRegistry();
         var perm = pf.getNode("a.b");
-        PermissionContext context = PermissionContext.DEFAULT;
+        IPermissionContext context = IPermissionContext.DEFAULT;
         testSubject = new UserImpl(
                 List.of(perm),
                 List.of(),
                 context,0
         );
         assertTrue(testSubject.hasPermission(perm));
-        context = (a,b) -> PermissionContext.Result.BLOCK;
+        context = (a,b) -> IPermissionContext.Result.BLOCK;
         testSubject = new UserImpl(
                 List.of(perm),
                 List.of(),
                 context,0
         );
         assertFalse(testSubject.hasPermission(perm));
-        context = (a,b) -> PermissionContext.Result.BYPASS;
+        context = (a,b) -> IPermissionContext.Result.BYPASS;
         testSubject = new UserImpl(
                 List.of(perm),
                 List.of(),

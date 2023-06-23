@@ -22,20 +22,30 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.user.permission;
+package io.ib67.dash.contact;
 
+import io.ib67.dash.adapter.PlatformAdapter;
+import io.ib67.dash.adapter.IPlatformRelated;
+import io.ib67.dash.user.IUser;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * A {@link Permissible} is an object whose ability is up to a {@link Permission}.<br>
- * Additionally, result from {@link PermissionContext} is prior to Permissible.
+ * Contact.<br>
+ * A Contact is an interactive object on IM Platform.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public interface Permissible {
-    boolean hasPermission(PermissionContext context, Permission permission);
+public interface IContact extends IPlatformRelated {
+    /**
+     * User ID from IM platform
+     */
+    String getPlatformIdentifier();
 
-    default boolean hasPermission(Permission perm) {
-        return hasPermission(PermissionContext.DEFAULT, perm);
-    }
+    PlatformAdapter getAdapter();
 
+    /**
+     * The name of the contact.
+     */
+    String getName();
+
+    IUser getUser();
 }

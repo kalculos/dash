@@ -24,13 +24,14 @@
 
 package io.ib67.dash.console.event;
 
+import io.ib67.dash.event.IEventListener;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.annotation.*;
 
 /**
  * Some filters for handler methods.
- * See also: {@link io.ib67.dash.event.EventListener}
+ * See also: {@link IEventListener}
  */
 @ApiStatus.AvailableSince("0.1.0")
 public class Require {

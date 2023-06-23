@@ -24,34 +24,34 @@
 
 package io.ib67.dash.exception;
 
-import io.ib67.dash.contact.group.Member;
+import io.ib67.dash.contact.group.IMember;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
 public class NotFriendException extends RuntimeException {
-    private final Member member;
+    private final IMember member;
 
-    public NotFriendException(Member member) {
+    public NotFriendException(IMember member) {
         super();
         this.member = member;
     }
 
-    public NotFriendException(String message, Member member) {
+    public NotFriendException(String message, IMember member) {
         super(message);
         this.member = member;
     }
 
-    public NotFriendException(String message, Throwable cause, Member member) {
+    public NotFriendException(String message, Throwable cause, IMember member) {
         super(message, cause);
         this.member = member;
     }
 
-    public NotFriendException(Throwable cause, Member member) {
+    public NotFriendException(Throwable cause, IMember member) {
         super(cause);
         this.member = member;
     }
 
-    protected NotFriendException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, Member member) {
+    protected NotFriendException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, IMember member) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.member = member;
     }

@@ -32,7 +32,7 @@ public interface IEventRegistry {
     /**
      * Register methods annotated with {@link EventHandler} in the listener object.* @param listener listener
      */
-    void registerListeners(EventListener listener);
+    void registerListeners(IEventListener listener);
     /**
      * Registers an listener
      *

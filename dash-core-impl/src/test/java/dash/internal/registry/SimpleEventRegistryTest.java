@@ -28,11 +28,10 @@ import dash.internal.event.DashEventBus;
 import dash.internal.event.SimpleEventChannelFactory;
 import dash.internal.scheduler.DashScheduler;
 import dash.test.SharedResources;
-import dash.internal.scheduler.DashScheduler;
 import dash.test.event.TestEventA;
 import dash.test.event.TestEventB;
 import io.ib67.dash.event.EventHandler;
-import io.ib67.dash.event.EventListener;
+import io.ib67.dash.event.IEventListener;
 import io.ib67.dash.event.IEventRegistry;
 import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.event.handler.IEventPipeline;
@@ -57,7 +56,7 @@ class SimpleEventRegistryTest {
     @Test
     public void testRegularRegistration() {
         boolean[] results = new boolean[3];
-        class Listeners implements EventListener {
+        class Listeners implements IEventListener {
             @EventHandler
             public void onMessage(IEventPipeline<?> pipe, TestEventA eventA) {
                 results[0] = true;

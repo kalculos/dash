@@ -24,9 +24,9 @@
 
 package io.ib67.dash.adapter;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.contact.Friend;
-import io.ib67.dash.contact.group.ChatGroup;
+import io.ib67.dash.contact.IContact;
+import io.ib67.dash.contact.IFriend;
+import io.ib67.dash.contact.group.IChatGroup;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
@@ -40,25 +40,25 @@ public abstract class PlatformAdapter {
     @Getter
     protected final String name;
 
-    public List<? extends Friend> getFriends() {
-        return getAllContacts().stream().filter(it -> it instanceof Friend).map(it -> (Friend) it).toList();
+    public List<? extends IFriend> getFriends() {
+        return getAllContacts().stream().filter(it -> it instanceof IFriend).map(it -> (IFriend) it).toList();
     }
 
-    public abstract Optional<? extends Contact> getContact(String platformId);
+    public abstract Optional<? extends IContact> getContact(String platformId);
 
-    public Optional<? extends Friend> getFriend(String platformId) {
-        return getContact(platformId).filter(it -> it instanceof Friend).map(it -> (Friend) it);
+    public Optional<? extends IFriend> getFriend(String platformId) {
+        return getContact(platformId).filter(it -> it instanceof IFriend).map(it -> (IFriend) it);
     }
 
-    public Optional<? extends ChatGroup> getGroup(String platformId) {
-        return getContact(platformId).filter(it -> it instanceof ChatGroup).map(it -> (ChatGroup) it);
+    public Optional<? extends IChatGroup> getGroup(String platformId) {
+        return getContact(platformId).filter(it -> it instanceof IChatGroup).map(it -> (IChatGroup) it);
     }
 
-    public List<? extends ChatGroup> getChatGroups() {
-        return getAllContacts().stream().filter(it -> it instanceof ChatGroup).map(it -> (ChatGroup) it).toList();
+    public List<? extends IChatGroup> getChatGroups() {
+        return getAllContacts().stream().filter(it -> it instanceof IChatGroup).map(it -> (IChatGroup) it).toList();
     }
 
-    public abstract List<? extends Contact> getAllContacts();
+    public abstract List<? extends IContact> getAllContacts();
 
-    public abstract Contact getPlatformBot();
+    public abstract IContact getPlatformBot();
 }

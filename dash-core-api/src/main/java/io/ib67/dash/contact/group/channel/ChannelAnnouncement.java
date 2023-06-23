@@ -24,7 +24,7 @@
 
 package io.ib67.dash.contact.group.channel;
 
-import io.ib67.dash.contact.group.Member;
+import io.ib67.dash.contact.group.IMember;
 import org.jetbrains.annotations.ApiStatus;
 
 import static java.util.Objects.requireNonNull;
@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
  */
 @ApiStatus.AvailableSince("0.1.0")
 public record ChannelAnnouncement(
-        Member sender,
+        IMember sender,
         String message
 ) {
     public ChannelAnnouncement {

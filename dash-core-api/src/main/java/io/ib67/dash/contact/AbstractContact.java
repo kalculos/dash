@@ -25,7 +25,7 @@
 package io.ib67.dash.contact;
 
 import io.ib67.dash.adapter.PlatformAdapter;
-import io.ib67.dash.user.User;
+import io.ib67.dash.user.IUser;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -34,7 +34,7 @@ import lombok.Getter;
  */
 @Getter
 @EqualsAndHashCode
-public abstract class AbstractContact implements Contact{
+public abstract class AbstractContact implements IContact {
     /**
      * User ID from IM platform
      */
@@ -52,7 +52,7 @@ public abstract class AbstractContact implements Contact{
         this.adapter = platform;
     }
 
-    public abstract User getUser();
+    public abstract IUser getUser();
 
     @Override
     public String toString() {

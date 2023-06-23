@@ -22,20 +22,23 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.scheduler;
+package io.ib67.dash.contact.group;
 
-import io.ib67.dash.scheduler.future.TaskFuture;
+import io.ib67.dash.contact.IContact;
+import io.ib67.dash.contact.IFriend;
+import io.ib67.dash.message.IMessageSource;
 import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.AvailableSince("0.1.0")
-public interface Executor {
+import java.util.Optional;
 
-    @FunctionalInterface
-    interface Task {
-        void execute();
+/**
+ * {@link IMember}s are some {@link IContact} in the {@link IChatGroup}, while they are able to be {@link IMessageSource}s.
+ */
+@ApiStatus.AvailableSince("0.1.0")
+public interface IMember extends IContact, IMessageSource {
+    default Optional<? extends IFriend> asFriend() {
+        return getAdapter().getFriend(getPlatformIdentifier());
     }
 
-    TaskFuture submit(Task task);
-
-     TaskFuture submitAsync(Task task);
+    IChatGroup getGroup();
 }

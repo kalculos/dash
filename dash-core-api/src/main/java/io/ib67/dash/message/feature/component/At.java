@@ -24,7 +24,7 @@
 
 package io.ib67.dash.message.feature.component;
 
-import io.ib67.dash.contact.Contact;
+import io.ib67.dash.contact.IContact;
 import io.ib67.dash.message.feature.IMessageComponent;
 import io.ib67.dash.util.CatCodes;
 import lombok.Builder;
@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @ApiStatus.AvailableSince("0.1.0")
 public record At(
-        @Nullable Contact contact,
+        @Nullable IContact contact,
         @Nullable String platformId,
         @Nullable String display,
         @Nullable String platformUid

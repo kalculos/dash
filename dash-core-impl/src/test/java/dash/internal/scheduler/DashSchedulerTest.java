@@ -25,7 +25,7 @@
 package dash.internal.scheduler;
 
 import dash.test.SharedResources;
-import io.ib67.dash.scheduler.Scheduler;
+import io.ib67.dash.scheduler.IScheduler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DashSchedulerTest {
-    private static Scheduler scheduler;
+    private static IScheduler scheduler;
 
     @BeforeAll
     public static void setup() {

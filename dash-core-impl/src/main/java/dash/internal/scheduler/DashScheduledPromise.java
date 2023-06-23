@@ -24,17 +24,17 @@
 
 package dash.internal.scheduler;
 
-import io.ib67.dash.scheduler.Executor;
-import io.ib67.dash.scheduler.future.ScheduledFuture;
+import io.ib67.dash.scheduler.IExecutor;
+import io.ib67.dash.scheduler.future.IScheduledFuture;
 import lombok.Generated;
 
 import java.util.Objects;
 
-public class DashScheduledPromise extends DashTaskPromise implements ScheduledFuture {
+public class DashScheduledPromise extends DashTaskPromise implements IScheduledFuture {
     private final java.util.concurrent.ScheduledFuture<?> future;
     private final long time = System.currentTimeMillis();
 
-    public DashScheduledPromise(Executor.Task task, java.util.concurrent.ScheduledFuture<?> future) {
+    public DashScheduledPromise(IExecutor.Task task, java.util.concurrent.ScheduledFuture<?> future) {
         super(task);
         Objects.requireNonNull(this.future = future);
     }

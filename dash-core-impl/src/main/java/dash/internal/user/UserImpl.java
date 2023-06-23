@@ -24,13 +24,13 @@
 
 package dash.internal.user;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.contact.Friend;
+import io.ib67.dash.contact.IContact;
+import io.ib67.dash.contact.IFriend;
 import io.ib67.dash.context.IContext;
 import io.ib67.dash.message.MessageChain;
-import io.ib67.dash.user.User;
-import io.ib67.dash.user.permission.Permission;
-import io.ib67.dash.user.permission.PermissionContext;
+import io.ib67.dash.user.IUser;
+import io.ib67.dash.user.permission.IPermission;
+import io.ib67.dash.user.permission.IPermissionContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -40,23 +40,23 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A basic implementation of {@link User}.
+ * A basic implementation of {@link IUser}.
  */
-public class UserImpl implements User {
-    protected final List<Permission> permissions;
+public class UserImpl implements IUser {
+    protected final List<IPermission> permissions;
     @Getter
     protected final IContext context = IContext.create();
     @Getter
-    protected final Collection<Contact> knownContacts;
+    protected final Collection<IContact> knownContacts;
     @Getter
-    protected final PermissionContext permissionContext;
+    protected final IPermissionContext permissionContext;
     @Getter
     protected final long id;
     @Getter
     @Setter
     protected String name;
 
-    public UserImpl(List<Permission> permissions, Collection<Contact> knownContacts, PermissionContext permissionContext, long id) {
+    public UserImpl(List<IPermission> permissions, Collection<IContact> knownContacts, IPermissionContext permissionContext, long id) {
         this.permissions = new ArrayList<>(permissions);
         this.knownContacts = knownContacts;
         this.permissionContext = permissionContext;
@@ -65,34 +65,34 @@ public class UserImpl implements User {
 
     @Override
     public void broadcastMessage(@NotNull MessageChain message) {
-        for (Contact knownContact : getKnownContacts()) {
-            if (knownContact instanceof Friend friend) {
+        for (IContact knownContact : getKnownContacts()) {
+            if (knownContact instanceof IFriend friend) {
                 friend.sendMessage(message);
             }
         }
     }
 
     @Override
-    public synchronized void grant(Permission permission) {
+    public synchronized void grant(IPermission permission) {
         if (!hasPermission(permission)) {
             permissions.add(permission);
         }
     }
 
     @Override
-    public synchronized void revoke(Permission permission) {
+    public synchronized void revoke(IPermission permission) {
         if (hasPermission(permission)) {
             permissions.remove(permission);
         }
     }
 
     @Override
-    public Collection<? extends Permission> getPermissions() {
+    public Collection<? extends IPermission> getPermissions() {
         return new ArrayList<>(permissions);
     }
 
     @Override
-    public boolean hasPermission(PermissionContext context, Permission permission) {
+    public boolean hasPermission(IPermissionContext context, IPermission permission) {
         return switch (context.lookup(this, permission)) {
             case BLOCK -> false;
             case BYPASS -> true;

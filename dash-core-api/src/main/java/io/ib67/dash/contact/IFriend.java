@@ -22,13 +22,15 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.scheduler.future;
+package io.ib67.dash.contact;
 
-import io.ib67.dash.scheduler.Executor;
-import io.ib67.kiwi.future.Future;
+import io.ib67.dash.contact.group.IMember;
+import io.ib67.dash.message.IMessageSource;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * A {@link IFriend} has a stably established connection between bots' Contact and it.
+ * In difference to {@link IMember}, the connection indicates that you (or they) are able to send messages bi-directionally without any restrictions.
+ */
 @ApiStatus.AvailableSince("0.1.0")
-public interface TaskFuture extends Future<Void, Exception> {
-    Executor.Task getTask();
-}
+public interface IFriend extends IContact, IMessageSource { }

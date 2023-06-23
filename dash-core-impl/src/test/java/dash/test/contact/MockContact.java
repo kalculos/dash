@@ -26,13 +26,13 @@ package dash.test.contact;
 
 import io.ib67.dash.adapter.PlatformAdapter;
 import io.ib67.dash.contact.AbstractContact;
-import io.ib67.dash.user.User;
+import io.ib67.dash.user.IUser;
 import lombok.Getter;
 
 @Getter
 public class MockContact extends AbstractContact {
-    private final User user;
-    public MockContact(String platformIdentifier, PlatformAdapter platform, User user) {
+    private final IUser user;
+    public MockContact(String platformIdentifier, PlatformAdapter platform, IUser user) {
         super(platformIdentifier, platform);
         this.user = user;
     }

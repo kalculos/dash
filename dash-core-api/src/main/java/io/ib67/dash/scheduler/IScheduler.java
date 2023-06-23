@@ -22,18 +22,21 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.user.permission;
+package io.ib67.dash.scheduler;
 
+import io.ib67.dash.scheduler.future.IScheduledFuture;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.time.Duration;
+
 @ApiStatus.AvailableSince("0.1.0")
-public interface Permission {
-    @NotNull
-    String getNode();
+public interface IScheduler extends IExecutor {
+     IScheduledFuture scheduleLater(Task task, Duration duration);
 
-    @Nullable
-    String getDescription();
+     IScheduledFuture scheduleTimer(Task task, Duration period);
 
-    boolean matches(Permission permission);
+     IScheduledFuture scheduleAsyncLater(Task task, Duration duration);
+
+     IScheduledFuture scheduleAsyncTimer(Task task, Duration period);
+
 }

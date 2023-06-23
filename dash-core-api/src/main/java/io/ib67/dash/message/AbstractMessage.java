@@ -25,11 +25,11 @@
 package io.ib67.dash.message;
 
 import io.ib67.dash.adapter.PlatformAdapter;
-import io.ib67.dash.adapter.PlatformRelated;
+import io.ib67.dash.adapter.IPlatformRelated;
 import io.ib67.dash.context.ContextKey;
 import io.ib67.dash.context.IContext;
 import io.ib67.dash.event.AbstractEvent;
-import io.ib67.dash.event.ContextualEvent;
+import io.ib67.dash.event.IContextualEvent;
 import io.ib67.dash.message.internal.UnorderedEventContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ import static java.util.Objects.requireNonNull;
  */
 @ApiStatus.AvailableSince("0.1.0")
 @RequiredArgsConstructor
-public abstract class AbstractMessage<S extends IMessageSource> extends AbstractEvent implements PlatformRelated, ContextualEvent {
+public abstract class AbstractMessage<S extends IMessageSource> extends AbstractEvent implements IPlatformRelated, IContextualEvent {
     /**
      * The source of the message.
      */

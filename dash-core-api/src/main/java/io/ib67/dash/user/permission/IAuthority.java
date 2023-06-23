@@ -22,15 +22,16 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.scheduler.future;
+package io.ib67.dash.user.permission;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Collection;
 @ApiStatus.AvailableSince("0.1.0")
-public interface ScheduledFuture extends TaskFuture {
-    void cancel();
+public interface IAuthority extends IPermissible {
+    void grant(IPermission permission);
 
-    boolean isCancelled();
+    void revoke(IPermission permission);
 
-    long getEnqueueTime();
+    Collection<? extends IPermission> getPermissions();
 }

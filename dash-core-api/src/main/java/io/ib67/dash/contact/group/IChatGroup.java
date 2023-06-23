@@ -22,57 +22,26 @@
  * SOFTWARE.
  */
 
-package io.ib67.dash.user;
+package io.ib67.dash.contact.group;
 
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.context.IContext;
-import io.ib67.dash.message.MessageChain;
-import io.ib67.dash.user.permission.Authority;
-import io.ib67.dash.user.permission.Permission;
-import io.ib67.dash.user.permission.PermissionContext;
+import io.ib67.dash.contact.IContact;
+import io.ib67.dash.contact.group.channel.ChatChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.List;
 
+/**
+ * A {@link IChatGroup} is a set of channels, including some additional metadata shared between these channels.
+ */
 @ApiStatus.AvailableSince("0.1.0")
-public interface User extends Authority {
-    /**
-     * This is not persistent. Data will be lost after reinitialization etc.
-     *
-     * @return a memory-only context
-     */
+public interface IChatGroup extends IContact {
     @NotNull
-    IContext getContext();
-
-    /**
-     * Fetch known contacts who were bind to this user.
-     *
-     * @return list of known contacts.
-     */
-    @NotNull
-    Collection<? extends Contact> getKnownContacts();
-
-    /**
-     * Attempts to send message to every known contact.
-     *
-     * @param message message to be sent
-     */
-    void broadcastMessage(@NotNull MessageChain message);
+    List<ChatChannel> getChannels();
 
     @NotNull
-    PermissionContext getPermissionContext();
+    ChatChannel getDefaultChannel();
 
-    long getId();
-
-    @Nullable
-    String getName();
-
-    void setName(String name);
-
-    @Override
-    default boolean hasPermission(Permission perm) {
-        return hasPermission(getPermissionContext(), perm);
-    }
+    @NotNull
+    List<IMember> getMembers();
 }

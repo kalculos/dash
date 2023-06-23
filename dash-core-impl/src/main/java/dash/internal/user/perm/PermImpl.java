@@ -24,13 +24,13 @@
 
 package dash.internal.user.perm;
 
-import io.ib67.dash.user.permission.Permission;
+import io.ib67.dash.user.permission.IPermission;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
-public class PermImpl implements Permission {
+public class PermImpl implements IPermission {
     @Getter
     private final String parent;
     @Getter
@@ -48,7 +48,7 @@ public class PermImpl implements Permission {
      * @return
      */
     @Override
-    public boolean matches(Permission permission) {
+    public boolean matches(IPermission permission) {
         if (permission instanceof PermImpl impl) {
             if (parent.equals(impl.parent)) {
                 return reversed == impl.reversed == // same direction, reverse result
@@ -63,7 +63,7 @@ public class PermImpl implements Permission {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (!(obj instanceof Permission perm)) {
+        if (!(obj instanceof IPermission perm)) {
             return false;
         }
         if (perm instanceof PermImpl p) {

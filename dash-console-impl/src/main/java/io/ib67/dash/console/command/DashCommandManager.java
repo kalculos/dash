@@ -3,18 +3,18 @@ package io.ib67.dash.console.command;
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
-import io.ib67.dash.contact.Contact;
-import io.ib67.dash.scheduler.Executor;
+import io.ib67.dash.contact.IContact;
+import io.ib67.dash.scheduler.IExecutor;
 import io.ib67.dash.user.IPermissionRegistry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static java.util.Objects.requireNonNull;
 
-public class DashCommandManager extends CommandManager<Contact> {
+public class DashCommandManager extends CommandManager<IContact> {
     private final IPermissionRegistry permissionRegistry;
 
-    public DashCommandManager(Executor executor, IPermissionRegistry permissionRegistry) {
-        super(AsynchronousCommandExecutionCoordinator.<Contact>builder()
+    public DashCommandManager(IExecutor executor, IPermissionRegistry permissionRegistry) {
+        super(AsynchronousCommandExecutionCoordinator.<IContact>builder()
                 .withExecutor(it -> executor.submitAsync(it::run))
                 .withSynchronousParsing()
                 .build(), a -> true);
@@ -22,7 +22,7 @@ public class DashCommandManager extends CommandManager<Contact> {
     }
 
     @Override
-    public boolean hasPermission(@NonNull Contact sender, @NonNull String permission) {
+    public boolean hasPermission(@NonNull IContact sender, @NonNull String permission) {
         return sender.getUser().hasPermission(permissionRegistry.getNode(permission));
     }
 
