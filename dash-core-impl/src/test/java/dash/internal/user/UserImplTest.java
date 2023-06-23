@@ -55,7 +55,7 @@ class UserImplTest {
 
     @Test
     public void testGrant() {
-        var pf = new SimplePermissionFactory();
+        var pf = new SimplePermissionRegistry();
         var perm = pf.getNode("a.b");
         assertFalse(testSubject.hasPermission(perm));
         testSubject.grant(perm);
@@ -67,7 +67,7 @@ class UserImplTest {
 
     @Test
     public void testRevoke() {
-        var pf = new SimplePermissionFactory();
+        var pf = new SimplePermissionRegistry();
         var perm = pf.getNode("a.b");
         testSubject = new UserImpl(
                 new ArrayList<>(List.of(perm)),
@@ -117,7 +117,7 @@ class UserImplTest {
 
     @Test
     public void testHasPermission(){
-        var pf = new SimplePermissionFactory();
+        var pf = new SimplePermissionRegistry();
         var perm = pf.getNode("a.b");
         PermissionContext context = PermissionContext.DEFAULT;
         testSubject = new UserImpl(
