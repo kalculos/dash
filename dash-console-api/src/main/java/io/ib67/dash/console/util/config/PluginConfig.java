@@ -35,6 +35,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface PluginConfig {
-    String fileName() default "config.toml";
+    String fileName() default "config.yml";
 
 }
