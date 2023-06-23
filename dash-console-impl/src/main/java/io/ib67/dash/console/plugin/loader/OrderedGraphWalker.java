@@ -25,7 +25,6 @@
 package io.ib67.dash.console.plugin.loader;
 
 import com.google.common.graph.MutableNetwork;
-import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,9 +33,9 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-@RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 public class OrderedGraphWalker<N, E> {
+
     enum WalkState {
         ERROR, SUCCESS, NONE
     }
@@ -50,35 +49,44 @@ public class OrderedGraphWalker<N, E> {
     private final ExceptionalConsumer<N> consumer;
     private final BiConsumer<N, ? super Exception> exceptionHandler;
     private final Predicate<E> shouldPassError;
-    private final Map<N, WalkState> stateMap = new HashMap<>(network.nodes().size());
+    private final Map<N, WalkState> stateMap;
     private final Set<N> walkedNodes = new HashSet<>();
+
+    public OrderedGraphWalker(MutableNetwork<N, E> network, ExceptionalConsumer<N> consumer, BiConsumer<N, ? super Exception> exceptionHandler, Predicate<E> shouldPassError) {
+        this.network = network;
+        this.consumer = consumer;
+        this.exceptionHandler = exceptionHandler;
+        this.shouldPassError = shouldPassError;
+        stateMap = new HashMap<>(network.nodes().size());
+    }
 
     public void walk() {
         for (N node : network.nodes()) {
             if (stateMap.containsKey(node)) return;
             traverse(node);
-            walkedNodes.clear();;
+            walkedNodes.clear();
+            ;
         }
     }
 
-    public void cleanState(){
+    public void cleanState() {
         var iter = stateMap.entrySet().iterator();
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             var entry = iter.next();
-            switch (entry.getValue()){
+            switch (entry.getValue()) {
                 case ERROR -> network.removeNode(entry.getKey());
             }
             iter.remove();
         }
-        stateMap.entrySet().removeIf(it->it.getValue() == WalkState.ERROR);
+        stateMap.entrySet().removeIf(it -> it.getValue() == WalkState.ERROR);
     }
 
     private void traverse(N node) {
         var stateMap = this.stateMap;
         var walked = this.walkedNodes;
-        if(walked.contains(node)){
-            stateMap.put(node,WalkState.ERROR);
-            exceptionHandler.accept(node,new IllegalStateException("Circular dependency"));
+        if (walked.contains(node)) {
+            stateMap.put(node, WalkState.ERROR);
+            exceptionHandler.accept(node, new IllegalStateException("Circular dependency"));
             return;
         }
         walked.add(node);
@@ -86,7 +94,7 @@ public class OrderedGraphWalker<N, E> {
         for (N predecessor : network.predecessors(node)) {
             if (!stateMap.containsKey(predecessor)) traverse(predecessor); // process it first.
             if (stateMap.get(predecessor) == WalkState.ERROR) {
-                if(shouldPassError.test(network.edgeConnectingOrNull(predecessor,node))){
+                if (shouldPassError.test(network.edgeConnectingOrNull(predecessor, node))) {
                     stateMap.put(node, WalkState.ERROR); // pass the error
                     exceptionHandler.accept(node, null); // oh
                     return;
@@ -101,7 +109,7 @@ public class OrderedGraphWalker<N, E> {
         } catch (Exception exception) {
             // something wrong...
             exceptionHandler.accept(node, exception);
-            stateMap.put(node,WalkState.ERROR);
+            stateMap.put(node, WalkState.ERROR);
             return;
         }
     }
