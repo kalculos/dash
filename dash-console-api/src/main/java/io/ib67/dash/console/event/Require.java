@@ -26,6 +26,8 @@ package io.ib67.dash.console.event;
 
 import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.annotation.*;
+
 /**
  * Some filters for handler methods.
  * See also: {@link io.ib67.dash.event.EventListener}
@@ -40,6 +42,9 @@ public class Require {
      * Indicating some permission authentication are required before calling the annotated {@link io.ib67.dash.event.EventHandler} _method_.
      */
     @ApiStatus.AvailableSince("0.1.0")
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
     public @interface Permission {
         String value();
 
@@ -50,6 +55,9 @@ public class Require {
      * Indicating the existence of some {@link io.ib67.dash.context.ContextKey} is required before calling the annotated {@link io.ib67.dash.event.EventHandler} _method_.
      */
     @ApiStatus.AvailableSince("0.1.0")
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
     public @interface Context {
         String value();
 
@@ -60,6 +68,9 @@ public class Require {
      * Indicating the message must come from a specified adapter.
      */
     @ApiStatus.AvailableSince("0.1.0")
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
     public @interface Platform {
         String value();
 
