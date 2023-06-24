@@ -25,11 +25,7 @@ public interface IMessageEncoder<S extends IMessageSource> {
         Builder<S> clear();
 
         /**
-         * Text is the smallest unit to sent, so you can't register it here.
-         * @param clazz
-         * @param encoder
-         * @return
-         * @param <T>
+         * @throws UnsupportedOperationException if clazz == Text.class
          */
         <T extends IMessageComponent> Builder<S> register(Class<T> clazz, IComponentEncoder<T> encoder);
 
