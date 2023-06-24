@@ -98,6 +98,7 @@ public class DashImpl implements Dash {
         return new DashImpl(adapterRegistry, globalChannel, eventRegistry, permissionRegistry, userManager, bus, scheduler, defaultMessageEncoder());
     }
 
+    @Generated
     private static IMessageEncoder<?> defaultMessageEncoder() {
         return new MessageEncoderImpl.BuilderImpl<>(new HashMap<>())
                 .register(Image.class, DashImpl::toStringEncoder)
@@ -108,6 +109,7 @@ public class DashImpl implements Dash {
                 .build();
     }
 
+    @Generated
     private static <T> boolean toStringEncoder(T component, IComponentAppendable appendable, AbstractMessage<?> message){
         appendable.append(component.toString());
         return true;
