@@ -16,7 +16,7 @@ public interface MessageEncoder<S extends IMessageSource> {
 
     @ApiStatus.AvailableSince("0.1.0")
     interface Builder<S extends IMessageSource> {
-        Builder<S> keep(Class<? extends IMessageComponent>... classes);
+        Builder<S> keep(Class<?>... classes);
 
         <T extends IMessageComponent> Builder<S> register(Class<T> clazz, ComponentEncoder<T> encoder);
 
