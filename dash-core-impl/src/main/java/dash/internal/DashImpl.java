@@ -37,11 +37,12 @@ import io.ib67.dash.event.bus.IEventBus;
 import io.ib67.dash.scheduler.IScheduler;
 import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
+
+import static java.util.Objects.requireNonNull;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DashImpl implements Dash {
     private final IAdapterRegistry adapterRegistry;
     private final IEventChannel<? extends AbstractEvent> globalChannel;
@@ -51,14 +52,37 @@ public class DashImpl implements Dash {
     private final IEventBus bus;
     private final IScheduler scheduler;
 
-    public DashImpl(IScheduler scheduler) {
-        this.scheduler = scheduler;
-        bus = new DashEventBus(scheduler);
+    @Builder
+    @Generated // to avoid unnecessary unit tests
+    public static Dash create(IAdapterRegistry adapterRegistry, IEventBus bus, IEventRegistry eventRegistry,
+                              IUserManager userManager, IScheduler scheduler, IPermissionRegistry permissionRegistry) {
+        requireNonNull(adapterRegistry);
+        requireNonNull(bus);
+        requireNonNull(eventRegistry);
+        requireNonNull(userManager);
+        requireNonNull(scheduler);
+        requireNonNull(permissionRegistry);
+        return new DashImpl(
+                adapterRegistry,
+                bus.getChannelFactory().forMain("GLOBAL"),
+                eventRegistry,
+                permissionRegistry,
+                userManager,
+                bus,
+                scheduler
+        );
+    }
+
+    @Generated
+    public static Dash createDefault(IScheduler scheduler, IUserManager userManager) {
+        requireNonNull(scheduler);
+        requireNonNull(userManager);
+        var bus = new DashEventBus(scheduler);
         var channelFactory = bus.getChannelFactory();
-        adapterRegistry = new SimpleAdapterRegistry();
-        globalChannel = channelFactory.forMain("GLOBAL");
-        eventRegistry = new SimpleEventRegistry(channelFactory);
-        permissionRegistry = new SimplePermissionRegistry();
-        userManager = null;//new UserManagerImpl(session, permissionFactory, adapterRegistry);
+        var adapterRegistry = new SimpleAdapterRegistry();
+        var globalChannel = channelFactory.forMain("GLOBAL");
+        var eventRegistry = new SimpleEventRegistry(channelFactory);
+        var permissionRegistry = new SimplePermissionRegistry();
+        return new DashImpl(adapterRegistry, globalChannel, eventRegistry, permissionRegistry, userManager, bus, scheduler);
     }
 }
