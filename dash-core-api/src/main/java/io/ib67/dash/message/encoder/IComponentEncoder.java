@@ -7,5 +7,5 @@ import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.AvailableSince("0.1.0")
 public interface IComponentEncoder<T extends IMessageComponent> {
-    boolean encode(T component, IComponentAppendable appendable, @Nullable AbstractMessage message);
+    void encode(T component, IComponentAppendable appendable, @Nullable AbstractMessage message) throws ComponentEncodeException;
 }

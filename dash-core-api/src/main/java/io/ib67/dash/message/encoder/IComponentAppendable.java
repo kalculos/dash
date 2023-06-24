@@ -8,14 +8,14 @@ import org.jetbrains.annotations.ApiStatus;
 @FunctionalInterface
 public interface IComponentAppendable {
 
-    void add(IMessageComponent component);
-    
-    default IComponentAppendable append(IMessageComponent component) {
+    void add(IMessageComponent component) throws ComponentEncodeException;
+
+    default IComponentAppendable append(IMessageComponent component) throws ComponentEncodeException{
         add(component);
         return this;
     }
 
-    default IComponentAppendable append(String text) {
+    default IComponentAppendable append(String text) throws ComponentEncodeException{
         return append(new Text(text));
     }
 
