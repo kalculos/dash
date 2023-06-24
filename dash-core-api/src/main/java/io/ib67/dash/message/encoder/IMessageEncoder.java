@@ -18,6 +18,19 @@ public interface IMessageEncoder<S extends IMessageSource> {
     interface Builder<S extends IMessageSource> {
         Builder<S> keep(Class<?>... classes);
 
+        /**
+         * Equals to keepAll
+         * @return this
+         */
+        Builder<S> clear();
+
+        /**
+         * Text is the smallest unit to sent, so you can't register it here.
+         * @param clazz
+         * @param encoder
+         * @return
+         * @param <T>
+         */
         <T extends IMessageComponent> Builder<S> register(Class<T> clazz, IComponentEncoder<T> encoder);
 
         IMessageEncoder<S> build();
