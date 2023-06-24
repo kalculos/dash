@@ -19,5 +19,7 @@ public interface MessageEncoder<S extends IMessageSource> {
         Builder<S> keep(Class<? extends IMessageComponent>... classes);
 
         <T extends IMessageComponent> Builder<S> register(Class<T> clazz, ComponentEncoder<T> encoder);
+
+        MessageEncoder<S> build();
     }
 }
