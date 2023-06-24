@@ -7,7 +7,7 @@ import io.ib67.dash.message.feature.IMessageComponent;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
-public interface MessageEncoder<S extends IMessageSource> {
+public interface IMessageEncoder<S extends IMessageSource> {
     MessageChain encodeSingle(IMessageComponent component);
 
     MessageChain encodeByMessage(CompoundMessage<S> message);
@@ -18,8 +18,8 @@ public interface MessageEncoder<S extends IMessageSource> {
     interface Builder<S extends IMessageSource> {
         Builder<S> keep(Class<?>... classes);
 
-        <T extends IMessageComponent> Builder<S> register(Class<T> clazz, ComponentEncoder<T> encoder);
+        <T extends IMessageComponent> Builder<S> register(Class<T> clazz, IComponentEncoder<T> encoder);
 
-        MessageEncoder<S> build();
+        IMessageEncoder<S> build();
     }
 }

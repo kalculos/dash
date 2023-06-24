@@ -28,8 +28,7 @@ import io.ib67.dash.adapter.IAdapterRegistry;
 import io.ib67.dash.event.AbstractEvent;
 import io.ib67.dash.event.IEventChannel;
 import io.ib67.dash.event.bus.IEventBus;
-import io.ib67.dash.message.IMessageSource;
-import io.ib67.dash.message.encoder.MessageEncoder;
+import io.ib67.dash.message.encoder.IMessageEncoder;
 import io.ib67.dash.scheduler.IScheduler;
 import io.ib67.dash.user.IPermissionRegistry;
 import io.ib67.dash.user.IUserManager;
@@ -58,5 +57,5 @@ public interface Dash {
 
     IUserManager getUserManager();
 
-    MessageEncoder<?> getDefaultEncoder();
+    IMessageEncoder<?> getDefaultEncoder();
 }
