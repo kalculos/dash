@@ -31,8 +31,12 @@ import io.ib67.dash.message.MessageChain;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 /**
  * A {@link CompoundMessage} is a set of {@link IMessageComponent}
@@ -41,7 +45,7 @@ import java.util.Objects;
  */
 @ApiStatus.AvailableSince("0.1.0")
 @Getter
-public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S> {
+public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S> implements Iterable<IMessageComponent> {
     /**
      * The content of {@link CompoundMessage}, aka "MessageChain"
      */
@@ -61,5 +65,21 @@ public class CompoundMessage<S extends IMessageSource> extends AbstractMessage<S
     public CompoundMessage<S> replaceAll(String regex, String toBe) {
         var newChain = components.replaceAll(regex, toBe);
         return new CompoundMessage<>(source, id, newChain);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<IMessageComponent> iterator() {
+        return components.iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super IMessageComponent> action) {
+        components.forEach(action);
+    }
+
+    @Override
+    public Spliterator<IMessageComponent> spliterator() {
+        return components.spliterator();
     }
 }
