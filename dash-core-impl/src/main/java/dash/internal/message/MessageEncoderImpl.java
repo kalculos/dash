@@ -65,6 +65,12 @@ public class MessageEncoderImpl<S extends IMessageSource> implements IMessageEnc
         }
 
         @Override
+        public Builder<T> clear() {
+            map.clear();
+            return this;
+        }
+
+        @Override
         public <A extends IMessageComponent> IMessageEncoder.Builder<T> register(Class<A> clazz, IComponentEncoder<A> encoder) {
             if(clazz == Text.class){
                 throw new UnsupportedOperationException("Text is the smallest unit to be sent.");
