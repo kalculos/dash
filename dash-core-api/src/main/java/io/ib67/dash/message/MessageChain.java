@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
  * A set of messages.
  */
 @ApiStatus.AvailableSince("0.1.0")
-public class MessageChain extends ArrayList<IMessageComponent> {
+public class MessageChain extends ArrayList<IMessageComponent> implements Cloneable{
     public MessageChain(int initialCapacity) {
         super(initialCapacity);
     }
@@ -51,6 +52,10 @@ public class MessageChain extends ArrayList<IMessageComponent> {
 
     public MessageChain(@NotNull Collection<? extends IMessageComponent> c) {
         super(c);
+    }
+
+    public MessageChain(@NotNull MessageChain chain){
+        addAll(chain);
     }
 
     public static MessageChain of(IMessageComponent... components) {
@@ -109,7 +114,7 @@ public class MessageChain extends ArrayList<IMessageComponent> {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends IMessageComponent> T performReplaceAll(String regex, String toBe, T it) {
+    private static <T extends IMessageComponent> T performReplaceAll(String regex, String toBe, T it) {
         if (it instanceof Text t) {
             return (T) new Text(t.toString().replaceAll(regex, toBe)); // we can make sure that T is Text
         }
@@ -123,5 +128,10 @@ public class MessageChain extends ArrayList<IMessageComponent> {
     public MessageChain append(IMessageComponent component) {
         add(component);
         return this;
+    }
+
+    @Override
+    public MessageChain clone() {
+       return new MessageChain(this);
     }
 }
