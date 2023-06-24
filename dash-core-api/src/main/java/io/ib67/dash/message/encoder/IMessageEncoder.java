@@ -8,9 +8,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.AvailableSince("0.1.0")
 public interface IMessageEncoder<S extends IMessageSource> {
-    MessageChain encodeSingle(IMessageComponent component);
+    MessageChain encodeSingle(IMessageComponent component) throws ComponentEncodeException;
 
-    MessageChain encodeByMessage(CompoundMessage<S> message);
+    MessageChain encodeByMessage(CompoundMessage<S> message) throws ComponentEncodeException;
 
     <T extends IMessageSource> Builder<T> cloneEncoder();
 

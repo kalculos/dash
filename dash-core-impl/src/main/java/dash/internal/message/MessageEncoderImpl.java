@@ -3,6 +3,7 @@ package dash.internal.message;
 import io.ib67.dash.message.AbstractMessage;
 import io.ib67.dash.message.IMessageSource;
 import io.ib67.dash.message.MessageChain;
+import io.ib67.dash.message.encoder.ComponentEncodeException;
 import io.ib67.dash.message.encoder.IComponentEncoder;
 import io.ib67.dash.message.encoder.IMessageEncoder;
 import io.ib67.dash.message.feature.CompoundMessage;
@@ -19,14 +20,14 @@ public class MessageEncoderImpl<S extends IMessageSource> implements IMessageEnc
     private final Map<Class<?>, IComponentEncoder<?>> map;
 
     @Override
-    public MessageChain encodeSingle(IMessageComponent component) {
+    public MessageChain encodeSingle(IMessageComponent component) throws ComponentEncodeException {
         var chain = new MessageChain();
         encodeSingle(component, chain, null);
         return chain;
     }
 
     @SuppressWarnings("unchecked")
-    private void encodeSingle(IMessageComponent component, MessageChain chain, AbstractMessage<S> message) {
+    private void encodeSingle(IMessageComponent component, MessageChain chain, AbstractMessage<S> message) throws ComponentEncodeException {
         if (map.containsKey(component.getClass())) {
             var processor = (IComponentEncoder<IMessageComponent>) map.get(component.getClass());
             processor.encode(component, it -> encodeSingle(it, chain, message), message);
