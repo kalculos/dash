@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.Objects;
 
 /**
- * A {@link CompoundMessage} is a set of {@link IMessageComponent}, which is mutable.
+ * A {@link CompoundMessage} is a set of {@link IMessageComponent}
  *
  * @param <S>
  */
