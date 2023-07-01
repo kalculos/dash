@@ -4,4 +4,5 @@ include 'dash-core-impl'
 include 'benchmark'
 include 'dash-console-api'
 include 'dash-console-impl'
+include 'extension-session'
 
